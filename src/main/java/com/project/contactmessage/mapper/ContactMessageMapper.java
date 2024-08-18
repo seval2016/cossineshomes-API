@@ -3,6 +3,9 @@ package com.project.contactmessage.mapper;
 import com.project.contactmessage.dto.ContactMessageRequest;
 import com.project.contactmessage.dto.ContactMessageResponse;
 import com.project.contactmessage.entity.ContactMessage;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -35,4 +38,9 @@ public class ContactMessageMapper {
 
     }
 
+    // !!! Pageable oluşturma metodu
+    public Pageable createPageable(int page, int size, String sort, String type) {
+        Sort.Direction direction = Sort.Direction.fromString(type);
+        return PageRequest.of(page, size, Sort.by(direction, sort));
+    }
 }
