@@ -1,0 +1,70 @@
+"2024-08-18 21:08:51,302 INFO  [main] com.project.CossinesHomesApplication:Starting CossinesHomesApplication using Java 17.0.9 on Seval with PID 17756 (C:\Users\seval\IdeaProjects\CossinesHomes\target\classes started by seval in C:\Users\seval\IdeaProjects\CossinesHomes)
+""2024-08-18 21:08:51,310 INFO  [main] com.project.CossinesHomesApplication:No active profile set, falling back to 1 default profile: "default"
+""2024-08-18 21:08:53,136 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+""2024-08-18 21:08:53,221 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Finished Spring Data repository scanning in 68 ms. Found 1 JPA repository interfaces.
+""2024-08-18 21:08:54,072 INFO  [main] org.springframework.boot.web.embedded.tomcat.TomcatWebServer:Tomcat initialized with port(s): 8080 (http)
+""2024-08-18 21:08:54,086 INFO  [main] org.apache.catalina.core.StandardService:Starting service [Tomcat]
+""2024-08-18 21:08:54,087 INFO  [main] org.apache.catalina.core.StandardEngine:Starting Servlet engine: [Apache Tomcat/9.0.68]
+""2024-08-18 21:08:54,246 INFO  [main] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]:Initializing Spring embedded WebApplicationContext
+""2024-08-18 21:08:54,247 INFO  [main] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext:Root WebApplicationContext: initialization completed in 2807 ms
+""2024-08-18 21:08:54,478 INFO  [main] org.hibernate.jpa.internal.util.LogHelper:HHH000204: Processing PersistenceUnitInfo [name: default]
+""2024-08-18 21:08:54,533 INFO  [main] org.hibernate.Version:HHH000412: Hibernate ORM core version 5.6.12.Final
+""2024-08-18 21:08:54,700 INFO  [main] org.hibernate.annotations.common.Version:HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+""2024-08-18 21:08:54,826 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Starting...
+""2024-08-18 21:08:55,055 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Start completed.
+""2024-08-18 21:08:55,075 INFO  [main] org.hibernate.dialect.Dialect:HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL81Dialect
+""2024-08-18 21:08:55,952 INFO  [main] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator:HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+""2024-08-18 21:08:55,960 INFO  [main] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean:Initialized JPA EntityManagerFactory for persistence unit 'default'
+""2024-08-18 21:08:56,638 WARN  [main] org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration:spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+""2024-08-18 21:08:57,391 INFO  [main] org.springframework.boot.web.embedded.tomcat.TomcatWebServer:Tomcat started on port(s): 8080 (http) with context path ''
+""2024-08-18 21:08:57,417 INFO  [main] com.project.CossinesHomesApplication:Started CossinesHomesApplication in 6.99 seconds (JVM running for 7.465)
+""2024-08-18 21:18:01,094 INFO  [SpringApplicationShutdownHook] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean:Closing JPA EntityManagerFactory for persistence unit 'default'
+""2024-08-18 21:18:01,096 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Shutdown initiated...
+""2024-08-18 21:18:01,098 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Shutdown completed.
+""2024-08-18 21:18:06,580 INFO  [main] com.project.CossinesHomesApplication:Starting CossinesHomesApplication using Java 17.0.9 on Seval with PID 22380 (C:\Users\seval\IdeaProjects\CossinesHomes\target\classes started by seval in C:\Users\seval\IdeaProjects\CossinesHomes)
+""2024-08-18 21:18:06,584 INFO  [main] com.project.CossinesHomesApplication:No active profile set, falling back to 1 default profile: "default"
+""2024-08-18 21:18:07,510 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+""2024-08-18 21:18:07,588 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Finished Spring Data repository scanning in 62 ms. Found 1 JPA repository interfaces.
+""2024-08-18 21:18:09,019 INFO  [main] org.springframework.boot.web.embedded.tomcat.TomcatWebServer:Tomcat initialized with port(s): 8080 (http)
+""2024-08-18 21:18:09,046 INFO  [main] org.apache.catalina.core.StandardService:Starting service [Tomcat]
+""2024-08-18 21:18:09,047 INFO  [main] org.apache.catalina.core.StandardEngine:Starting Servlet engine: [Apache Tomcat/9.0.68]
+""2024-08-18 21:18:09,330 INFO  [main] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]:Initializing Spring embedded WebApplicationContext
+""2024-08-18 21:18:09,331 INFO  [main] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext:Root WebApplicationContext: initialization completed in 2680 ms
+""2024-08-18 21:18:09,654 INFO  [main] org.hibernate.jpa.internal.util.LogHelper:HHH000204: Processing PersistenceUnitInfo [name: default]
+""2024-08-18 21:18:09,781 INFO  [main] org.hibernate.Version:HHH000412: Hibernate ORM core version 5.6.12.Final
+""2024-08-18 21:18:10,055 INFO  [main] org.hibernate.annotations.common.Version:HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+""2024-08-18 21:18:10,178 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Starting...
+""2024-08-18 21:18:10,401 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Start completed.
+""2024-08-18 21:18:10,420 INFO  [main] org.hibernate.dialect.Dialect:HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL81Dialect
+""2024-08-18 21:18:11,262 INFO  [main] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator:HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+""2024-08-18 21:18:11,286 INFO  [main] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean:Initialized JPA EntityManagerFactory for persistence unit 'default'
+""2024-08-18 21:18:11,926 WARN  [main] org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration:spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+""2024-08-18 21:18:12,293 INFO  [main] org.springframework.boot.web.embedded.tomcat.TomcatWebServer:Tomcat started on port(s): 8080 (http) with context path ''
+""2024-08-18 21:18:12,304 INFO  [main] com.project.CossinesHomesApplication:Started CossinesHomesApplication in 6.295 seconds (JVM running for 6.784)
+""2024-08-18 21:24:33,930 INFO  [http-nio-8080-exec-1] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]:Initializing Spring DispatcherServlet 'dispatcherServlet'
+""2024-08-18 21:24:34,173 WARN  [http-nio-8080-exec-1] org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver:Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public com.project.payload.response.business.ResponseMessage<com.project.contactmessage.dto.ContactMessageResponse> com.project.contactmessage.controller.ContactMessageController.save(com.project.contactmessage.dto.ContactMessageRequest) with 4 errors: [Field error in object 'contactMessageRequest' on field 'name': rejected value [null]; codes [NotNull.contactMessageRequest.name,NotNull.name,NotNull.java.lang.String,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [contactMessageRequest.name,name]; arguments []; default message [name]]; default message [Please enter name]] [Field error in object 'contactMessageRequest' on field 'subject': rejected value [null]; codes [NotNull.contactMessageRequest.subject,NotNull.subject,NotNull.java.lang.String,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [contactMessageRequest.subject,subject]; arguments []; default message [subject]]; default message [Please enter subject]] [Field error in object 'contactMessageRequest' on field 'email': rejected value [null]; codes [NotNull.contactMessageRequest.email,NotNull.email,NotNull.java.lang.String,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [contactMessageRequest.email,email]; arguments []; default message [email]]; default message [Please enter your email]] [Field error in object 'contactMessageRequest' on field 'message': rejected value [null]; codes [NotNull.contactMessageRequest.message,NotNull.message,NotNull.java.lang.String,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [contactMessageRequest.message,message]; arguments []; default message [message]]; default message [Please enter message]] ]
+""2024-08-18 21:25:11,311 WARN  [http-nio-8080-exec-4] org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver:Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public com.project.payload.response.business.ResponseMessage<com.project.contactmessage.dto.ContactMessageResponse> com.project.contactmessage.controller.ContactMessageController.save(com.project.contactmessage.dto.ContactMessageRequest): [Field error in object 'contactMessageRequest' on field 'name': rejected value [Ali]; codes [Size.contactMessageRequest.name,Size.name,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [contactMessageRequest.name,name]; arguments []; default message [name],16,4]; default message [Your name should be at least 4 chars]] ]
+""2024-08-18 21:27:56,981 INFO  [SpringApplicationShutdownHook] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean:Closing JPA EntityManagerFactory for persistence unit 'default'
+""2024-08-18 21:27:56,983 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Shutdown initiated...
+""2024-08-18 21:27:56,986 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Shutdown completed.
+""2024-08-18 21:28:18,694 INFO  [main] com.project.CossinesHomesApplication:Starting CossinesHomesApplication using Java 17.0.9 on Seval with PID 15084 (C:\Users\seval\IdeaProjects\CossinesHomes\target\classes started by seval in C:\Users\seval\IdeaProjects\CossinesHomes)
+""2024-08-18 21:28:18,703 INFO  [main] com.project.CossinesHomesApplication:No active profile set, falling back to 1 default profile: "default"
+""2024-08-18 21:28:20,267 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+""2024-08-18 21:28:20,390 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Finished Spring Data repository scanning in 101 ms. Found 1 JPA repository interfaces.
+""2024-08-18 21:28:21,611 INFO  [main] org.springframework.boot.web.embedded.tomcat.TomcatWebServer:Tomcat initialized with port(s): 8080 (http)
+""2024-08-18 21:28:21,629 INFO  [main] org.apache.catalina.core.StandardService:Starting service [Tomcat]
+""2024-08-18 21:28:21,630 INFO  [main] org.apache.catalina.core.StandardEngine:Starting Servlet engine: [Apache Tomcat/9.0.68]
+""2024-08-18 21:28:21,989 INFO  [main] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]:Initializing Spring embedded WebApplicationContext
+""2024-08-18 21:28:21,990 INFO  [main] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext:Root WebApplicationContext: initialization completed in 3130 ms
+""2024-08-18 21:28:22,588 INFO  [main] org.hibernate.jpa.internal.util.LogHelper:HHH000204: Processing PersistenceUnitInfo [name: default]
+""2024-08-18 21:28:22,732 INFO  [main] org.hibernate.Version:HHH000412: Hibernate ORM core version 5.6.12.Final
+""2024-08-18 21:28:23,243 INFO  [main] org.hibernate.annotations.common.Version:HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+""2024-08-18 21:28:23,688 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Starting...
+""2024-08-18 21:28:24,229 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Start completed.
+""2024-08-18 21:28:24,284 INFO  [main] org.hibernate.dialect.Dialect:HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL81Dialect
+""2024-08-18 21:28:25,697 INFO  [main] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator:HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+""2024-08-18 21:28:25,711 INFO  [main] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean:Initialized JPA EntityManagerFactory for persistence unit 'default'
+""2024-08-18 21:28:26,319 WARN  [main] org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration:spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+""2024-08-18 21:28:26,706 INFO  [main] org.springframework.boot.web.embedded.tomcat.TomcatWebServer:Tomcat started on port(s): 8080 (http) with context path ''
+""2024-08-18 21:28:26,720 INFO  [main] com.project.CossinesHomesApplication:Started CossinesHomesApplication in 9.496 seconds (JVM running for 10.051)
+"

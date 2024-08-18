@@ -16,9 +16,9 @@ import java.util.Optional;
 public interface ContactMessageRepository extends JpaRepository<ContactMessage, Long> {
 
 
-    Page<ContactMessage> findByEmailEquals(String email, Pageable pageable);
+    Page<ContactMessage> findByContactEmailEquals(String contactEmail, Pageable pageable);
 
-    Page<ContactMessage> findBySubjectEquals(String subject, Pageable pageable);
+    Page<ContactMessage> findByContactSubjectEquals(String contactSubject, Pageable pageable);
 
     @Query("SELECT c FROM ContactMessage c WHERE FUNCTION('DATE', c.dateTime) BETWEEN ?1 and ?2") //ContactMessage tablosundan istediğim günler arasında tarih bilgileri geliyor.FUNCTION('DATE', c.dateTime) ile dateTime sütununda(javaca field'ında) ki, sadece DATE yani tarih kısmın getirecek. BETWEEN ?1 and ?2 ile de ->  1.parametre ile 2.parametre arasındaki dateleri contactMessage olarak bana getir.
     List<ContactMessage> findMessagesBetweenDates(LocalDate beginDate, LocalDate endDate);

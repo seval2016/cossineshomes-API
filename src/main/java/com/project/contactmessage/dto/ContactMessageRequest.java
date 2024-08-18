@@ -19,7 +19,7 @@ public class ContactMessageRequest {
     //Client'dan gelmesi gereken bilgiler. Bu kısıamda validation yapılmalı
 
     @NotNull(message = "Please enter name")
-    @Size(min = 4, max = 16, message = "Your name should be at least 4 chars")
+    @Size(min = 3, max = 16, message = "Your name should be at least 4 chars")
     @Pattern(regexp = "\\A(?!\\s*\\Z).+",message = "Your message must consist of the character .")
     private String name;
 

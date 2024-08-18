@@ -55,7 +55,7 @@ public class ContactMessageService {
         Pageable pageable = contactMessageMapper.createPageable(page, size, sort, type);
 
         // Email'e göre arama yap ve dönüşüm yap
-        return contactMessageRepository.findByEmailEquals(email, pageable)
+        return contactMessageRepository.findByContactEmailEquals(email, pageable)
                 .map(contactMessageMapper::contactMessageToResponse);
     }
 
@@ -64,7 +64,7 @@ public class ContactMessageService {
         Pageable pageable = contactMessageMapper.createPageable(page, size, sort, type);
 
         // Konuya göre arama yap ve dönüşüm yap
-        return contactMessageRepository.findBySubjectEquals(subject, pageable)
+        return contactMessageRepository.findByContactSubjectEquals(subject, pageable)
                 .map(contactMessageMapper::contactMessageToResponse);
     }
 
