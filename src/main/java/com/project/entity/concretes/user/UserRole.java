@@ -22,7 +22,6 @@ public class UserRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,unique = true,length = 30)
     private String roleName;
 
     @Enumerated(EnumType.STRING)
