@@ -17,14 +17,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user=userRepository.finByUsernameEquals(username);
+        User user=userRepository.findByUsernameEquals(username);
         if(user != null){
             return new UserDetailsImpl(
                     user.getId(),
                     user.getUsername(),
                     user.getFirstName(),
                     user.getPasswordHash(),
-                    user.getRoles().stream()
+                    user.getUserRole().stream()
                             .findFirst()
                             .orElseThrow(() -> new RuntimeException("Role not found"))
                             .getRole()

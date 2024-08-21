@@ -45,7 +45,7 @@ public class Category {
     @Column
     private LocalDateTime updateAt;
 
-    @OneToMany(mappedBy = "category")
-    private List<CategoryPropertyKey> categoryPropertyKeys;
+    /*@OneToMany(mappedBy = "category")
+    private List<CategoryPropertyKey> categoryPropertyKeys;*/
 
 }

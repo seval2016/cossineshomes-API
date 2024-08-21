@@ -33,6 +33,6 @@ public class Image {
     private boolean featured = false;
 
     @ManyToOne
-    @JoinColumn(name = "advert_id")
+    @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 }
