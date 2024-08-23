@@ -25,7 +25,6 @@ public class UniquePropertyValidator {
             isChanged = true;
         }
 
-
         if( ! user.getPhone().equalsIgnoreCase(abstractUserRequest.getPhone())){
             updatedPhone = abstractUserRequest.getPhone();
             isChanged = true;
