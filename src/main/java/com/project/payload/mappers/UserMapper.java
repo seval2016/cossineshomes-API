@@ -1,6 +1,7 @@
 package com.project.payload.mappers;
 
 import com.project.entity.concretes.user.User;
+import com.project.payload.request.user.UserRequest;
 import com.project.payload.response.UserResponse;
 import org.springframework.stereotype.Component;
 
@@ -20,5 +21,8 @@ public class UserMapper {
                 .getRole()
                 .name())
                 .build();
+    }
+
+    public User mapUserRequestToUser(UserRequest userRequest) {
     }
 }

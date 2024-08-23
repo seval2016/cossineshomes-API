@@ -2,6 +2,8 @@ package com.project.service.user;
 
 import com.project.entity.concretes.user.User;
 import com.project.entity.enums.Role;
+import com.project.exception.ResourceNotFoundException;
+import com.project.payload.mappers.UserMapper;
 import com.project.payload.request.user.UserRequest;
 import com.project.payload.response.UserResponse;
 import com.project.payload.response.business.ResponseMessage;
@@ -18,23 +20,24 @@ import java.util.Objects;
 public class UserService {
     private final UserRepository userRepository;
     private final UniquePropertyValidator uniquePropertyValidator;
+    private final UserMapper userMapper;
 
     public ResponseMessage<UserResponse> saveUser(UserRequest userRequest, String userRole) {
 
-        //!!! Girilen username, email, phoneNumber, ssn
-        uniquePropertyValidator.checkDuplicate(userRequest.getUsername(),
-                userRequest.getFirstName(),
-                userRequest.getLastName(),
+        //!!! Girilen username,email ve phone
+        uniquePropertyValidator.checkDuplicate(
+                userRequest.getUsername(),
                 userRequest.getEmail(),
                 userRequest.getPhone());
 
         //!!! DTO --> POJO
         User user = userMapper.mapUserRequestToUser(userRequest);
+
         //!!! Rol bilgisini setliyoruz
-        if(userRole.equalsIgnoreCase(RoleType.ADMIN.name())){
+        if(userRole.equalsIgnoreCase(Role.ADMIN.name())){
 
             if(Objects.equals(userRequest.getUsername(),"Admin")){
-                user.setBuilt_in(true);
+                user.setBuiltIn(true);
             }
             //!!! admin rolu veriliyor
             user.setUserRole(userRoleService.getUserRole(Role.ADMIN));
@@ -46,7 +49,7 @@ public class UserService {
             throw new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_USER_USERROLE_MESSAGE, userRole));
         }
         //!!! password encode
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPasswordHash(passwordEncoder.encode(user.getPassword()));
         //!!! isAdvisor degerini False yapiyoruz
         user.setIsAdvisor(Boolean.FALSE);
         User savedUser = userRepository.save(user);
