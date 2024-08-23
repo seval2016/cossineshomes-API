@@ -2,6 +2,7 @@ package com.project.controller.user;
 
 import com.project.payload.request.user.UserRequest;
 import com.project.payload.response.UserResponse;
+import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -21,14 +23,15 @@ public class UserController {
     private final UserService userService;
 
     //!!! Save --> Customer disindakiler icin
-    @PostMapping("/save/{userRole}") // http://localhost:8080/user/save/Admin + POST + JSON
+    @PostMapping("/save/{userRole}") // http://localhost:8080/users/save/Admin + POST + JSON
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ResponseMessage<UserResponse>> saveUser(@Valid @RequestBody UserRequest userRequest,
                                                                   @PathVariable String userRole){
         return ResponseEntity.ok(userService.saveUser(userRequest,userRole));
     }
 
-    @GetMapping("/getAllUserByPage/{userRole}") // http://localhost:8080/user/getAllUserByPage/Admin
+    //!!! getall --> Admin,Manager
+    @GetMapping("/getAllUserByPage/{userRole}") // http://localhost:8080/users/getAllUserByPage/Admin
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Page<UserResponse>> getUserByPage(
             @PathVariable String userRole,
@@ -37,7 +40,34 @@ public class UserController {
             @RequestParam(value = "sort",defaultValue = "name") String sort,
             @RequestParam(value = "type",defaultValue = "desc") String type
     ){
-        Page<UserResponse> adminsOrDeansOrViceDeans = userService.getUsersByPage(page,size,sort,type,userRole);
-        return new ResponseEntity<>(adminsOrDeansOrViceDeans, HttpStatus.OK);
+        Page<UserResponse> adminsOrManager = userService.getUsersByPage(page,size,sort,type,userRole);
+        return new ResponseEntity<>(adminsOrManager, HttpStatus.OK);
+    }
+
+    //!!! getUserById
+    @GetMapping("/getUserById/{userId}") // http://localhost:8080/users/getUserById/1 + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
+    public ResponseMessage<BaseUserResponse> getUserById(@PathVariable Long userId){
+        return userService.getUserById(userId);
+    }
+
+    // !!!  deleteUser()
+    // !!! Admin ise hepsini silebilsin
+    // !!! Mudur sadece customer silebilsin
+    @DeleteMapping("/delete/{id}") // http://localhost:8080/user/delete/3
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id, HttpServletRequest httpServletRequest){
+
+        return ResponseEntity.ok(userService.deleteUserById(id, httpServletRequest));
+    }
+
+
+    // Update
+    // !!! Admin -->Manager guncellerken kullanilacak method
+    // !!! Customer icin ekstra fieldlar gerekebileceği icin, baska endpoint gerekiyor
+    @PutMapping("/update/{userId}")  // http://localhost:8080/users/update/1 + PUT + JSON
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseMessage<BaseUserResponse> updateAdminManagerForAdmin( @RequestBody @Valid UserRequest userRequest, @PathVariable Long userId){
+        return userService.updateUser(userRequest,userId);
     }
 }
