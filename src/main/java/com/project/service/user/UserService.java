@@ -8,6 +8,7 @@ import com.project.payload.mappers.UserMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.user.UserRequest;
+import com.project.payload.request.user.UserRequestWithoutPassword;
 import com.project.payload.response.UserResponse;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.business.ResponseMessage;
@@ -19,11 +20,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -148,5 +152,37 @@ public class UserService {
                 .object(userMapper.mapUserToUserResponse(savedUser))
                 .build();
 
+    }
+
+    public ResponseEntity<String> updateUserForUsers(UserRequestWithoutPassword userRequest, HttpServletRequest request) {
+        String userName = (String) request.getAttribute("username");
+        User user = userRepository.findByUsernameEquals(userName);
+
+        //!!! builtIn
+        methodHelper.checkBuiltIn(user);
+
+        // unique kontrolu
+        uniquePropertyValidator.checkUniqueProperties(user, userRequest);
+
+        //!!! DTO --> POJO
+        user.setUsername(userRequest.getUsername());
+
+        user.setEmail(userRequest.getEmail());
+        user.setPhone(userRequest.getPhone());
+        user.setFirstName(userRequest.getFirstName());
+        user.setLastName(userRequest.getLastName());
+
+        userRepository.save(user);
+
+        String message = SuccessMessages.USER_UPDATED;
+        return ResponseEntity.ok(message);
+    }
+
+    public List<UserResponse> getUserByName(String name) {
+
+        return userRepository.getUserByFirstNameContaining(name) // List<User>
+                .stream() // stream<User>
+                .map(userMapper::mapUserToUserResponse) // stream<UserResponse>
+                .collect(Collectors.toList()); // List<UserResponse>
     }
 }

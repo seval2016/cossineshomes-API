@@ -1,6 +1,7 @@
 package com.project.controller.user;
 
 import com.project.payload.request.user.UserRequest;
+import com.project.payload.request.user.UserRequestWithoutPassword;
 import com.project.payload.response.UserResponse;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.business.ResponseMessage;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -52,7 +54,7 @@ public class UserController {
     }
 
     // !!!  deleteUser()
-    // !!! Admin ise hepsini silebilsin
+    // !!! Admin hepsini silebilsin
     // !!! Mudur sadece customer silebilsin
     @DeleteMapping("/delete/{id}") // http://localhost:8080/user/delete/3
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
@@ -63,11 +65,26 @@ public class UserController {
 
 
     // Update
-    // !!! Admin -->Manager guncellerken kullanilacak method
+    // !!! Admin -->Manager'ı guncellerken kullanilacağı method
     // !!! Customer icin ekstra fieldlar gerekebileceği icin, baska endpoint gerekiyor
     @PutMapping("/update/{userId}")  // http://localhost:8080/users/update/1 + PUT + JSON
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseMessage<BaseUserResponse> updateAdminManagerForAdmin( @RequestBody @Valid UserRequest userRequest, @PathVariable Long userId){
         return userService.updateUser(userRequest,userId);
+    }
+
+    // Update
+    // !!! Kullanicinin kendisini update edeceği zaman bu method tetiklenir.
+    @PatchMapping("/updateUser") // http://localhost:8080/users/updateUser + PATCH + JSON
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','CUSTOMER')")
+    public ResponseEntity<String> updateUser(@RequestBody @Valid UserRequestWithoutPassword userRequestWithoutPassword, HttpServletRequest request){ //HttpServletRequest request ile bu methodu tetikleyen kullanıcıya ulaşıyoruz.
+        return userService.updateUserForUsers(userRequestWithoutPassword, request);
+    }
+
+    //!!! getByName
+    @GetMapping("/getUserByName") // http://localhost:8080/users/getUserByName?name=user1  + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','CUSTOMER')")
+    public List<UserResponse> getUserByName(@RequestParam (name = "name") String userName){
+        return userService.getUserByName(userName);
     }
 }
