@@ -2,14 +2,14 @@ package com.project.entity.concretes.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.entity.enums.Role;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
+
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Set;
+
 
 @Entity
 @Table(name="users")
@@ -60,8 +60,17 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<UserRole> userRole ;
+    private List<UserRole> userRole;
 
+    @PrePersist
+    protected void onCreate() {
+        createAt = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updateAt = LocalDateTime.now();
+    }
 
     // Diğer ilişkiler burada tanımlanacak (adverts, favorites, logs, tourRequests vs.)
 

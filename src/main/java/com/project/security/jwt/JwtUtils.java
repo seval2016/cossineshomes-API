@@ -21,25 +21,25 @@ public class JwtUtils {
     @Value("${backendapi.app.jwtSecret}")
     private String jwtSecret;
 
-    public String generateJwtToken(Authentication authentication){
-
+    public String generateJwtToken(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         return generateTokenFromUsername(userDetails.getUsername());
     }
 
-    public String generateTokenFromUsername(String username){
+    public String generateTokenFromUsername(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret.getBytes()) // Ensure the secret is in bytes
                 .compact();
     }
 
-    public boolean validateJwtToken(String jwtToken){
-
+    public boolean validateJwtToken(String jwtToken) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(jwtToken);
+            Jwts.parser()
+                    .setSigningKey(jwtSecret.getBytes()) // Ensure the secret is in bytes
+                    .parseClaimsJws(jwtToken);
             return true;
         } catch (ExpiredJwtException e) {
             LOGGER.error("Jwt token is expired : {}", e.getMessage());
@@ -55,9 +55,9 @@ public class JwtUtils {
         return false;
     }
 
-    public String getUserNameFromJwtToken(String token){
+    public String getUserNameFromJwtToken(String token) {
         return Jwts.parser()
-                .setSigningKey(jwtSecret)
+                .setSigningKey(jwtSecret.getBytes()) // Ensure the secret is in bytes
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();

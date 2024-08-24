@@ -58,9 +58,9 @@ public class UserService {
                 user.setBuiltIn(true);
             }
             //!!! admin rolu veriliyor
-            user.setUserRole(userRoleService.getAllUserRole(Role.ADMIN));
+            user.setUserRole(List.of(userRoleService.getUserRole(Role.ADMIN)));
         } else if (userRole.equalsIgnoreCase("Manager")) {
-            user.setUserRole(userRoleService.getAllUserRole(Role.MANAGER));
+            user.setUserRole(List.of(userRoleService.getUserRole(Role.MANAGER)));
         } else {
             throw new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_USER_USER_ROLE_MESSAGE,userRole));
         }
@@ -184,5 +184,24 @@ public class UserService {
                 .stream() // stream<User>
                 .map(userMapper::mapUserToUserResponse) // stream<UserResponse>
                 .collect(Collectors.toList()); // List<UserResponse>
+    }
+
+    //!!! Runner tarafi icin yazildi
+    public long countAllAdmins(){
+        return userRepository.countAdmin(Role.ADMIN);
+    }
+
+    public User getCustomerByUsername(String customerUsername){
+        return userRepository.findByUsername(customerUsername);
+    }
+
+    public User getUserByUserId(Long userId) {
+
+        return userRepository.findById(userId).orElseThrow(()->
+                new ResourceNotFoundException(ErrorMessages.NOT_FOUND_USER_MESSAGE));
+    }
+
+    public List<User> getCustomerById(Long[] customerIds) {
+        return userRepository.findByIdsEquals(customerIds);
     }
 }

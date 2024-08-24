@@ -21,7 +21,7 @@ public class UserRoleService {
                 new ResourceNotFoundException(ErrorMessages.ROLE_NOT_FOUND));
     }
 
-    public List<UserRole> getAllUserRole(Role admin){
+    public List<UserRole> getAllUserRole(){
         return userRoleRepository.findAll();
     }
 }
