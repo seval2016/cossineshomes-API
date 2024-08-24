@@ -4,7 +4,7 @@ import com.project.entity.concretes.user.User;
 import com.project.exception.ConflictException;
 import com.project.payload.messages.ErrorMessages;
 import com.project.repository.user.UserRepository;
-import com.project.payload.request.abstracts.AbstractUserRequest
+import com.project.payload.request.abstracts.AbstractUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
