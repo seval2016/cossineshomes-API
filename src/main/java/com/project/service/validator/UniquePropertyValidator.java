@@ -46,7 +46,7 @@ public class UniquePropertyValidator {
             throw new ConflictException(String.format(ErrorMessages.ALREADY_REGISTER_MESSAGE_USERNAME, username));
         }
 
-        if(userRepository.existsByPhoneNumber(phone)){
+        if(userRepository.existsByPhone(phone)){
             throw new ConflictException(String.format(ErrorMessages.ALREADY_REGISTER_MESSAGE_PHONE, phone));
         }
         if(userRepository.existsByEmail(email)){

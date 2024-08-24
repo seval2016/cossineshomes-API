@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,5 +19,5 @@ public abstract class BaseUserResponse {
     private String lastname;
     private String email;
     private String phone;
-    private String userRole;
+    private List<String> userRole; // Liste olarak güncellendi
 }

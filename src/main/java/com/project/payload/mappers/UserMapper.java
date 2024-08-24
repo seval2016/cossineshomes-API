@@ -8,9 +8,13 @@ import com.project.payload.response.UserResponse;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 @Component
 public class UserMapper {
     public UserResponse mapUserToUserResponse(User user) {
+        // Kullanıcı nesnesinden UserResponse nesnesi oluşturuluyor
         return UserResponse.builder()
                 .userId(user.getId())
                 .username(user.getUsername())
@@ -19,11 +23,9 @@ public class UserMapper {
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .userRole(user.getUserRole().stream()
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Role not found"))
-                .getRole()
-                .name())
-                .build();
+                        .map(role -> role.getRole().name())
+                        .collect(Collectors.toList()))  // Eğer roller null ise, boş bir liste dönüyor
+                .build();  // UserResponse nesnesi oluşturuluyor ve döndürülüyor
     }
 
     public User mapUserRequestToUser(BaseUserRequest userRequest) {
