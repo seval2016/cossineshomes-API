@@ -38,26 +38,26 @@ public class JwtUtils {
     public boolean validateJwtToken(String jwtToken) {
         try {
             Jwts.parser()
-                    .setSigningKey(jwtSecret.getBytes()) // Ensure the secret is in bytes
+                    .setSigningKey(jwtSecret.getBytes()) // Anahtarın byte dizisi olarak kullanılması
                     .parseClaimsJws(jwtToken);
             return true;
         } catch (ExpiredJwtException e) {
-            LOGGER.error("Jwt token is expired : {}", e.getMessage());
+            LOGGER.error("Jwt token is expired: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
-            LOGGER.error("Jwt token is unsupported : {}", e.getMessage());
+            LOGGER.error("Jwt token is unsupported: {}", e.getMessage());
         } catch (MalformedJwtException e) {
-            LOGGER.error("Jwt token is invalid : {}", e.getMessage());
+            LOGGER.error("Jwt token is invalid: {}", e.getMessage());
         } catch (SignatureException e) {
-            LOGGER.error("Jwt Signature is invalid : {}", e.getMessage());
+            LOGGER.error("Jwt Signature is invalid: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
-            LOGGER.error("Jwt is empty : {}", e.getMessage());
+            LOGGER.error("Jwt is empty: {}", e.getMessage());
         }
         return false;
     }
 
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser()
-                .setSigningKey(jwtSecret.getBytes()) // Ensure the secret is in bytes
+                .setSigningKey(jwtSecret.getBytes()) // Anahtarın byte dizisi olarak kullanılması
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();

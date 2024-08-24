@@ -5,7 +5,7 @@ public class ErrorMessages {
     private ErrorMessages() {
     }
 
-    public static final String NOT_PERMITTED_METHOD_MESSAGE = "You do not have any permission to do this operation";
+    public static final String NOT_PERMITTED_METHOD_MESSAGE = "You do not have any permission to do this operation because the user is built-in.";
 
     // User Errors
     public static final String PASSWORD_NOT_MATCHED = "Error : Your passwords are not matched";
