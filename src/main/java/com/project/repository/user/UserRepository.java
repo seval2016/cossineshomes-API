@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsernameEquals(String username);
@@ -30,5 +31,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT COUNT(u) FROM User u JOIN u.userRole ur WHERE ur.role = ?1")
     long countAdmin(Role role);
+
+    Optional<User> findByEmail(String email);
 }
 

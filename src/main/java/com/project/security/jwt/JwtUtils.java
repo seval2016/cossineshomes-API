@@ -1,5 +1,6 @@
 package com.project.security.jwt;
 
+import com.project.entity.concretes.user.User;
 import com.project.security.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
@@ -8,12 +9,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
 import java.util.Date;
 
 @Component
 public class JwtUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtUtils.class);
+
+    private static final int RESET_CODE_LENGTH = 6;
+    private static final String RESET_CODE_CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     @Value("${backendapi.app.jwtExpirationMs}")
     private long jwtExpirationMs;
@@ -61,5 +66,24 @@ public class JwtUtils {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    public String generateResetCode(User user) {
+        SecureRandom random = new SecureRandom();
+        StringBuilder resetCode = new StringBuilder(RESET_CODE_LENGTH);
+
+        for (int i = 0; i < RESET_CODE_LENGTH; i++) {
+            int index = random.nextInt(RESET_CODE_CHARACTERS.length());
+            resetCode.append(RESET_CODE_CHARACTERS.charAt(index));
+        }
+
+        // Generate JWT token using the reset code
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .claim("resetCode", resetCode.toString())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + jwtExpirationMs)) // Expiration can be adjusted
+                .signWith(SignatureAlgorithm.HS512, jwtSecret.getBytes())
+                .compact();
     }
 }

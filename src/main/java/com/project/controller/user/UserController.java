@@ -63,7 +63,6 @@ public class UserController {
         return ResponseEntity.ok(userService.deleteUserById(id, Request));
     }
 
-
     // Update
     // !!! Admin -->Manager'ı guncellerken kullanilacağı method
     // !!! Customer icin ekstra fieldlar gerekebileceği icin, baska endpoint gerekiyor
@@ -80,7 +79,6 @@ public class UserController {
     public ResponseEntity<String> updateUser(@RequestBody @Valid UserRequestWithoutPassword userRequestWithoutPassword,HttpServletRequest request){ //HttpServletRequest request ile bu methodu tetikleyen kullanıcıya ulaşıyoruz.
         return userService.updateUserForUsers(userRequestWithoutPassword, request);
     }
-
 
     //!!! getByName
     @GetMapping("/") // http://localhost:8080/users?name=user1  + GET

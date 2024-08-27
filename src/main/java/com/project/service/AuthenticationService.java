@@ -2,10 +2,12 @@ package com.project.service;
 
 import com.project.entity.concretes.user.User;
 import com.project.exception.BadRequestException;
+import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.UserMapper;
 import com.project.payload.messages.ErrorMessages;
 
 import com.project.payload.request.authentication.LoginRequest;
+import com.project.payload.request.business.ForgotPasswordRequest;
 import com.project.payload.request.business.UpdatePasswordRequest;
 
 import com.project.payload.response.UserResponse;
@@ -14,6 +16,7 @@ import com.project.payload.response.authentication.AuthResponse;
 import com.project.repository.user.UserRepository;
 import com.project.security.jwt.JwtUtils;
 import com.project.security.service.UserDetailsImpl;
+import com.project.service.email.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,6 +41,7 @@ public class AuthenticationService {
     private final JwtUtils jwtUtils;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
 
     public ResponseEntity<AuthResponse> authenticateUser(LoginRequest loginRequest) {
@@ -101,6 +105,17 @@ public class AuthenticationService {
         //!!! update
         user.setPasswordHash(hashedPassword);
         userRepository.save(user);
+    }
 
+    public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
+        User user = userRepository.findByEmail(forgotPasswordRequest.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", forgotPasswordRequest.getEmail()));
+
+        String resetPasswordCode = jwtUtils.generateResetCode(user);
+        user.setResetPasswordCode(resetPasswordCode);
+        userRepository.save(user);
+
+        // Email gönderimi
+        emailService.sendPasswordResetEmail(user.getEmail(), resetPasswordCode);
     }
 }

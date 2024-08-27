@@ -3,6 +3,7 @@ package com.project.controller;
 import com.project.payload.messages.SuccessMessages;
 
 import com.project.payload.request.authentication.LoginRequest;
+import com.project.payload.request.business.ForgotPasswordRequest;
 import com.project.payload.request.business.UpdatePasswordRequest;
 import com.project.payload.response.UserResponse;
 import com.project.payload.response.authentication.AuthResponse;
@@ -47,5 +48,11 @@ public class AuthenticationController {
         authenticationService.updatePassword(updatePasswordRequest, request);
         String response = SuccessMessages.PASSWORD_CHANGED_RESPONSE_MESSAGE;
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody @Valid ForgotPasswordRequest forgotPasswordRequest) {
+        authenticationService.forgotPassword(forgotPasswordRequest);
+        return ResponseEntity.ok(SuccessMessages.PASSWORD_RESET_INSTRUCTIONS_SENT);
     }
 }

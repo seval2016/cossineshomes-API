@@ -6,7 +6,7 @@ public class SuccessMessages {
     }
 
     public static final String PASSWORD_CHANGED_RESPONSE_MESSAGE = "Password Successfully Changed";
-
+    public static final String PASSWORD_RESET_INSTRUCTIONS_SENT = "Password reset instructions have been sent to your e-mail address.";
     public static final String IMAGE_SAVED = "Image is Uploaded Successfully";
 
     // User Messages

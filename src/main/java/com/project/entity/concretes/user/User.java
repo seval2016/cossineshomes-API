@@ -72,6 +72,8 @@ public class User {
         updateAt = LocalDateTime.now();
     }
 
+
+
     // Diğer ilişkiler burada tanımlanacak (adverts, favorites, logs, tourRequests vs.)
 
 }
