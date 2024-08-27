@@ -40,7 +40,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(userResponse);
     }
 
-    @PatchMapping("/updatePassword")  // http://localhost:8080/auth/updatePassword + PATCH + JSON
+    @PatchMapping("/reset-password")  // http://localhost:8080/auth/resetPassword + PATCH + JSON
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','CUSTOMER')")
     public ResponseEntity<String> updatePassword(@RequestBody @Valid UpdatePasswordRequest updatePasswordRequest,
                                                  HttpServletRequest request){

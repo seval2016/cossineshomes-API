@@ -25,7 +25,7 @@ public class UserController {
     private final UserService userService;
 
     //!!! Save --> Customer disindakiler icin
-    @PostMapping("/save/{userRole}") // http://localhost:8080/users/save/Admin + POST + JSON
+    @PostMapping("/{userRole}") // http://localhost:8080/users/Admin + POST + JSON
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ResponseMessage<UserResponse>> saveUser(@Valid @RequestBody UserRequest userRequest,
                                                                   @PathVariable String userRole){
@@ -39,7 +39,7 @@ public class UserController {
             @PathVariable String userRole,
             @RequestParam(value = "page",defaultValue = "0") int page,
             @RequestParam(value = "size",defaultValue = "10") int size,
-            @RequestParam(value = "sort",defaultValue = "name") String sort,
+            @RequestParam(value = "sort",defaultValue = "firstName") String sort,
             @RequestParam(value = "type",defaultValue = "desc") String type
     ){
         Page<UserResponse> adminsOrManager = userService.getUsersByPage(page,size,sort,type,userRole);
@@ -47,7 +47,7 @@ public class UserController {
     }
 
     //!!! getUserById
-    @GetMapping("/getUserById/{userId}") // http://localhost:8080/users/getUserById/1 + GET
+    @GetMapping("/{userId}") // http://localhost:8080/users/getUserById/1 + GET
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseMessage<BaseUserResponse> getUserById(@PathVariable Long userId){
         return userService.getUserById(userId);
@@ -56,11 +56,11 @@ public class UserController {
     // !!!  deleteUser()
     // !!! Admin hepsini silebilsin
     // !!! Mudur sadece customer silebilsin
-    @DeleteMapping("/delete/{id}") // http://localhost:8080/user/delete/3
+    @DeleteMapping("/delete/{id}") // http://localhost:8080/users/delete/3
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
-    public ResponseEntity<String> deleteUserById(@PathVariable Long id, HttpServletRequest httpServletRequest){
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id, HttpServletRequest Request){
 
-        return ResponseEntity.ok(userService.deleteUserById(id, httpServletRequest));
+        return ResponseEntity.ok(userService.deleteUserById(id, Request));
     }
 
 
@@ -75,14 +75,15 @@ public class UserController {
 
     // Update
     // !!! Kullanicinin kendisini update edeceği zaman bu method tetiklenir.
-    @PatchMapping("/updateUser") // http://localhost:8080/users/updateUser + PATCH + JSON
+    @PatchMapping("/auth") // http://localhost:8080/users/auth + PATCH + JSON
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','CUSTOMER')")
-    public ResponseEntity<String> updateUser(@RequestBody @Valid UserRequestWithoutPassword userRequestWithoutPassword, HttpServletRequest request){ //HttpServletRequest request ile bu methodu tetikleyen kullanıcıya ulaşıyoruz.
+    public ResponseEntity<String> updateUser(@RequestBody @Valid UserRequestWithoutPassword userRequestWithoutPassword,HttpServletRequest request){ //HttpServletRequest request ile bu methodu tetikleyen kullanıcıya ulaşıyoruz.
         return userService.updateUserForUsers(userRequestWithoutPassword, request);
     }
 
+
     //!!! getByName
-    @GetMapping("/getUserByName") // http://localhost:8080/users/getUserByName?name=user1  + GET
+    @GetMapping("/") // http://localhost:8080/users?name=user1  + GET
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','CUSTOMER')")
     public List<UserResponse> getUserByName(@RequestParam (name = "name") String userName){
         return userService.getUserByName(userName);

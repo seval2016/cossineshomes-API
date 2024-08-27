@@ -3,6 +3,7 @@ package com.project.payload.mappers;
 import com.project.entity.concretes.user.User;
 import com.project.payload.request.abstracts.BaseUserRequest;
 import com.project.payload.request.user.UserRequest;
+import com.project.payload.request.user.UserRequestWithoutPassword;
 import com.project.payload.response.user.CustomerResponse;
 import com.project.payload.response.UserResponse;
 
@@ -65,4 +66,15 @@ public class UserMapper {
                 .build();
 
     }
+
+   /* private User mapUserRequestToUpdatedUserWithoutPassword(UserRequestWithoutPassword userRequestWithoutPassword, Long userId) {
+        return User.builder()
+                .id(userId)
+                .username(userRequestWithoutPassword.getUsername())
+                .firstName(userRequestWithoutPassword.getFirstName())
+                .lastName(userRequestWithoutPassword.getLastName())
+                .phone(userRequestWithoutPassword.getPhone())
+                .email(userRequestWithoutPassword.getEmail())
+                .build();
+    }*/
 }

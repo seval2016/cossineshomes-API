@@ -154,23 +154,22 @@ public class UserService {
 
     }
 
-    public ResponseEntity<String> updateUserForUsers(UserRequestWithoutPassword userRequest, HttpServletRequest request) {
+    public ResponseEntity<String> updateUserForUsers(UserRequestWithoutPassword userRequestWithoutPassword, HttpServletRequest request) {
         String userName = (String) request.getAttribute("username");
         User user = userRepository.findByUsernameEquals(userName);
 
         //!!! builtIn
-        methodHelper.checkBuiltIn(user);
+       methodHelper.checkBuiltIn(user);
 
         // unique kontrolu
-        uniquePropertyValidator.checkUniqueProperties(user, userRequest);
+        uniquePropertyValidator.checkUniqueProperties(user, userRequestWithoutPassword);
 
         //!!! DTO --> POJO
-        user.setUsername(userRequest.getUsername());
-
-        user.setEmail(userRequest.getEmail());
-        user.setPhone(userRequest.getPhone());
-        user.setFirstName(userRequest.getFirstName());
-        user.setLastName(userRequest.getLastName());
+        user.setUsername(userRequestWithoutPassword.getUsername());
+        user.setFirstName(userRequestWithoutPassword.getFirstName());
+        user.setLastName(userRequestWithoutPassword.getLastName());
+        user.setEmail(userRequestWithoutPassword.getEmail());
+        user.setPhone(userRequestWithoutPassword.getPhone());
 
         userRepository.save(user);
 
