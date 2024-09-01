@@ -7,6 +7,7 @@ import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.UserMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
+import com.project.payload.request.business.UpdatePasswordRequest;
 import com.project.payload.request.user.UserRequest;
 import com.project.payload.request.user.UserRequestWithoutPassword;
 import com.project.payload.response.UserResponse;
@@ -154,7 +155,7 @@ public class UserService {
 
     }
 
-    public ResponseEntity<String> updateUserForUsers(UserRequestWithoutPassword userRequestWithoutPassword, HttpServletRequest request) {
+    public ResponseEntity<String> updateAuthenticatedUser(UserRequestWithoutPassword userRequestWithoutPassword, HttpServletRequest request) {
         String userName = (String) request.getAttribute("username");
         User user = userRepository.findByUsernameEquals(userName);
 
@@ -203,4 +204,42 @@ public class UserService {
     public List<User> getCustomerById(Long[] customerIds) {
         return userRepository.findByIdsEquals(customerIds);
     }
+
+
+    public BaseUserResponse getAuthenticatedUser(HttpServletRequest request) {
+        String username = (String) request.getAttribute("username");
+        User user = userRepository.findByUsernameEquals(username);
+        return userMapper.mapUserToUserResponse(user);
+    }
+
+    public void updateAuthenticatedUserPassword(UpdatePasswordRequest passwordUpdateRequest, HttpServletRequest request) {
+        String username = (String) request.getAttribute("username");
+        User user = userRepository.findByUsernameEquals(username);
+        user.setPasswordHash(passwordEncoder.encode(passwordUpdateRequest.getNewPassword()));
+        userRepository.save(user);
+    }
+
+   /* public void deleteAuthenticatedUser(HttpServletRequest request) {
+        //!!! Kullanıcı kimliğini alıyoruz.
+        String username = (String) request.getAttribute("username");
+        User user = userRepository.findByUsernameEquals(username);
+
+        //!!! builtIn kullanıcılar silinemez.
+        methodHelper.checkBuiltIn(user);
+
+        //!!! İlgili kayıtlar varsa (adverts, tour requests) kullanıcı silinemez.
+        boolean hasAdverts = advertsRepository.existsByUserId(user.getId());
+        boolean hasTourRequests = tourRequestRepository.existsByUserId(user.getId());
+
+        if (hasAdverts || hasTourRequests) {
+            throw new BadRequestException(ErrorMessages.USER_CANNOT_BE_DELETED);
+        }
+
+        //!!! İlgili kayıtları (favorites, logs) siliyoruz.
+        favoritesRepository.deleteByUserId(user.getId());
+        logsRepository.deleteByUserId(user.getId());
+
+        //!!! Kullanıcıyı sil.
+        userRepository.delete(user);
+    }*/
 }

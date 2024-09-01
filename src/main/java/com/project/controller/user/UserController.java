@@ -1,5 +1,7 @@
 package com.project.controller.user;
 
+import com.project.payload.messages.SuccessMessages;
+import com.project.payload.request.business.UpdatePasswordRequest;
 import com.project.payload.request.user.UserRequest;
 import com.project.payload.request.user.UserRequestWithoutPassword;
 import com.project.payload.response.UserResponse;
@@ -24,17 +26,17 @@ public class UserController {
 
     private final UserService userService;
 
-    //!!! Save --> Customer disindakiler icin
-    @PostMapping("/{userRole}") // http://localhost:8080/users/Admin + POST + JSON
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    //!!! Yeni bir kullanıcı kaydetmek için kullanılır.
+    @PostMapping("/register/{userRole}") // http://localhost:8080/users/register/Admin + POST + JSON
     public ResponseEntity<ResponseMessage<UserResponse>> saveUser(@Valid @RequestBody UserRequest userRequest,
                                                                   @PathVariable String userRole){
+        // Kullanıcıyı rolüne göre kaydeder.
         return ResponseEntity.ok(userService.saveUser(userRequest,userRole));
-    }
+    } //F02
 
-    //!!! getall --> Admin,Manager
+    //!!! Belirli bir rol için sayfalanmış kullanıcıları getirmek için kullanılır.
     @GetMapping("/getAllUserByPage/{userRole}") // http://localhost:8080/users/getAllUserByPage/Admin
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseEntity<Page<UserResponse>> getUserByPage(
             @PathVariable String userRole,
             @RequestParam(value = "page",defaultValue = "0") int page,
@@ -42,48 +44,76 @@ public class UserController {
             @RequestParam(value = "sort",defaultValue = "firstName") String sort,
             @RequestParam(value = "type",defaultValue = "desc") String type
     ){
+        // Belirtilen rol için sayfalanmış kullanıcı listesini döndürür.
         Page<UserResponse> adminsOrManager = userService.getUsersByPage(page,size,sort,type,userRole);
         return new ResponseEntity<>(adminsOrManager, HttpStatus.OK);
-    }
+    } //F09
 
-    //!!! getUserById
-    @GetMapping("/{userId}") // http://localhost:8080/users/getUserById/1 + GET
+    //!!! ID'ye göre bir kullanıcıyı getirmek için kullanılır.
+    @GetMapping("/{userId}") // http://localhost:8080/users/1 + GET
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseMessage<BaseUserResponse> getUserById(@PathVariable Long userId){
+        // Belirtilen ID'ye sahip kullanıcıyı döndürür.
         return userService.getUserById(userId);
-    }
+    } //F10
 
-    // !!!  deleteUser()
-    // !!! Admin hepsini silebilsin
-    // !!! Mudur sadece customer silebilsin
+    // !!! Admin tarafından, belirli bir kullanıcıyı güncellemek için kullanılır.
+    @PutMapping("/update/{userId}")  // http://localhost:8080/users/update/1 + PUT + JSON
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
+    public ResponseMessage<BaseUserResponse> updateAdminManagerForAdmin( @RequestBody @Valid UserRequest userRequest, @PathVariable Long userId){
+        // Kullanıcıyı günceller ve güncellenmiş kullanıcı bilgilerini döndürür.
+        return userService.updateUser(userRequest,userId);
+    } //F11
+
+    // !!! Belirli bir ID'ye sahip kullanıcıyı silmek için kullanılır.
     @DeleteMapping("/delete/{id}") // http://localhost:8080/users/delete/3
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseEntity<String> deleteUserById(@PathVariable Long id, HttpServletRequest Request){
-
+        // Kullanıcıyı ID'ye göre siler ve sonucu döndürür.
         return ResponseEntity.ok(userService.deleteUserById(id, Request));
-    }
+    } //F12
 
-    // Update
-    // !!! Admin -->Manager'ı guncellerken kullanilacağı method
-    // !!! Customer icin ekstra fieldlar gerekebileceği icin, baska endpoint gerekiyor
-    @PutMapping("/update/{userId}")  // http://localhost:8080/users/update/1 + PUT + JSON
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseMessage<BaseUserResponse> updateAdminManagerForAdmin( @RequestBody @Valid UserRequest userRequest, @PathVariable Long userId){
-        return userService.updateUser(userRequest,userId);
-    }
-
-    // Update
-    // !!! Kullanicinin kendisini update edeceği zaman bu method tetiklenir.
-    @PatchMapping("/auth") // http://localhost:8080/users/auth + PATCH + JSON
-    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','CUSTOMER')")
-    public ResponseEntity<String> updateUser(@RequestBody @Valid UserRequestWithoutPassword userRequestWithoutPassword,HttpServletRequest request){ //HttpServletRequest request ile bu methodu tetikleyen kullanıcıya ulaşıyoruz.
-        return userService.updateUserForUsers(userRequestWithoutPassword, request);
-    }
-
-    //!!! getByName
+    //!!! Kullanıcı adını içerir şekilde kullanıcıları getirmek için kullanılır.
     @GetMapping("/") // http://localhost:8080/users?name=user1  + GET
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','CUSTOMER')")
     public List<UserResponse> getUserByName(@RequestParam (name = "name") String userName){
+        // Kullanıcı adını içerir şekilde kullanıcı listesini döndürür.
         return userService.getUserByName(userName);
     }
+
+    //!!! Authenticate olmuş kullanıcının bilgilerini döndürmek için kullanılır.
+    @GetMapping("/auth") // http://localhost:8080/users/auth + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','CUSTOMER')")
+    public ResponseEntity<BaseUserResponse> getAuthenticatedUser(HttpServletRequest request) {
+        // Authenticate olmuş kullanıcının bilgilerini döndürür.
+        return ResponseEntity.ok(userService.getAuthenticatedUser(request));
+    } //f05
+
+    // !!! Authenticate olmuş kullanıcı bilgilerini güncellemek için kullanılır.
+    @PutMapping("/auth") // http://localhost:8080/users/auth + PUT + JSON
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','CUSTOMER')")
+    public ResponseEntity<String> updateAuthenticatedUser(@RequestBody @Valid UserRequestWithoutPassword userRequestWithoutPassword, HttpServletRequest request) {
+        // Authenticate olmuş kullanıcı bilgilerini günceller.
+        userService.updateAuthenticatedUser(userRequestWithoutPassword, request);
+        return ResponseEntity.ok(SuccessMessages.USER_UPDATED);
+    }//F06
+
+    //!!! Authenticate olmuş kullanıcının şifresini güncellemek için kullanılır.
+    @PatchMapping("/auth") // http://localhost:8080/users/auth + PATCH + JSON
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','CUSTOMER')")
+    public ResponseEntity<String> updateAuthenticatedUserPassword(@RequestBody @Valid UpdatePasswordRequest passwordUpdateRequest, HttpServletRequest request) {
+        // Authenticate olmuş kullanıcının şifresini günceller.
+        userService.updateAuthenticatedUserPassword(passwordUpdateRequest, request);
+        return ResponseEntity.ok(SuccessMessages.PASSWORD_CHANGED_RESPONSE_MESSAGE);
+    } //F07
+
+   /* //!!! Authenticate olmuş kullanıcının hesabını silmek için kullanılır.
+    @DeleteMapping("/auth") // http://localhost:8080/users/auth + DELETE + JSON
+    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
+    public ResponseEntity<String> deleteAuthenticatedUser(HttpServletRequest request) {
+        // Authenticate olmuş kullanıcının hesabını siler.
+        userService.deleteAuthenticatedUser(request);
+        return ResponseEntity.ok(SuccessMessages.USER_DELETED);
+    } //f08*/
+
 }

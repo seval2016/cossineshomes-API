@@ -73,7 +73,4 @@ public class User {
     }
 
 
-
-    // Diğer ilişkiler burada tanımlanacak (adverts, favorites, logs, tourRequests vs.)
-
 }
