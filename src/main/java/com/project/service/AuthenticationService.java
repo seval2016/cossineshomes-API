@@ -10,6 +10,7 @@ import com.project.payload.request.authentication.LoginRequest;
 import com.project.payload.request.business.ForgotPasswordRequest;
 import com.project.payload.request.business.UpdatePasswordRequest;
 
+import com.project.payload.request.user.UserRequestWithoutPassword;
 import com.project.payload.response.UserResponse;
 
 import com.project.payload.response.authentication.AuthResponse;
@@ -117,5 +118,29 @@ public class AuthenticationService {
 
         // Email gönderimi
         emailService.sendPasswordResetEmail(user.getEmail(), resetPasswordCode);
+    }
+
+    public UserResponse getAuthenticatedUser(String username) {
+        User user = userRepository.findByUsername(username);
+        return userMapper.mapUserToUserResponse(user);
+    }
+
+    public UserResponse updateAuthenticatedUser(UserRequestWithoutPassword userRequestWithoutPassword, String username) {
+        User user = userRepository.findByUsername(username);
+        userMapper.mapUserRequestWithoutPasswordToUser(userRequestWithoutPassword, user);
+        userRepository.save(user);
+        return userMapper.mapUserToUserResponse(user);
+    }
+
+    public void updateAuthenticatedUserPassword(UpdatePasswordRequest updatePasswordRequest, String username) {
+        User user = userRepository.findByUsername(username);
+
+        if (!passwordEncoder.matches(updatePasswordRequest.getOldPassword(), user.getPasswordHash())) {
+            throw new BadRequestException(ErrorMessages.PASSWORD_NOT_MATCHED);
+        }
+
+        String hashedNewPassword = passwordEncoder.encode(updatePasswordRequest.getNewPassword());
+        user.setPasswordHash(hashedNewPassword);
+        userRepository.save(user);
     }
 }
