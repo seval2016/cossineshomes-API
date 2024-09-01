@@ -33,7 +33,7 @@ public class CategoryPropertyKey {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    /*@OneToMany(mappedBy = "categoryPropertyKey")
-    private List<CategoryPropertyValue> propertyValues;*/
+    @OneToMany(mappedBy = "categoryPropertyKey")
+    private List<CategoryPropertyValue> propertyValues;
 }
 

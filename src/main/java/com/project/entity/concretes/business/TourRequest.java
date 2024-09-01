@@ -1,54 +1,51 @@
 package com.project.entity.concretes.business;
 
-        import com.fasterxml.jackson.annotation.JsonFormat;
-        import com.project.entity.concretes.user.User;
-        import lombok.AllArgsConstructor;
-        import lombok.Builder;
-        import lombok.Data;
-        import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.project.entity.concretes.user.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-        import javax.persistence.*;
-        import java.time.LocalDateTime;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tour_requests")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class TourRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
-    @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "tour_date", nullable = false)
     private LocalDateTime tourDate;
 
-    @Column(nullable = false)
+    @JsonFormat(pattern = "HH:mm:ss")
+    @Column(name = "tour_time", nullable = false)
     private LocalDateTime tourTime;
 
-    @Column(nullable = false)
-    private Integer status = 0;
-
-    // Advert tablosuna foreign key ile bağlanıyor
     @ManyToOne
-    @JoinColumn(name = "advert_id",nullable = false)
+    @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 
-    // Owner User tablosuna foreign key ile bağlanıyor
+    @Column(nullable = false)
+    private int status;
+
     @ManyToOne
-    @JoinColumn(name = "owner_user_id",nullable = false)
+    @JoinColumn(name = "owner_user_id", nullable = false)
     private User ownerUser;
 
-    // Guest User tablosuna foreign key ile bağlanıyor
     @ManyToOne
-    @JoinColumn(name = "guest_user_id",nullable = false)
+    @JoinColumn(name = "guest_user_id", nullable = false)
     private User guestUser;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDateTime updateAt;
 }

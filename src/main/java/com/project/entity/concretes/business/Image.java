@@ -12,12 +12,12 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Lob
     @Column(nullable = false)
@@ -26,11 +26,11 @@ public class Image {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 100)
     private String type;
 
     @Column(nullable = false)
-    private boolean featured = false;
+    private boolean featured;
 
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)

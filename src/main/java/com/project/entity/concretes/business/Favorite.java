@@ -1,5 +1,6 @@
 package com.project.entity.concretes.business;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.entity.concretes.user.User;
 
 import lombok.AllArgsConstructor;
@@ -15,12 +16,12 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class Favorite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -30,6 +31,8 @@ public class Favorite {
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 
-    @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt;
 }
+

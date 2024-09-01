@@ -1,5 +1,6 @@
 package com.project.entity.concretes.business;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,38 +15,37 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 100)
     private String icon;
 
     @Column(nullable = false)
-    private boolean builtIn = false;
+    private boolean built_in;
 
     @Column(nullable = false)
-    private int seq = 0;
+    private int seq;
 
-    @Column(nullable = false, length = 200)
+    @Column(nullable = false, length = 100)
     private String slug;
 
     @Column(nullable = false)
-    private boolean isActive = true;
+    private boolean is_active;
 
-    @Column(nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
+    @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt;
 
-    @Column
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
+    @Column(name = "update_at", nullable = false)
     private LocalDateTime updateAt;
-
-    /*@OneToMany(mappedBy = "category")
-    private List<CategoryPropertyKey> categoryPropertyKeys;*/
-
 }
+

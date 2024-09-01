@@ -8,26 +8,17 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "category_property_values")
+@Table(name = "countries")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class CategoryPropertyValue {
+public class Country {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(nullable = false, length = 100)
-    private String value;
-
-    @ManyToOne
-    @JoinColumn(name = "category_property_key_id", nullable = false)
-    private CategoryPropertyKey categoryPropertyKey;
-
-    @ManyToOne
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Advert advert;
+    private String name;
 }
-

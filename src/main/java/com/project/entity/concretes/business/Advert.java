@@ -7,13 +7,11 @@ import lombok.*;
 
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "adverts")
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,48 +23,46 @@ public class Advert {
     private Long id;
 
     @Column(nullable = false, length = 150)
-    @Size(min = 5, max = 150)
     private String title;
 
     @Column(length = 300)
-    private String description;
+    private String desc;
 
-    @Column(nullable = false, length = 200, unique = true)
-    @Size(min = 5, max = 200)
+    @Column(nullable = false, length = 200)
     private String slug;
 
     @Column(nullable = false)
     private BigDecimal price;
 
     @Column(nullable = false)
-    private int status = 0;
+    private int status;
 
     @Column(nullable = false)
-    private boolean builtIn = false;
+    private boolean built_in;
 
     @Column(nullable = false)
-    private boolean isActive = true;
+    private boolean is_active;
 
     @Column(nullable = false)
-    private int viewCount = 0;
+    private int view_count;
 
-    @Column(length = 255)
+    @Column(nullable = false)
     private String location;
 
-    /*@ManyToOne
+    @ManyToOne
     @JoinColumn(name = "advert_type_id", nullable = false)
     private AdvertType advertType;
 
     @ManyToOne
-    @JoinColumn(name = "country_id",nullable = false)
+    @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 
     @ManyToOne
-    @JoinColumn(name = "city_id",nullable = false)
+    @JoinColumn(name = "city_id", nullable = false)
     private City city;
 
     @ManyToOne
-    @JoinColumn(name = "district_id",nullable = false)
+    @JoinColumn(name = "district_id", nullable = false)
     private District district;
 
     @ManyToOne
@@ -74,16 +70,15 @@ public class Advert {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;*/
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
-    @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
+    @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt;
 
-    @Column
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
+    @Column(name = "update_at", nullable = false)
     private LocalDateTime updateAt;
-
-    // Getter, Setter, Constructors
 }
+
