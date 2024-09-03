@@ -1,18 +1,19 @@
 package com.project.payload.request.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.project.entity.concretes.business.*;
+import com.project.entity.concretes.user.User;
 import com.project.entity.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Data
@@ -22,15 +23,15 @@ import java.time.LocalDateTime;
 public class AdvertRequest {
 
 
-    @NotNull(message = " Title must not be empty")
+    @NotBlank
     @Size(min = 5, max = 150)
     private String title;
 
-    @NotNull(message = "Description must not be empty")
+    @NotNull
     @Size(max = 300)
     private String description;
 
-    @NotNull(message =" Price  must not be empty")
+    @NotNull
     private BigDecimal price;
 
     /* title otomatik olarak slug'a dönüştürülebilir kullanıcıdan bir daha slug almaya gerek yok !!!
@@ -38,28 +39,31 @@ public class AdvertRequest {
     @Size(min = 5, max = 200)
     private String slug;*/
 
-    @NotNull(message =" Advert Type must not be empty")
+    @NotNull
     private Long advertTypeId;
 
-    @NotNull(message =" Country must not be empty")
-    private Long countryId;
+    @NotNull
+    private Integer countryId;
 
-    @NotNull(message =" City  must not be empty")
+    @NotNull
     private Long cityId;
 
-    @NotNull(message =" District  must not be empty")
+    @NotNull
     private Long districtId;
 
-    @NotNull(message =" Category  must not be empty")
+    @NotNull
     private Long categoryId;
 
-    @NotNull(message =" User must not be empty")
+    @NotNull
     private Long userId;
 
-    @NotNull(message =" Location  must not be empty")
+    @NotNull
     private String location;
 
-    @NotNull(message =" Active status must not be empty")
+    @NotNull
+    private List<PropertyRequest> properties;
+
+    @NotNull
     private boolean isActive;
 
 }

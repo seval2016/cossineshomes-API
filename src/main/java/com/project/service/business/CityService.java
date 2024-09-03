@@ -2,7 +2,7 @@ package com.project.service.business;
 
 import com.project.entity.concretes.business.City;
 import com.project.payload.response.business.CityResponse;
-import com.project.repository.business.CityRepository;
+import com.project.entity.concretes.business.business.CityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

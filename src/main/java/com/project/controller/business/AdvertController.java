@@ -2,15 +2,18 @@ package com.project.controller.business;
 
 import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.business.AdvertResponse;
-import com.project.payload.response.business.ResponseMessage;
+
 import com.project.service.business.AdvertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import javax.validation.Valid;
-import java.util.List;
+
+import java.math.BigDecimal;
+
 
 @RestController
 @RequestMapping("/adverts")
@@ -19,7 +22,31 @@ public class AdvertController {
 
     private final AdvertService advertService;
 
+    @GetMapping
+    public ResponseEntity<Page<AdvertResponse>> getAdverts(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long advertTypeId,
+            @RequestParam(required = false) BigDecimal priceStart,
+            @RequestParam(required = false) BigDecimal priceEnd,
+            @RequestParam(required = false) Integer status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "categoryId") String sort,
+            @RequestParam(defaultValue = "asc") String type) {
 
+        Page<AdvertResponse> adverts = advertService.getAdverts(q, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type);
+        return ResponseEntity.ok(adverts);
+    }//A01
+
+    @PostMapping
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<AdvertResponse> createAdvert(@RequestBody AdvertRequest advertRequest) {
+        AdvertResponse advertResponse = advertService.createAdvert(advertRequest);
+        return new ResponseEntity<>(advertResponse, HttpStatus.CREATED);
+    }//A10
+
+/*
     @PostMapping("/save")  // http://localhost:8080/adverts/save + POST + JSON
     @PreAuthorize("hasAnyAuthority('CUSTOMER')")
     public ResponseMessage<AdvertResponse> saveAdvert(@RequestBody @Valid AdvertRequest advertRequest) {
@@ -64,46 +91,38 @@ public class AdvertController {
 
         return advertService.updateAdvertById(id, advertRequest);
     }
-
+*/
 }
 /*
-Aşağıdaki  şartlara ve entitylere göre controller service ve gerekli olan tüm classları açıklayarak yazar msıın
-@GetMapping
-@PreAuthorize -> ANONYMOUS
-It should return adverts depending on query and paging parameters
+Aşağıdaki  şartlara ve entitylere göre controller, AdvertService,AdvertRequest,AdvertResponse, AdvertRepository,AdvertMapper gibi gerekli olan tüm classları açıklayarak yazar mısın
 
-/adverts?q=beyoğlu&category_id=12&advert_type_id=3&price_start=500&price_end=1500 location=34 &
-status=1;page=1&size=10&sort=date&type=asc
+@PostMapping
+@PreAuthorize -> CUSTOMER
+It should create an advert
 
-Payload
-(Queryvarchar)
-q: search query (optional)
-category_id: advert category
-advert_type_id: advert type id
-price_start: number (optional)
-price_end: number (optional)
-status: number(optional)
-page: active page number (optional, default: 0)
-size: record countin a page (optional, default: 20)
-sort : sort field name (optional, default: category_id)
-type: sorting type (optional, default: asc)
-
-
-Response
-( Array<advert> )
-[
-{ "id": 2,
-“title": "…",
-“image”: “…” …
-}
-]
+Response (advert)
+{ "id": 2, “title": "…", }
 
 Requirements
-– Value of q parameter should be
-searched in advert title and desc field
-– Get the adverts whose active fields of
-category and advert is 1, If q is omitted,
-get all records according to the paging
-params
+- Default builtIn value is false
+- Default create_at value is current
+date and time
+- It should return the advert that just
+created
+
+/adverts
+Payload (body)
+title district_id
+desc category_id
+price images
+advert_type_id Properties=[ {
+keyId: 12, value:
+"4" }, { keyId: 44,
+value: "12" }, {
+keyId: 15, value:
+"test" }, { keyId: 76,
+value: "125" }]
+country_id location
+city_id
 
  */

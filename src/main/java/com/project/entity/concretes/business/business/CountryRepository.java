@@ -1,4 +1,4 @@
-package com.project.repository.business;
+package com.project.entity.concretes.business.business;
 
 import com.project.entity.concretes.business.Country;
 import org.springframework.data.jpa.repository.JpaRepository;
