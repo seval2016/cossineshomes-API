@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 import java.time.temporal.ChronoUnit;
@@ -28,13 +29,16 @@ public class User {
     @Column(unique = true)
     private String username;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
+    @Size(min = 2, max = 30)
     private String firstName;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
+    @Size(min = 2, max = 30)
     private String lastName;
 
-    @Column(nullable = false, unique = true, length = 80)
+    @Column(nullable = false, unique = true)
+    @Size(min = 10, max = 80)
     private String email;
 
     @Column(unique = true)

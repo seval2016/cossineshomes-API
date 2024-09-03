@@ -3,10 +3,12 @@ package com.project.entity.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.entity.concretes.user.User;
+import com.project.entity.enums.Status;
 import lombok.*;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -22,29 +24,32 @@ public class Advert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false)
+    @Size(min = 5, max = 150)
     private String title;
 
     @Column(length = 300)
-    private String desc;
+    private String description;
 
     @Column(nullable = false, length = 200)
+    @Size(min = 5, max = 200)
     private String slug;
 
     @Column(nullable = false)
     private BigDecimal price;
 
     @Column(nullable = false)
-    private int status;
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.PENDING;
 
     @Column(nullable = false)
-    private boolean built_in;
+    private boolean builtIn;
 
     @Column(nullable = false)
-    private boolean is_active;
+    private boolean isActive;
 
     @Column(nullable = false)
-    private int view_count;
+    private int viewCount;
 
     @Column(nullable = false)
     private String location;
@@ -74,11 +79,11 @@ public class Advert {
     private Category category;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
-    @Column(name = "create_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime createAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
-    @Column(name = "update_at", nullable = false)
+
     private LocalDateTime updateAt;
 }
 

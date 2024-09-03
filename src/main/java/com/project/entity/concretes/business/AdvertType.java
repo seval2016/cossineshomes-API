@@ -17,12 +17,12 @@ public class AdvertType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 30)
     private String title;
 
     @Column(nullable = false)
-    private boolean built_in;
+    private boolean builtIn;
 }
 

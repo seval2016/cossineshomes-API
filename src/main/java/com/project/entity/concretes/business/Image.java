@@ -17,20 +17,19 @@ public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Lob
     @Column(nullable = false)
     private byte[] data;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, length = 100)
     private String type;
 
     @Column(nullable = false)
-    private boolean featured;
+    private boolean featured=false;
 
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
