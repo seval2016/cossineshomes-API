@@ -1,8 +1,7 @@
 package com.project.payload.response.business;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.project.entity.concretes.business.*;
-import com.project.entity.concretes.user.User;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,12 +24,16 @@ public class AdvertResponse {
     private BigDecimal price;
     private String advertTypeTitle;
     private String countryName;
-    private String cityName;
     private String districtName;
     private String categoryTitle;
     private String userName;
     private String location;
     private String image;
     private boolean isActive;
+
+    // Şehir bazlı reklam sayısı için ek alanlar
+    private Long cityId;
+    private String cityName;
+    private long amount;
 
 }

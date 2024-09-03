@@ -1,4 +1,4 @@
-package com.project.entity.concretes.business.business;
+package com.project.repository.business;
 
 import com.project.entity.concretes.business.Advert;
 import com.project.entity.concretes.business.City;

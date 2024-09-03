@@ -1,12 +1,14 @@
 package com.project.service.business;
 
 import com.project.entity.concretes.business.*;
-import com.project.entity.concretes.business.business.*;
+
 import com.project.entity.concretes.user.User;
 import com.project.payload.mappers.AdvertMapper;
 import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.business.AdvertResponse;
 
+import com.project.payload.response.business.CityAdvertResponse;
+import com.project.repository.business.*;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.PageableHelper;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -52,5 +55,7 @@ public class AdvertService {
         return advertMapper.mapAdvertToAdvertResponse(savedAdvert);
     }
 
-
+    public List<CityAdvertResponse> getAdvertCities() {
+        return advertRepository.findAdvertsGroupedByCity();
+    }
 }

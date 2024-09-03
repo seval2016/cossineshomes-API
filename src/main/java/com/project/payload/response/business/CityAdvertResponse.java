@@ -9,10 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class CityResponse {
+public class CityAdvertResponse {
 
-    private Long id;
-    private String name;
-    private Long CountryId;
-    private long amount; // Bu alan sadece DTO'da yer alacak ve her şehir için reklam sayısını döndürecektir.
+    private String cityName;
+    private long amount;
 }

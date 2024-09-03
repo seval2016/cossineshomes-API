@@ -1,7 +1,8 @@
-package com.project.entity.concretes.business.business;
+package com.project.repository.business;
 
 import com.project.entity.concretes.business.Advert;
-import com.project.entity.enums.Status;
+import com.project.payload.response.business.AdvertResponse;
+import com.project.payload.response.business.CityAdvertResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Repository
 public interface AdvertRepository extends JpaRepository<Advert, Long> {
@@ -32,4 +34,11 @@ public interface AdvertRepository extends JpaRepository<Advert, Long> {
                              @Param("priceEnd") BigDecimal priceEnd,
                              @Param("status") Integer status,
                              Pageable pageable);
+
+
+    @Query("SELECT c.name AS cityName, COUNT(a) AS amount " +
+            "FROM City c " +
+            "LEFT JOIN Advert a ON a.city.id = c.id " +
+            "GROUP BY c.id, c.name")
+    List<CityAdvertResponse> findAdvertsGroupedByCity();
 }
