@@ -66,3 +66,44 @@ public class AdvertController {
     }
 
 }
+/*
+Aşağıdaki  şartlara ve entitylere göre controller service ve gerekli olan tüm classları açıklayarak yazar msıın
+@GetMapping
+@PreAuthorize -> ANONYMOUS
+It should return adverts depending on query and paging parameters
+
+/adverts?q=beyoğlu&category_id=12&advert_type_id=3&price_start=500&price_end=1500 location=34 &
+status=1;page=1&size=10&sort=date&type=asc
+
+Payload
+(Queryvarchar)
+q: search query (optional)
+category_id: advert category
+advert_type_id: advert type id
+price_start: number (optional)
+price_end: number (optional)
+status: number(optional)
+page: active page number (optional, default: 0)
+size: record countin a page (optional, default: 20)
+sort : sort field name (optional, default: category_id)
+type: sorting type (optional, default: asc)
+
+
+Response
+( Array<advert> )
+[
+{ "id": 2,
+“title": "…",
+“image”: “…” …
+}
+]
+
+Requirements
+– Value of q parameter should be
+searched in advert title and desc field
+– Get the adverts whose active fields of
+category and advert is 1, If q is omitted,
+get all records according to the paging
+params
+
+ */

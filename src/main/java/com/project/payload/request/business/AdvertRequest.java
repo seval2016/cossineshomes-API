@@ -26,36 +26,40 @@ public class AdvertRequest {
     @Size(min = 5, max = 150)
     private String title;
 
-    @NotNull(message = " Description must not be empty")
+    @NotNull(message = "Description must not be empty")
     @Size(max = 300)
     private String description;
 
-    @NotNull ( message = " Slug must not be empty")
-    @Size(min = 5, max = 200)
-    private String slug;
-
-    @NotNull(message = " Price  must not be empty")
+    @NotNull(message =" Price  must not be empty")
     private BigDecimal price;
 
-    @NotNull(message = " Status must not be empty")
-    private Status status = Status.PENDING;
+    /* title otomatik olarak slug'a dönüştürülebilir kullanıcıdan bir daha slug almaya gerek yok !!!
+    @NotNull ( message = " Slug must not be empty")
+    @Size(min = 5, max = 200)
+    private String slug;*/
 
-    // @NotNull
-    // private Boolean builtIn =false;
+    @NotNull(message =" Advert Type must not be empty")
+    private Long advertTypeId;
 
-    @NotNull(message = " View Count must not be empty")
-    private int viewCount = 0;
+    @NotNull(message =" Country must not be empty")
+    private Long countryId;
 
-    // @NotNull
-    // private Boolean isActive = true;
+    @NotNull(message =" City  must not be empty")
+    private Long cityId;
 
+    @NotNull(message =" District  must not be empty")
+    private Long districtId;
+
+    @NotNull(message =" Category  must not be empty")
+    private Long categoryId;
+
+    @NotNull(message =" User must not be empty")
+    private Long userId;
+
+    @NotNull(message =" Location  must not be empty")
     private String location;
 
-    @NotNull(message = " Create date must not be empty")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate createdAt;
+    @NotNull(message =" Active status must not be empty")
+    private boolean isActive;
 
-    @Column(nullable = true)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate updatedAt;
 }

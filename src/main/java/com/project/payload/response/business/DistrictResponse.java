@@ -13,5 +13,5 @@ public class DistrictResponse {
 
     private Long id;
     private String name;
-    private int cityId;
+    private Long cityId;
 }
