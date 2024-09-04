@@ -1,7 +1,7 @@
-package com.project.entity.concretes.business;
+package com.project.repository.business.entity.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.project.entity.concretes.user.User;
+import com.project.repository.business.entity.concretes.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

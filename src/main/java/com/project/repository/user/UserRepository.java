@@ -1,7 +1,7 @@
 package com.project.repository.user;
 
-import com.project.entity.concretes.user.User;
-import com.project.entity.enums.Role;
+import com.project.repository.business.entity.concretes.user.User;
+import com.project.repository.business.entity.enums.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

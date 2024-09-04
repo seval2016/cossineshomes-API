@@ -1,4 +1,4 @@
-package com.project.entity.enums;
+package com.project.repository.business.entity.enums;
 
 public enum Status {
 

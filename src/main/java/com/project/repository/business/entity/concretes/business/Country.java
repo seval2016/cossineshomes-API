@@ -1,4 +1,4 @@
-package com.project.entity.concretes.business;
+package com.project.repository.business.entity.concretes.business;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,21 +8,17 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "districts")
+@Table(name = "countries")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class District {
+public class Country {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length =30)
     private String name;
-
-    @ManyToOne
-    @JoinColumn(name = "city_id", nullable = false)
-    private City city;
 }

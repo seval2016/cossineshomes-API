@@ -1,4 +1,4 @@
-package com.project.entity.concretes.business;
+package com.project.repository.business.entity.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

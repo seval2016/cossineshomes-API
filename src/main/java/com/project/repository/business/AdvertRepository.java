@@ -1,7 +1,7 @@
 package com.project.repository.business;
 
-import com.project.entity.concretes.business.Advert;
-import com.project.payload.response.business.AdvertResponse;
+import com.project.repository.business.entity.concretes.business.Advert;
+import com.project.payload.response.business.CategoryAdvertResponse;
 import com.project.payload.response.business.CityAdvertResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AdvertRepository extends JpaRepository<Advert, Long> {
@@ -41,4 +42,13 @@ public interface AdvertRepository extends JpaRepository<Advert, Long> {
             "LEFT JOIN Advert a ON a.city.id = c.id " +
             "GROUP BY c.id, c.name")
     List<CityAdvertResponse> findAdvertsGroupedByCity();
+
+    @Query("SELECT c.title AS categoryName, COUNT(a) AS amount " +
+            "FROM Category c " +
+            "LEFT JOIN Advert a ON a.category.id = c.id " +
+            "GROUP BY c.id, c.title")
+    List<CategoryAdvertResponse> findAdvertsGroupedByCategory();
+
+    @Query("SELECT a FROM Advert a WHERE a.id = :id AND a.user.id = :userId")
+    Optional<Advert> findByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
 }

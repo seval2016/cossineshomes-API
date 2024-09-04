@@ -1,7 +1,7 @@
 package com.project.service.user;
 
-import com.project.entity.concretes.user.User;
-import com.project.entity.enums.Role;
+import com.project.repository.business.entity.concretes.user.User;
+import com.project.repository.business.entity.enums.Role;
 import com.project.exception.BadRequestException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.UserMapper;

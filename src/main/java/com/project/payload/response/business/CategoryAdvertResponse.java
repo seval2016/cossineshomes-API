@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class CityAdvertResponse {
+public class CategoryAdvertResponse {
 
-    //Bu DTO sınıfı, city adı ve bu city'nin reklamlarının sayısını temsil eder.
-    private String cityName;
+    //Bu DTO sınıfı, kategori adı ve bu kategorideki reklamların sayısını temsil eder.
+    private String category;
     private long amount;
 }

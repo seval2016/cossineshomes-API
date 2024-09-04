@@ -1,23 +1,18 @@
 package com.project.controller;
 
-import com.project.entity.concretes.user.User;
 import com.project.payload.mappers.UserMapper;
 import com.project.payload.messages.SuccessMessages;
 
 import com.project.payload.request.authentication.LoginRequest;
 import com.project.payload.request.business.ForgotPasswordRequest;
 import com.project.payload.request.business.UpdatePasswordRequest;
-import com.project.payload.request.user.UserRequest;
-import com.project.payload.request.user.UserRequestWithoutPassword;
 import com.project.payload.response.UserResponse;
-import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.authentication.AuthResponse;
 
 
 import com.project.service.AuthenticationService;
 import com.project.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

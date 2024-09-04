@@ -1,7 +1,7 @@
 package com.project;
 
-import com.project.entity.concretes.user.UserRole;
-import com.project.entity.enums.Role;
+import com.project.repository.business.entity.concretes.user.UserRole;
+import com.project.repository.business.entity.enums.Role;
 import com.project.payload.request.user.UserRequest;
 import com.project.repository.user.UserRoleRepository;
 import com.project.service.user.UserRoleService;

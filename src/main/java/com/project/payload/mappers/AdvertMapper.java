@@ -1,8 +1,8 @@
 package com.project.payload.mappers;
 
-import com.project.entity.concretes.business.*;
-import com.project.entity.concretes.user.User;
-import com.project.entity.enums.Status;
+import com.project.repository.business.entity.concretes.business.*;
+import com.project.repository.business.entity.concretes.user.User;
+import com.project.repository.business.entity.enums.Status;
 import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.business.AdvertResponse;
 import lombok.Data;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Component
 public class AdvertMapper {
 
-    // DTO -> POJO
+    // Yeni bir Advert nesnesi oluşturur (DTO -> POJO)
     public Advert mapAdvertRequestToAdvert(AdvertRequest advertRequest, AdvertType advertType, Country country, City city, District district, Category category, User user){
         return Advert.builder()
                 .title(advertRequest.getTitle())
@@ -41,8 +41,8 @@ public class AdvertMapper {
         return title.toLowerCase().replaceAll(" ", "-");
     }
 
-    // POJO -> DTO
 
+    // Advert nesnesini AdvertResponse'a dönüştürür (POJO -> DTO)
     public AdvertResponse mapAdvertToAdvertResponse(Advert advert){
 
         return AdvertResponse.builder()
@@ -59,7 +59,6 @@ public class AdvertMapper {
                 .location(advert.getLocation())
                 .isActive(advert.isActive())
                 .build();
-
     }
 
 }

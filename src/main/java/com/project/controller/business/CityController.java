@@ -22,4 +22,5 @@ public class CityController {
     public List<CityResponse> getAllCities() {
         return cityService.getAllCities();
     }
+    //U02
 }

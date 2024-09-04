@@ -30,10 +30,7 @@ public class AdvertResponse {
     private String location;
     private String image;
     private boolean isActive;
-
-    // Şehir bazlı reklam sayısı için ek alanlar
-    private Long cityId;
     private String cityName;
-    private long amount;
+
 
 }

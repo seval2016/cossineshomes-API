@@ -1,6 +1,6 @@
 package com.project.security.jwt;
 
-import com.project.entity.concretes.user.User;
+import com.project.repository.business.entity.concretes.user.User;
 import com.project.security.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
