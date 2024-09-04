@@ -1,4 +1,4 @@
-package com.project.repository.business.entity.concretes.business;
+package com.project.entity.concretes.business;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,21 +8,17 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "advert_types")
+@Table(name = "countries")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class AdvertType {
+public class Country {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 30)
-    private String title;
-
-    @Column(nullable = false)
-    private boolean builtIn;
+    @Column(nullable = false, length =30)
+    private String name;
 }
-

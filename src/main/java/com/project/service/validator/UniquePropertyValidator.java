@@ -1,6 +1,6 @@
 package com.project.service.validator;
 
-import com.project.repository.business.entity.concretes.user.User;
+import com.project.entity.concretes.user.User;
 import com.project.exception.ConflictException;
 import com.project.payload.messages.ErrorMessages;
 import com.project.repository.user.UserRepository;

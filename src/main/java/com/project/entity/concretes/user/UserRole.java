@@ -1,7 +1,7 @@
-package com.project.repository.business.entity.concretes.user;
+package com.project.entity.concretes.user;
 
 
-import com.project.repository.business.entity.enums.Role;
+import com.project.entity.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

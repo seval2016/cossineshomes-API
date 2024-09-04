@@ -1,4 +1,4 @@
-package com.project.repository.business.entity.concretes.business;
+package com.project.entity.concretes.business;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

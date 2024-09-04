@@ -1,4 +1,4 @@
-package com.project.repository.business.entity.concretes.business;
+package com.project.entity.concretes.business;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,26 +8,30 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "category_property_values")
+@Table(name = "images")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class CategoryPropertyValue {
+public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String value;
+    @Lob
+    @Column(nullable = false)
+    private byte[] data;
 
-    @ManyToOne
-    @JoinColumn(name = "category_property_key_id", nullable = false)
-    private CategoryPropertyKey categoryPropertyKey;
+    @Column(nullable = false)
+    private String name;
+
+    private String type;
+
+    @Column(nullable = false)
+    private boolean featured=false;
 
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 }
-

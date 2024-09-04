@@ -1,7 +1,7 @@
 package com.project.repository.user;
 
-import com.project.repository.business.entity.concretes.user.UserRole;
-import com.project.repository.business.entity.enums.Role;
+import com.project.entity.concretes.user.UserRole;
+import com.project.entity.enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

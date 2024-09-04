@@ -4,6 +4,7 @@ import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.business.AdvertResponse;
 import com.project.payload.response.business.CategoryAdvertResponse;
 import com.project.payload.response.business.CityAdvertResponse;
+import com.project.payload.response.business.ResponseMessage;
 import com.project.service.business.AdvertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -66,17 +67,17 @@ public class AdvertController {
     // Yeni endpoint: authenticated user's advert update
     @PostMapping("/auth/{id}")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<AdvertResponse> updateAdvert(@PathVariable Long id, @RequestBody AdvertRequest advertRequest,
-                                                       HttpServletRequest request) {
-        AdvertResponse response = advertService.updateAdvert(id, advertRequest, request);
-        return ResponseEntity.ok(response);
+    public ResponseMessage<AdvertResponse> updateAdvert(@PathVariable Long id, @RequestBody AdvertRequest advertRequest,
+                                                        HttpServletRequest request) {
+
+        return advertService.updateAdvert(id, advertRequest, request);
     } //A11
 
-    @PostMapping("/{id}")
-    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
+    @DeleteMapping("/admin/{id}")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public ResponseEntity<AdvertResponse> deleteAdvert(@PathVariable Long id) {
-        AdvertResponse deletedAdvert = advertService.deleteAdvert(id);
-        return ResponseEntity.ok(deletedAdvert);
+        AdvertResponse response = advertService.deleteAdvert(id);
+        return ResponseEntity.ok(response);
     } //A13
 }
 /*

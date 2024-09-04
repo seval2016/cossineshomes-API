@@ -1,6 +1,6 @@
 package com.project.repository.business;
 
-import com.project.repository.business.entity.concretes.business.Advert;
+import com.project.entity.concretes.business.Advert;
 import com.project.payload.response.business.CategoryAdvertResponse;
 import com.project.payload.response.business.CityAdvertResponse;
 import org.springframework.data.domain.Page;

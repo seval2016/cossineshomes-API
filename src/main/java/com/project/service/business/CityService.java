@@ -1,6 +1,6 @@
 package com.project.service.business;
 
-import com.project.repository.business.entity.concretes.business.City;
+import com.project.entity.concretes.business.City;
 import com.project.payload.response.business.CityResponse;
 import com.project.repository.business.CityRepository;
 import lombok.RequiredArgsConstructor;

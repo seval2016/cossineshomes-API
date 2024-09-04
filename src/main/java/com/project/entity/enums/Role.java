@@ -1,4 +1,4 @@
-package com.project.repository.business.entity.enums;
+package com.project.entity.enums;
 
 public enum Role {
 

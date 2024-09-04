@@ -1,6 +1,6 @@
 package com.project.service;
 
-import com.project.repository.business.entity.concretes.user.User;
+import com.project.entity.concretes.user.User;
 import com.project.exception.BadRequestException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.UserMapper;

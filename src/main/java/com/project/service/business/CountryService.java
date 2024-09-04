@@ -1,6 +1,6 @@
 package com.project.service.business;
 
-import com.project.repository.business.entity.concretes.business.Country;
+import com.project.entity.concretes.business.Country;
 import com.project.payload.response.business.CountryResponse;
 import com.project.repository.business.CountryRepository;
 import lombok.RequiredArgsConstructor;

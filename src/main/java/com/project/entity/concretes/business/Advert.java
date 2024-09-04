@@ -1,9 +1,9 @@
-package com.project.repository.business.entity.concretes.business;
+package com.project.entity.concretes.business;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.project.repository.business.entity.concretes.user.User;
-import com.project.repository.business.entity.enums.Status;
+import com.project.entity.enums.Status;
+import com.project.entity.concretes.user.User;
 import lombok.*;
 
 

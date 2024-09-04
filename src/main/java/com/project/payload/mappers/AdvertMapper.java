@@ -1,8 +1,8 @@
 package com.project.payload.mappers;
 
-import com.project.repository.business.entity.concretes.business.*;
-import com.project.repository.business.entity.concretes.user.User;
-import com.project.repository.business.entity.enums.Status;
+import com.project.entity.concretes.business.*;
+import com.project.entity.concretes.user.User;
+import com.project.entity.enums.Status;
 import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.business.AdvertResponse;
 import lombok.Data;
@@ -34,7 +34,6 @@ public class AdvertMapper {
                 .viewCount(0)
                 .slug(generateSlug(advertRequest.getTitle()))
                 .build();
-
     }
 
     private String generateSlug(String title) {

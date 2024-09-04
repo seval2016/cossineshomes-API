@@ -1,25 +1,27 @@
 package com.project.service.business;
 
-import com.project.repository.business.entity.concretes.business.*;
-import com.project.repository.business.entity.concretes.user.User;
-import com.project.repository.business.entity.enums.Status;
+import com.project.entity.concretes.business.*;
+import com.project.entity.concretes.user.User;
+import com.project.entity.enums.Status;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.AdvertMapper;
+import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.business.AdvertResponse;
 
 import com.project.payload.response.business.CategoryAdvertResponse;
 import com.project.payload.response.business.CityAdvertResponse;
+import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.*;
 import com.project.repository.user.UserRepository;
-import com.project.security.jwt.JwtUtils;
 import com.project.service.helper.MethodHelper;
 import com.project.service.helper.PageableHelper;
 import com.project.service.validator.UniquePropertyValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +31,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AdvertService {
+
     private final AdvertRepository advertRepository;
     private final AdvertMapper advertMapper;
     private final PageableHelper pageableHelper;
@@ -38,10 +41,13 @@ public class AdvertService {
     private final DistrictRepository districtRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-    private final JwtUtils jwtUtils;  // Kullanıcının kimliğini doğrulamak için ekledik
-    private final PasswordEncoder passwordEncoder;  // Şifreleri hashlemek için kullanılıyor
     private final MethodHelper methodHelper;
     private final UniquePropertyValidator uniquePropertyValidator;
+    private final TourRequestRepository tourRequestRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final ImageRepository imageRepository;
+    private final LogRepository logRepository;
+
 
     //!!! 1. İlanları Getirme
     public Page<AdvertResponse> getAdverts(String q, Long categoryId, Long advertTypeId, BigDecimal priceStart, BigDecimal priceEnd, Integer status, int page, int size, String sort, String type) {
@@ -76,8 +82,7 @@ public class AdvertService {
         return advertRepository.findAdvertsGroupedByCategory();
     }
 
-
-    public AdvertResponse updateAdvert(Long id, AdvertRequest advertRequest, HttpServletRequest request) {
+    public ResponseMessage<AdvertResponse> updateAdvert(Long id, AdvertRequest advertRequest, HttpServletRequest request) {
         //!!! id var mi kontrolu :
         User user = methodHelper.isUserExist(id);
 
@@ -103,12 +108,14 @@ public class AdvertService {
         advertMapper.mapAdvertRequestToAdvert(advertRequest, advertType, country, city, district, category, user);
 
         // Güncellenmiş ilanı kaydet
-        Advert updatedAdvert = advertRepository.save(advert);
+        Advert savedAdvert = advertRepository.save(advert);
 
         // Güncellenmiş ilanı response olarak döndür
-        return advertMapper.mapAdvertToAdvertResponse(updatedAdvert);
-
-
+        return ResponseMessage.<AdvertResponse>builder()
+                .message(SuccessMessages.ADVERT_UPDATED)
+                        .httpStatus(HttpStatus.OK)
+                                .object( advertMapper.mapAdvertToAdvertResponse(savedAdvert))
+                .build();
     }
 
     public AdvertResponse deleteAdvert(Long id) {
@@ -125,9 +132,7 @@ public class AdvertService {
         favoriteRepository.deleteByAdvertId(id);
         logRepository.deleteByAdvertId(id);
         imageRepository.deleteByAdvertId(id);
-        categoryRepository.deleteByAdvertId(id);
-        propertyValueRepository.deleteByAdvertId(id);
-
+        advertRepository.deleteById(id);;
         advertRepository.delete(advert);
 
         return advertMapper.mapAdvertToAdvertResponse(advert);
