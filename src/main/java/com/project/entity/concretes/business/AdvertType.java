@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "advert_types")
@@ -23,6 +24,9 @@ public class AdvertType {
     private String title;
 
     @Column(nullable = false)
-    private boolean builtIn;
+    private boolean builtIn=false;
+
+    @OneToMany(mappedBy = "advertType",cascade = CascadeType.ALL)
+    private List<Advert> advertList;
 }
 

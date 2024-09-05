@@ -2,6 +2,7 @@ package com.project.entity.concretes.business;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.entity.enums.Status;
 import com.project.entity.concretes.user.User;
 import lombok.*;
@@ -9,8 +10,9 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "adverts")
@@ -36,23 +38,40 @@ public class Advert {
     private String slug;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private Double pricee= 0.0;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Status status = Status.PENDING;
+    private int status = Status.PENDING.getValue();
 
     @Column(nullable = false)
-    private boolean builtIn;
+    private boolean builtIn=false;
 
     @Column(nullable = false)
-    private boolean isActive;
+    private boolean isActive=true;
 
     @Column(nullable = false)
-    private int viewCount;
+    private int viewCount=0;
 
     @Column(nullable = false)
     private String location;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Turkey")
+    @Column(nullable = false)
+    private LocalDateTime createAt;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Turkey")
+    private LocalDateTime updateAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createAt = LocalDateTime.now();
+        updateAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updateAt = LocalDateTime.now();
+    }
 
     @ManyToOne
     @JoinColumn(name = "advert_type_id", nullable = false)
@@ -78,12 +97,28 @@ public class Advert {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
-    @Column(nullable = false)
-    private LocalDateTime createAt;
+    @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<Favorite> favoritesList;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
+    @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<TourRequest> tourRequestList;
 
-    private LocalDateTime updateAt;
+    @OneToMany(mappedBy = "adverts",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<CategoryPropertyValue> categoryPropertyValuesList;
+
+    @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Image> imageList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Image> featuredImage= new ArrayList<>();
+
+    @OneToMany(mappedBy = "advertId",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Log> logList;
 }
 

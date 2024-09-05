@@ -1,11 +1,13 @@
 package com.project.entity.concretes.business;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.beans.PropertyChangeEvent;
 
 @Entity
 @Table(name = "category_property_values")
@@ -23,11 +25,13 @@ public class CategoryPropertyValue {
     private String value;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "category_property_key_id", nullable = false)
     private CategoryPropertyKey categoryPropertyKey;
 
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
+
 }
 

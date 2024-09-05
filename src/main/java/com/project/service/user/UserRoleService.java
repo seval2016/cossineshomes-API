@@ -1,7 +1,7 @@
 package com.project.service.user;
 
 import com.project.entity.concretes.user.UserRole;
-import com.project.entity.enums.Role;
+import com.project.entity.enums.RoleType;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
 import com.project.repository.user.UserRoleRepository;
@@ -16,7 +16,7 @@ public class UserRoleService {
 
     private final UserRoleRepository userRoleRepository;
 
-    public UserRole getUserRole(Role role){
+    public UserRole getUserRole(RoleType role){
         return userRoleRepository.findByEnumRoleEquals(role).orElseThrow(()->
                 new ResourceNotFoundException(ErrorMessages.ROLE_NOT_FOUND));
     }

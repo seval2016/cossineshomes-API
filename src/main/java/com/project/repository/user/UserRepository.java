@@ -1,7 +1,7 @@
 package com.project.repository.user;
 
 import com.project.entity.concretes.user.User;
-import com.project.entity.enums.Role;
+import com.project.entity.enums.RoleType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByIdsEquals(Long[] customerIds);
 
     @Query(value = "SELECT COUNT(u) FROM User u JOIN u.userRole ur WHERE ur.role = ?1")
-    long countAdmin(Role role);
+    long countAdmin(RoleType role);
 
     Optional<User> findByEmail(String email);
 }

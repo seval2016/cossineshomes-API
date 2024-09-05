@@ -1,13 +1,15 @@
 package com.project.entity.concretes.user;
 
 
-import com.project.entity.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.entity.enums.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -26,9 +28,10 @@ public class UserRole {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private Role role;
+    private RoleType role;
 
     @OneToMany(mappedBy = "userRole")
-    private Set<User> users;
+    @JsonIgnore
+    private Set<User> users=new HashSet<>();
 
 }

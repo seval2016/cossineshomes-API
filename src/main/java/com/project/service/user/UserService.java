@@ -1,7 +1,7 @@
 package com.project.service.user;
 
 import com.project.entity.concretes.user.User;
-import com.project.entity.enums.Role;
+import com.project.entity.enums.RoleType;
 import com.project.exception.BadRequestException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.UserMapper;
@@ -53,15 +53,15 @@ public class UserService {
         User user = userMapper.mapUserRequestToUser(userRequest);
 
         //!!! Rol bilgisini setliyoruz
-        if(userRole.equalsIgnoreCase(Role.ADMIN.name())){
+        if(userRole.equalsIgnoreCase(RoleType.ADMIN.name())){
             //!!! Rol bilgisi admin ise builtin true yapılıyor
             if(Objects.equals(userRequest.getUsername(),"Admin")){
                 user.setBuiltIn(true);
             }
             //!!! admin rolu veriliyor
-            user.setUserRole(List.of(userRoleService.getUserRole(Role.ADMIN)));
+            user.setUserRole(List.of(userRoleService.getUserRole(RoleType.ADMIN)));
         } else if (userRole.equalsIgnoreCase("Manager")) {
-            user.setUserRole(List.of(userRoleService.getUserRole(Role.MANAGER)));
+            user.setUserRole(List.of(userRoleService.getUserRole(RoleType.MANAGER)));
         } else {
             throw new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_USER_USER_ROLE_MESSAGE,userRole));
         }
@@ -91,7 +91,7 @@ public class UserService {
                 new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_USER_MESSAGE, userId)));
 
         if(user.getUserRole().stream()
-                .anyMatch(role -> role.getRole() == Role.CUSTOMER)){
+                .anyMatch(role -> role.getRole() == RoleType.CUSTOMER)){
             baseUserResponse = userMapper.mapUserToCustomerResponse(user);
         } else {
             baseUserResponse = userMapper.mapUserToUserResponse(user);
@@ -118,9 +118,9 @@ public class UserService {
             throw  new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
 
         } else if (user2.getUserRole().stream()
-                .anyMatch(role -> role.getRole() == Role.MANAGER)) {
+                .anyMatch(role -> role.getRole() == RoleType.MANAGER)) {
             if(!(user.getUserRole().stream()
-                    .anyMatch(role -> role.getRole() == Role.CUSTOMER))){
+                    .anyMatch(role -> role.getRole() == RoleType.CUSTOMER))){
                 throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
             }
         }
@@ -188,7 +188,7 @@ public class UserService {
 
     //!!! Runner tarafi icin yazildi
     public long countAllAdmins(){
-        return userRepository.countAdmin(Role.ADMIN);
+        return userRepository.countAdmin(RoleType.ADMIN);
     }
 
     public User getCustomerByUsername(String customerUsername){

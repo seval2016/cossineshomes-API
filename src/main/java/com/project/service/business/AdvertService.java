@@ -2,6 +2,7 @@ package com.project.service.business;
 
 import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.user.User;
+import com.project.entity.enums.RoleType;
 import com.project.entity.enums.Status;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.AdvertMapper;
@@ -15,17 +16,18 @@ import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.*;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.MethodHelper;
+import com.project.payload.messages.ErrorMessages;
 import com.project.service.helper.PageableHelper;
 import com.project.service.validator.UniquePropertyValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+
 import java.util.List;
 
 @Service
@@ -82,7 +84,7 @@ public class AdvertService {
         return advertRepository.findAdvertsGroupedByCategory();
     }
 
-    public ResponseMessage<AdvertResponse> updateAdvert(Long id, AdvertRequest advertRequest, HttpServletRequest request) {
+    public ResponseMessage<AdvertResponse> updateAuthenticatedAdvert(Long id, AdvertRequest advertRequest, HttpServletRequest request) {
         //!!! id var mi kontrolu :
         User user = methodHelper.isUserExist(id);
 
@@ -118,23 +120,61 @@ public class AdvertService {
                 .build();
     }
 
-    public AdvertResponse deleteAdvert(Long id) {
 
+    public ResponseMessage<AdvertResponse> updateAdvert(Long id, AdvertRequest advertRequest) {
+
+        // İlanı veri tabanından al
         Advert advert = advertRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("İlan bulunamadı"));
+                .orElseThrow(() -> new ResourceNotFoundException("Advert not found"));
 
-        if (advert.isBuiltIn()) {
-            throw new IllegalStateException("Built-in ilanlar silinemez.");
+        // Kullanıcı kontrolü (Bu kontrol tipik olarak JWT token'dan alınan kullanıcı bilgileri ile yapılır)
+        User user = methodHelper.getCurrentUser();  // getCurrentUser() mevcut kullanıcının bilgilerini almalı
+
+        //!!! built_IN kontrolu
+        methodHelper.checkBuiltIn(user);
+
+        // İlgili varlıkları veri tabanından getir
+        AdvertType advertType = advertTypeRepository.findById(advertRequest.getAdvertTypeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Advert type not found"));
+        Country country = countryRepository.findById(advertRequest.getCountryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Country not found"));
+        City city = cityRepository.findById(advertRequest.getCityId())
+                .orElseThrow(() -> new ResourceNotFoundException("City not found"));
+        District district = districtRepository.findById(advertRequest.getDistrictId())
+                .orElseThrow(() -> new ResourceNotFoundException("District not found"));
+        Category category = categoryRepository.findById(advertRequest.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+        // İlanı güncelle
+        advertMapper.mapAdvertRequestToAdvert(advertRequest, advertType, country, city, district, category, user);
+
+        // Güncellenmiş ilanı kaydet
+        Advert savedAdvert = advertRepository.save(advert);
+
+        // Güncellenmiş ilanı response olarak döndür
+        return ResponseMessage.<AdvertResponse>builder()
+                .message(SuccessMessages.ADVERT_UPDATED)
+                .httpStatus(HttpStatus.OK)
+                .object( advertMapper.mapAdvertToAdvertResponse(savedAdvert))
+                .build();
+    }
+
+
+    public AdvertResponse deleteAdvert(Long id, HttpServletRequest request) {
+        User user = methodHelper.getUserByHttpRequest(request);
+        methodHelper.checkRoles(user, RoleType.ADMIN, RoleType.MANAGER);
+        Advert advert=isAdvertExistById(id);
+
+        if(advert.isBuiltIn()){
+            throw new ResourceNotFoundException(ErrorMessages.THIS_ADVERT_DOES_NOT_UPDATE);
         }
-
-        // İlan ile ilişkili tüm verileri sil
-        tourRequestRepository.deleteByAdvertId(id);
-        favoriteRepository.deleteByAdvertId(id);
-        logRepository.deleteByAdvertId(id);
-        imageRepository.deleteByAdvertId(id);
-        advertRepository.deleteById(id);;
-        advertRepository.delete(advert);
+        advertRepository.deleteById(id);
 
         return advertMapper.mapAdvertToAdvertResponse(advert);
     }
+    public Advert isAdvertExistById(Long id){
+        return advertRepository.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_ADVERT_WITH_ID_MESSAGE,id)));
+    }
+
 }

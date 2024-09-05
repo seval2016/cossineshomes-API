@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -42,8 +43,8 @@ public class AdvertController {
         return ResponseEntity.ok(adverts);
     }//A01
 
-    @PostMapping // Yeni bir ilan oluşturur.
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PostMapping("/save") // Yeni bir ilan oluşturur.
+    @PreAuthorize("hasRole('CUSTOMER')") // http://localhost:8080/adverts/save
     public ResponseEntity<AdvertResponse> createAdvert(@RequestBody AdvertRequest advertRequest, HttpServletRequest request) {
         AdvertResponse advertResponse = advertService.createAdvert(advertRequest,request);
         return new ResponseEntity<>(advertResponse, HttpStatus.CREATED);
@@ -51,61 +52,38 @@ public class AdvertController {
 
     // Yeni endpoint
     @GetMapping("/cities")
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("permitAll()") // http://localhost:8080/adverts/cities
     public ResponseEntity<List<CityAdvertResponse>> getAdvertCities() {
         List<CityAdvertResponse> cityAdverts = advertService.getAdvertCities();
         return ResponseEntity.ok(cityAdverts);
     }//A02
 
     @GetMapping("/categories")
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("permitAll()") // http://localhost:8080/adverts/types
     public ResponseEntity<List<CategoryAdvertResponse>> getAdvertCategories() {
         List<CategoryAdvertResponse> categoryAdverts = advertService.getAdvertCategories();
         return ResponseEntity.ok(categoryAdverts);
     }//A03
 
     // Yeni endpoint: authenticated user's advert update
-    @PostMapping("/auth/{id}")
+    @PostMapping("/auth/{id}") // http://localhost:8080/adverts/auth/23
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseMessage<AdvertResponse> updateAdvert(@PathVariable Long id, @RequestBody AdvertRequest advertRequest,
+    public ResponseMessage<AdvertResponse> updateAuthenticatedAdvert(@PathVariable Long id, @RequestBody AdvertRequest advertRequest,
                                                         HttpServletRequest request) {
 
-        return advertService.updateAdvert(id, advertRequest, request);
+        return advertService.updateAuthenticatedAdvert(id, advertRequest, request);
     } //A11
 
-    @DeleteMapping("/admin/{id}")
-    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
-    public ResponseEntity<AdvertResponse> deleteAdvert(@PathVariable Long id) {
-        AdvertResponse response = advertService.deleteAdvert(id);
+    @PutMapping("/admin/{id}") // İlan güncelleme işlemi
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')") // http://localhost:8080/adverts/admin/23
+    public ResponseMessage<AdvertResponse> updateAdminById(@RequestBody @Valid AdvertRequest advertRequest, @PathVariable Long id ) {
+        return advertService.updateAdvert(id, advertRequest);
+    } //A12
+
+    @DeleteMapping("/admin/{id}")  // http://localhost:8080/adverts/admin/5
+    @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
+    public ResponseEntity<AdvertResponse> deleteAdvertById(@PathVariable Long id,HttpServletRequest request) {
+        AdvertResponse response = advertService.deleteAdvert(id,request);
         return ResponseEntity.ok(response);
     } //A13
 }
-/*
-Aşağıdaki  şartlara ve entitylere göre controller, AdvertService,AdvertRequest,AdvertResponse, AdvertRepository,AdvertMapper gibi gerekli olan tüm classları türkçe açıklayarak yazar mısın
-
-security var token ile giriş yapılıyor
-
-@PostMapping
-@PreAuthorize -> MANAGER ,ADMIN
-
-It should delete the user’s advert
-
-/adverts/admin/:id
-
-Payload
-id: advertId (required)
-
-Response
-(product)
-{ "id": 2, “title": "…", }
-
-Requirements
-- The advert whose builtIn property is
-true can not be deleted.
-- If any advert is deleted, related
-records in tour_requests, favorites,
-logs, images,
-category,property_values also should
-be deleted.
-
- */
