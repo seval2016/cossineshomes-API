@@ -1,5 +1,6 @@
 package com.project.entity.concretes.business;
 
+import ch.qos.logback.core.joran.spi.HostClassAndPropertyDouble;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +33,7 @@ public class CategoryPropertyValue {
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
+
 
 }
 

@@ -3,15 +3,16 @@ package com.project.entity.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.entity.enums.Status;
+import com.project.entity.enums.AdvertStatus;
 import com.project.entity.concretes.user.User;
+import com.project.payload.response.business.ImageResponse;
 import lombok.*;
 
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @Entity
@@ -38,10 +39,11 @@ public class Advert {
     private String slug;
 
     @Column(nullable = false)
-    private Double pricee= 0.0;
+    private Double price= 0.0;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false)
-    private int status = Status.PENDING.getValue();
+    private AdvertStatus status = AdvertStatus.PENDING;
 
     @Column(nullable = false)
     private boolean builtIn=false;
@@ -61,17 +63,6 @@ public class Advert {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Turkey")
     private LocalDateTime updateAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createAt = LocalDateTime.now();
-        updateAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updateAt = LocalDateTime.now();
-    }
 
     @ManyToOne
     @JoinColumn(name = "advert_type_id", nullable = false)
@@ -97,28 +88,23 @@ public class Advert {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnore
-    private List<Favorite> favoritesList;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "featured_image_id")
+    private Image featuredImage;
 
     @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL)
     @JsonIgnore
     private List<TourRequest> tourRequestList;
 
-    @OneToMany(mappedBy = "adverts",cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<CategoryPropertyValue> categoryPropertyValuesList;
+    @PrePersist
+    protected void onCreate() {
+        createAt = LocalDateTime.now();
+        updateAt = LocalDateTime.now();
+    }
 
-    @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Image> imageList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Image> featuredImage= new ArrayList<>();
-
-    @OneToMany(mappedBy = "advertId",cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Log> logList;
+    @PreUpdate
+    protected void onUpdate() {
+        updateAt = LocalDateTime.now();
+    }
 }
 

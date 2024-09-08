@@ -2,13 +2,15 @@ package com.project.entity.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.entity.concretes.user.User;
+import com.project.entity.enums.TourRequestStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "tour_requests")
@@ -20,22 +22,23 @@ public class TourRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "tour_date", nullable = false)
-    private LocalDateTime tourDate;
+    private LocalDate tourDate;
 
-    @JsonFormat(pattern = "HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     @Column(name = "tour_time", nullable = false)
-    private LocalDateTime tourTime;
+    private LocalTime tourTime;
 
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private int status;
+    private TourRequestStatus status = TourRequestStatus.PENDING;
 
     @ManyToOne
     @JoinColumn(name = "owner_user_id", nullable = false)
@@ -45,7 +48,7 @@ public class TourRequest {
     @JoinColumn(name = "guest_user_id", nullable = false)
     private User guestUser;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt;
+    private LocalDate createAt;
 }

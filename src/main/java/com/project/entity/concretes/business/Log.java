@@ -34,7 +34,7 @@ public class Log {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt;
 }

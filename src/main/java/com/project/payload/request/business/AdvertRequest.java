@@ -23,17 +23,12 @@ public class AdvertRequest {
     @Size(min = 5, max = 150)
     private String title;
 
-    @NotNull
+    @NotBlank
     @Size(max = 300)
     private String description;
 
     @NotNull
-    private BigDecimal price;
-
-    /* title otomatik olarak slug'a dönüştürülebilir kullanıcıdan bir daha slug almaya gerek yok !!!
-    @NotNull ( message = " Slug must not be empty")
-    @Size(min = 5, max = 200)
-    private String slug;*/
+    private Double price;
 
     @NotNull
     private Long advertTypeId;
@@ -53,7 +48,7 @@ public class AdvertRequest {
     @NotNull
     private Long userId;
 
-    @NotNull
+    @NotBlank
     private String location;
 
     @NotNull

@@ -2,6 +2,7 @@ package com.project.service.business;
 
 import com.project.entity.concretes.business.CategoryPropertyValue;
 import com.project.exception.ResourceNotFoundException;
+import com.project.payload.messages.ErrorMessages;
 import com.project.repository.business.CategoryPropertyValueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,12 +20,6 @@ public class CategoryPropertyValueService {
     //advert için method
     public CategoryPropertyValue getCategoryPropertyValueForAdvert(Object obje){
         return categoryPropertyValueRepository.findValueByName(obje).orElseThrow(()->new ResourceNotFoundException(ErrorMessages.PROPERTY_VALUE_NOT_FOUND));
-    }
-
-    public String getPropertyKeyNameByPropertyValue(Long id){
-        CategoryPropertyValue categoryPropertyValue=categoryPropertyValueRepository.findById(id).orElseThrow(()->new ResourceNotFoundException(ErrorMessages.PROPERTY_VALUE_NOT_FOUND));
-        return categoryPropertyValue.getCategoryPropertyKeys().getPropertyName();
-
     }
 
     public List<CategoryPropertyValue> categoryFindAllByValue(String value) {

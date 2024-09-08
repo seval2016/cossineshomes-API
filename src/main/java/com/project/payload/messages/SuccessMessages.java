@@ -2,6 +2,7 @@ package com.project.payload.messages;
 
 public class SuccessMessages {
 
+
     private SuccessMessages() {
     }
 
@@ -32,6 +33,7 @@ public class SuccessMessages {
     public static final String ADVERT_DELETED = "Advert is Deleted Successfully";
     public static final String ADVERT_FOUND = "Advert is Found Successfully";
     public static final String ADVERT_DECLINED = "Advert is Declined by Manager";
+    public static final String RETURNED_POPULAR_ADVERTS= "Popular adverts returned for value";
 
     // Category Messages
     public static final String CATEGORY_SAVED= "Category is Saved Successfully";
@@ -41,10 +43,11 @@ public class SuccessMessages {
     // Tour Request Messages
     public static final String TOUR_REQUEST_SAVED = "Tour Request is Created Successfully";
     public static final String TOUR_REQUEST_UPDATED = "Tour Request is Updated Successfully";
-    public static final String TOUR_REQUEST_ACCEPTED = "Tour Request is Accepted Successfully";
+    public static final String TOUR_REQUEST_APPROVED = "Tour Request is Accepted Successfully";
     public static final String TOUR_REQUEST_FOUND = "Tour Request is Found Successfully";
     public static final String TOUR_REQUEST_DECLINE = "Tour Request is Declined Successfully";
     public static final String TOUR_REQUEST_CANCELLED = "Tour Request is Canceled Successfully";
+    public static final String TOUR_REQUEST_DELETED="Tour Request is Deleted Successfully";
 
 
 }

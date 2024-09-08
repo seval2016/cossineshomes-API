@@ -2,7 +2,7 @@ package com.project.payload.mappers;
 
 import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.user.User;
-import com.project.entity.enums.Status;
+import com.project.entity.enums.AdvertStatus;
 import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.business.AdvertResponse;
 import lombok.Data;
@@ -30,7 +30,7 @@ public class AdvertMapper {
                 .isActive(advertRequest.isActive())
                 .builtIn(false)
                 .createAt(LocalDateTime.now())
-                .status(Status.PENDING)
+                .status(AdvertStatus.PENDING)
                 .viewCount(0)
                 .slug(generateSlug(advertRequest.getTitle()))
                 .build();
@@ -56,6 +56,7 @@ public class AdvertMapper {
                 .categoryTitle(advert.getCategory().getTitle())
                 .userName(advert.getUser().getUsername())
                 .location(advert.getLocation())
+                .image(advert.getFeaturedImage() != null ? advert.getFeaturedImage().getUrl() : null)
                 .isActive(advert.isActive())
                 .build();
     }

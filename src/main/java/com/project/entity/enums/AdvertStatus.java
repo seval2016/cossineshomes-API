@@ -1,6 +1,6 @@
 package com.project.entity.enums;
 
-public enum Status {
+public enum AdvertStatus {
 
     PENDING(0, "Pending"),
     ACTIVATED(1, "Activated"),
@@ -9,7 +9,7 @@ public enum Status {
     private final int value;
     private final String description;
 
-    Status(int value, String description) {
+    AdvertStatus(int value, String description) {
         this.value = value;
         this.description = description;
     }
@@ -21,8 +21,8 @@ public enum Status {
         return description;
     }
 
-    public static Status fromValue(int value) {
-        for (Status status : values()) {
+    public static AdvertStatus fromValue(int value) {
+        for (AdvertStatus status : values()) {
             if (status.getValue() == value) {
                 return status;
             }

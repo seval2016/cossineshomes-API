@@ -33,5 +33,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countAdmin(RoleType role);
 
     Optional<User> findByEmail(String email);
+
+    @Query("DELETE FROM User u WHERE u.builtIn=false")
+    void deleteAllUsersExceptBuiltIn();
 }
 

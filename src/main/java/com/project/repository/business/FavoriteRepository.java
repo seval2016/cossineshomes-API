@@ -10,11 +10,11 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 public interface FavoriteRepository extends JpaRepository<Favorite,Long> {
-    @Query("SELECT f FROM Favorites f WHERE f.user.id = :userId")
-    List<Favorite> findFavorite(@Param(value = "userId") Long userId);
+    @Query("SELECT f FROM Favorite f WHERE f.id = :id")
+    List<Favorite> findFavorite(@Param("id") Long id);
 
     @Modifying
-    @Query("DELETE FROM Favorites f WHERE f.user.id = :user_id AND f.advert.id = :advert_id")
+    @Query("DELETE FROM Favorite f WHERE f.user.id = :user_id AND f.advert.id = :advert_id")
     void deleteFavoriteIfExists(@Param("user_id") Long userId, @Param("advert_id") Long advertId);
 
     @Transactional
@@ -36,4 +36,8 @@ public interface FavoriteRepository extends JpaRepository<Favorite,Long> {
     Favorite getFavoriteByAdvertAndUser(Long id, Long advertId);
 
     List<Favorite> findAllByAdvert_Id(Long advertId);
+
+    @Modifying
+    @Query("DELETE FROM Favorite f WHERE f.builtIn = false")
+    void deleteAllFavoritesExceptBuiltIn();
 }

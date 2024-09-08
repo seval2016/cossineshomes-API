@@ -2,6 +2,7 @@ package com.project.repository.business;
 
 import com.project.entity.concretes.business.CategoryPropertyValue;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,7 @@ public interface CategoryPropertyValueRepository extends JpaRepository<CategoryP
 
     List<CategoryPropertyValue> findAllByValue(String value);
 
+    @Modifying
+    @Query("DELETE FROM CategoryPropertyValue cpv WHERE cpv.builtIn = false")
+    void deleteAllCategoryPropertyValuesExceptBuiltIn();
 }

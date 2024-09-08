@@ -21,7 +21,7 @@ public class AdvertResponse {
     private Long id;
     private String title;
     private String description;
-    private BigDecimal price;
+    private Double price;
     private String advertTypeTitle;
     private String countryName;
     private String districtName;

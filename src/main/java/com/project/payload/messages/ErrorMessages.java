@@ -2,9 +2,13 @@ package com.project.payload.messages;
 
 public class ErrorMessages {
 
+
+
     private ErrorMessages() {
     }
 
+
+    public static final String PROPERTY_VALUE_NOT_FOUND = "Property value not found";
 
     // General Errors
     public static final String DATABASE_CONNECTION_ERROR = "Error connecting to the database. Please try again later.";

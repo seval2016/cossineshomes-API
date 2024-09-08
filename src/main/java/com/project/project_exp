@@ -1,0 +1,2088 @@
+ABSTRACTION
+
+Gayrimenkul Projesinin amacı, gayrimenkul edinmek isteyen kişileri bir araya getirmektir.
+kendi mülklerini satmak veya kiralamak ve bir mülk satın almak veya kiralamak isteyen kişiler
+mülk.
+Ziyaretçiler sisteme kaydolabilir ve giriş yapabilir, ardından mülklere göz atabilir ve
+“tur talep formu”. Ayrıca kullanıcılar kiralık mülkleri için ilan ekleyebilirler
+veya satabilirsiniz. Kullanıcılar önceki ilanlarını ve tur taleplerini görüntüleyebilirler.
+Bir kullanıcı bir mülk için tur talep formu doldurursa, bu talep
+mülk sahibi. Mal sahibi talebi kabul edebilir veya reddedebilir.
+
+COMMON
+
+API token tabanlı kimlik doğrulama kullanmalıdır
+- Veriler PostgreeSQL veritabanında saklanmalıdır
+- Uç noktaların parametrelerinin geçerli olup olmadığı kontrol edilmelidir. (veri tipleri,
+veri uzunlukları, ...)
+- Endpoint'in yanıtları json formatında olmalıdır.
+- Yerleşik alanlar yalnızca veritabanında güncellenebilir. Bu alanı güncellemeye dahil etmeyin
+ifadeleri. Yeni bir kayıt oluşturulurken yerleşik alan false olmalıdır.
+- Slug alanları ilgili alanın url kodlanmış halini içerir (örneğin başlık alanı). Açık
+ön uç tarafı arka uç istekleri id yerine bu alan ile yapılacaktır
+- Create_atfield, kayıt oluşturulurken geçerli tarih saatine ayarlanmalıdır.
+- Update_atfield, kayıt güncellenirken güncel tarih saatine ayarlanmalıdır.
+- Yönetici kullanıcı yerleşik zamanda otomatik olarak oluşturulmalıdır
+- Ülke, şehir ve ilçe uç noktaları için yalnızca “get” yöntemi oluşturun. Böylece veritabanı
+yerleşik süre boyunca bu verilerle doldurulmalıdır.
+- Reklamlarla ilgili tüm faaliyetler kaydedilmelidir.
+
+
+Advert
+--------------
+Field           Type                        Properties
+id              Long (PK)                   auto number
+title           varchar                     Not null, min 5, max 150
+desc            varchar                     Nullable max-length: 300 chars
+slug            varchar                     Not null, min 5, max 200,
+price           decimal                     Not null
+status          Int                         Not null, default 0,
+built_in        boolean                     Not null, default 0, 1: Cannot be deleted or updated, default 0
+is_active       boolean                     Not null, default true, false: Not published true: published (for users)
+view_count      int                         Not null, default 0, the visit count of  detail page of an advert
+location        varchar                     Google embed code
+advert_type_id  Int (FK)                    Not null,
+country_id      Int (FK)                    Not null,
+city_id         Int (FK)                    Not null
+district_id     Int (FK)                    Not null
+user_id         Int (FK)                    Not null
+category_id     Int                         (FK) Not null
+create_at       DateTime                    Not null, ex: 1990-10-25T10:35:25Z
+update_at       DateTime                    Nullable
+
+Id     Status
+0      Pending The advert was created and waiting for administrative approval
+1      Activated The advert was approved by admin or manager users and everyone can see it
+2      Rejected The advert was rejected by admin or manager users
+
+
+categories
+--------------
+Field           Type                     Properties
+id              Long (PK)                auto number
+title           varchar                  Not null, max:150 Ex: Konut, İş yeri, Villa vs.
+icon            varchar                  Not null, max:50
+built_in        Boolean                  1: Cannot be deleted or updated, default 0,
+seq             int                      Not null, default 0, defines display order
+slug            varchar                  Not null, min 5, max 200, title with url encoded,
+is_active       boolean                  Not null, default true, false: Not published true:published(for users)
+create_at       DateTime                 Not null, ex: 1990-10-25T10:35:25Z
+update_at       DateTime                 Nullable
+
+
+CategoryPropertyKey
+--------------
+Field           Type                    Properties
+id              Long (PK)               auto number
+name            varchar                 Not null, min:2 max:80
+type            varchar                 Not null
+built_in        Boolean 1:              Cannot be deleted or updated, default 0
+category_id     Int (FK)                Not null
+
+Type
+string
+number
+boolean
+
+
+CategoryPropertyValue
+--------------
+Field                        Type                    Properties
+id                           Long (PK)               auto number
+value                        varchar                 Not null max length 100
+advert_id                    Int (FK)
+category_property_key_id     Int (FK)
+
+
+Favorite
+--------------
+Field                   Type                Properties
+id                      Long (PK)           auto number
+user_id                 Int (FK)            Not null,
+advert_id               Int (FK)            Not null,
+create_at               DateTime            Not null, ex: 1990-10-25T10:35:25Z
+
+
+User
+--------------
+Field                   Type                     Properties
+id                      Long (PK)                auto number
+first_name              varchar                  Not null, min:2 max:30
+last_name               varchar                  Not null, min:2 max:30
+email                   varchar                  Not null, unique, min:10: max:80 email format
+phone                   varchar                  No Null
+password_hash           varchar                  Not null, Hashed password
+reset_password_code     varchar                  Nullable, hash
+built_in                Boolean 1:               Cannot be deleted or updated, default 0
+create_at               DateTime                 Not null, ex: 1990-10-25T10:35:25Z
+update_at               DateTime                 Nullable
+
+
+Role
+--------------
+Field                 Type             Properties
+id                    Long,            (PK) auto number
+role_name             varchar           Not null, one of them (admin, Manager,Customer)
+
+Customer: Customer type users can register, login, logout, search adverts, get advert details, get
+and update their own profile information, create tour request, create advert and get
+information about their own adverts, tour requests, favorites.
+Manager: Manage all customer activities except manager and admin management
+Admin: Manage all activities
+
+
+UserRole
+--------------
+Field               Type            Properties
+user_id             Int (FK)
+role_id             Int (FK)
+
+
+Tour Request
+--------------
+Field               Type                     Properties
+id                  Long, (PK)              auto number
+tour_date           Date_time               Not null
+tour_time           Date_time               Not null,
+status              Int, default 0          Not Null
+advert_id           Int (FK)                Not null
+owner_user_id       Int (FK)                Not null
+guest_user_id       Int (FK)                Not null
+create_at           DateTime                Not null, ex: 1990-10-25T10:35:25Z
+update_at           DateTime                Nullable
+
+Id Status
+0 Pending Initial value
+1 Approved Can be approved by owner of property
+2 Declined Can be declined by owner of property
+3 Canceled Can be canceled by owner of tour request
+
+
+Image
+--------------
+Field                   Type                    Properties
+id                      Long, (PK)              auto number
+data                    Oid
+name                    varchar                 Not null
+type                    varchar                 Nullable
+featured                boolean                 Not null, default false
+advert_id               Int (FK)                Not null,
+
+
+AdvertType
+--------------
+Field               Type                 Properties
+id                  Long, (PK)           auto number
+title               varchar              Not null, max 30
+built_in            Boolean              1: Cannot be deleted or updated, default 0
+
+
+Country
+--------------
+Field               Type                Properties
+id                  Long, (PK)          auto number
+name                varchar             Not null, max 30
+
+
+City
+--------------
+Field               Type                Properties
+id                  Long,(PK)           auto number
+name                varchar             Not null, max 30
+country_id          Int                 Not null
+
+
+District
+--------------
+Field               Type                Properties
+id                  Long,(PK)           auto number
+name                varchar             Not null, max 30
+city_id             Int                 Not null
+
+
+Log
+--------------
+Field               Type                Properties
+id                  Long, (PK)          auto number
+log                 varchar             It is a simple code which represents the action performed for an offer
+user_id             Int (FK)
+advert_id           Int (FK)
+create_at           DateTime            Not null,
+
+
+Contact
+--------------
+Field               Type                Properties
+id                  Long, (PK)          auto number
+first_name          varchar             Not null, max 30
+last_name           varchar             Not null, max 30
+email               varchar             Not null, max 60
+message             varchar             Not null, max 300
+status              int                 Not null, Default 0
+create_at           datetime            Not null
+
+Status Description
+0 It is not opened by admins yet
+1 It was opened and read
+
+
+------------------------------------ ENDPOINTS ------------------------------------
+
+------------------------------------  ADVERT   ------------------------------------
+
+/adverts
+A01 -> http://localhost:8080/adverts?q=beyoğlu&category_id=12&advert_type_id=3&price_start=500&price_end=1500 location=34 & status=1;page=1&size=10&sort=date&type=asc
+
+It should return adverts depending on query and paging parameters
+
+@GetMapping
+@PreAuthorize-> ANONYMOUS
+
+Payload
+(Queryvarchar)
+q: search query (optional)
+category_id: advert category
+advert_type_id: advert type id
+price_start: number (optional)
+price_end: number (optional)
+status: number(optional)
+page: active page number (optional, default: 0)
+size: record countin a page (optional, default: 20)
+sort : sort field name (optional, default: category_id)
+type: sorting type (optional, default: asc)
+
+Response
+( Array<advert> )
+[
+{ "id": 2,
+“title": "…",
+“image”: “…” …
+}
+]
+
+Requirements
+– Value of q parameter should be searched in advert title and desc field
+– Get the adverts whose active fields of category and advert is 1, If q is omitted, get all records according to the paging params
+
+-------------------------------
+
+/adverts/cities
+A02 -> http://localhost:8080/adverts/cities
+
+It should return adverts depending on cities
+
+@GetMapping
+@PreAuthorize-> ANONYMOUS
+
+Payload
+()
+
+Response
+( Array<citydto> )
+[
+{
+“city": “İstanbul”,
+“amount": 453,
+},
+{
+“city": “Ankara”,
+“amount": 352,
+}
+]
+
+Requirements
+– The adverts should be grouped by cities
+
+-------------------------------
+
+/adverts/categories
+
+A03 -> http://localhost:8080/adverts/categories
+
+@GetMapping
+@PreAuthorize-> ANONYMOUS
+
+It should return adverts depending on categories
+
+Payload
+()
+
+Response
+[
+{
+“category": “villa”,
+“amount": 56,
+},
+{
+“category ": “appartment”,
+“amount": 33,
+}
+]
+
+Requirements
+– The adverts should be grouped by categories
+
+-------------------------------
+
+/adverts/popular/:amount
+
+A04 -> http://localhost:8080/adverts/popular/20
+
+@GetMapping
+@PreAuthorize-> ANONYMOUS
+
+It should return most popular adverts
+
+Payload
+(Queryvarchar)
+amount: nullable (default:10)
+
+Response
+( Array<advert> )
+[
+{ "id": 2,
+“title": "…",
+“image”: “…” …
+}
+]
+
+Requirements
+– Popularity of an advert is based on a
+formula:
+TROA: total tour requests of an advert
+TVOA: total views of an advert
+PP: Popularity point
+PP = 3*TROA + TVOA
+– The most popular advert is the one whose PP value is the highest
+
+-------------------------------
+
+/adverts/auth
+
+A05 -> http://localhost:8080/adverts/auth/?page=1&size=10&sort=date&type=asc
+
+@GetMapping
+@PreAuthorize-> CUSTOMER
+
+It should return authenticated user adverts
+
+Payload (Queryvarchar)
+page: active page number (optional, default: 0)
+size: record countin a page (optional, default: 20)
+sort : sort field name (optional, default: category_id)
+type: sorting type (optional, default: asc)
+
+
+Response
+[
+{ "id": 2,
+“title": "…",
+“image”: “…” …
+}
+]
+
+Requirements
+
+-------------------------------
+
+/adverts/admin
+
+A06 -> http://localhost:8080/adverts/admin/?q=beyoğlu&category_id=12&advert_type_id=3&price_start=500&price_end=1500&status=1;page=1&size=10&sort=date&type=asc
+
+@GetMapping
+@PreAuthorize-> ADMIN,MANAGER
+
+It should return adverts depending on query and paging parameters
+
+Payload
+(Queryvarchar)
+q: search query (optional)
+category_id: advert category
+advert_type_id: advert type id
+price_start: number (optional)
+price_end: number (optional)
+status: number(optional)
+page: active page number (optional, default: 0)
+size: record countin a page (optional, default: 20)
+sort : sort field name (optional, default: category_id)
+type: sorting type (optional, default: asc)
+
+
+Response
+( Array<advert> )
+[
+{ "id": 2,
+“title": "…",
+“image”: “…” …
+}
+]
+
+Requirements
+– Value of q parameter should be searched in advert title and desc field
+
+-------------------------------
+
+/adverts/:slug
+
+A07 -> http://localhost:8080/adverts/lux-villa-in-river-park
+
+@GetMapping
+@PreAuthorize-> ANONYMOUS
+
+It should return an advert by slug
+
+Payload
+(path)
+slug: slug value of an advert (required)
+
+
+Response
+(advert)
+{ "id": 2, “title": "…",
+“properties” : [
+“bathroom”: 3,
+“bedroom” : 5,
+….
+],
+“images” : […]
+“tour_requests”: […]
+},
+
+Requirements
+
+-------------------------------
+
+/adverts/:id/auth
+
+A08 -> http://localhost:8080/adverts/23/auth
+
+@GetMapping
+@PreAuthorize-> CUSTOMER
+
+It should return the authenticated user’s advert by id
+
+Payload
+(path)
+id: id value of an advert (required)
+
+Response
+(advert)
+{ "id": 2, “title": "…",
+“properties” : [
+“bathroom”: 3,
+“bedroom” : 5,
+….
+],
+“images” : […]
+“tour_requests”: […]
+},
+
+Requirements
+
+-------------------------------
+
+/adverts/:id/admin
+
+A09 -> http://localhost:8080/adverts/23/admin
+
+@GetMapping
+@PreAuthorize-> MANAGER ,ADMIN
+
+It should return an advert by id
+
+Payload
+(path)
+id: id value of an advert (required)
+
+Response
+(advert)
+{ "id": 2, “title": "…",
+“properties” : [
+“bathroom”: 3,
+“bedroom” : 5,
+….
+],
+“images” : […]
+“tour_requests”: […]
+},
+
+Requirements
+
+-------------------------------
+
+/adverts
+
+A10 -> http://localhost:8080/adverts
+
+@PostMapping
+@PreAuthorize-> CUSTOMER
+
+It should create an advert
+
+Payload (body)
+
+title
+desc
+price
+advert_type_id
+country_id
+city_id
+district_id
+category_id
+images
+Properties=[ {
+keyId: 12, value:
+"4" }, { keyId: 44,
+value: "12" }, {
+keyId: 15, value:
+"test" }, { keyId: 76,
+value: "125" }]
+location
+
+Response
+(advert)
+{ "id": 2, “title": "…", }
+
+Requirements
+- Default builtIn value is false
+- Default create_at value is current date and time
+- It should return the advert that just created
+
+-------------------------------
+
+/adverts/auth/:id
+
+A11 -> http://localhost:8080/adverts/auth/23
+
+@PutMapping
+@PreAuthorize-> CUSTOMER
+
+It should update the authenticated user’s advert
+
+Payload (body)
+
+title
+desc
+price
+advert_type_id
+country_id
+city_id
+district_id
+category_id
+propeties
+
+Response
+(advert)
+{ "id": 2, “title": "…", }
+
+The authenticated users can update only their own adverts created by them
+- It should return the advert that just updated
+- The advert whose builtIn property is true can not be updated.
+- If the advert is updated, the status field must be reset to “PENDING” and requires admin approvment
+
+-------------------------------
+
+/adverts/admin/:id
+
+A12 -> http://localhost:8080/adverts/admin/23
+
+@PutMapping
+@PreAuthorize-> MANAGER , ADMIN
+
+It should update an advert
+
+Payload (body)
+
+title
+desc
+price
+advert_type_id
+country_id
+city_id
+district_id
+category_id
+properties
+propeties
+
+Response
+(advert)
+{ "id": 2, “title": "…", }
+
+Requirements
+- The manager and admin users can update all adverts
+- It should return the advert that just updated
+- The advert whose builtIn property is true can not be updated.
+
+-------------------------------
+
+/adverts/admin/:id
+
+A13 -> http://localhost:8080/adverts/admin/5
+
+@DeleteMapping
+@PreAuthorize-> MANAGER , ADMIN
+
+It should delete the user’s advert
+
+Payload (body)
+id: advertId (required)
+
+Response
+(product)
+{ "id": 2, “title": "…"}
+
+Requirements
+- The advert whose builtIn property is true can not be deleted.
+- If any advert is deleted, related records in tour_requests, favorites,logs, images, category,property_values also should be deleted.
+
+
+------------------------------------  IMAGES  ------------------------------------
+
+/images/:imageId
+
+I01 -> http://localhost:8080/images/5
+
+@GetMapping
+@PreAuthorize-> ANONYMOUS
+
+It will get an image of an advert
+
+Payload
+(path)
+image_id: not null
+
+Response
+( image)
+
+Requirements
+
+-------------------------------
+
+/images/:advertId
+
+I02 -> http://localhost:8080/images/5
+
+@PostMapping
+@PreAuthorize-> CUSTOMER, ADMIN, MANAGER
+
+It will upload image(s) of a product
+
+Payload
+(path & body)
+advert_id: not null
+Images :[ File, File, File … ]
+
+Response
+( Arr[ image_id] )
+
+Requirements
+
+-------------------------------
+
+/images/:image_ids
+
+I03 -> http://localhost:8080/images/5,56,22,56,7
+
+@DeleteMapping
+@PreAuthorize-> CUSTOMER, ADMIN, MANAGER
+
+It will delete images
+
+Payload
+(path)
+Image_ids: not null
+
+Response
+()
+
+Requirements
+
+-------------------------------
+
+/images/:imageId
+
+I04 -> http://localhost:8080/images/5
+
+@PutMapping
+@PreAuthorize-> CUSTOMER, ADMIN, MANAGER
+
+It will set the featured field of an image
+
+Payload
+(path)
+Image_ids: not null
+
+Response
+( image)
+
+Requirements
+An advert can have only one featured image.
+
+
+------------------------------------  CATEGORIES  ------------------------------------
+
+/categories
+
+C01 -> http://localhost:8080/categories/?page=1&size=10&sort=date&type=asc
+
+@GetMapping
+@PreAuthorize-> ANONYMOUS
+
+It should return categories
+
+Payload
+q: search query (optional)
+page: active page number (optional,default: 0)
+size: record count in a page (optional,default: 20)
+sort : sort field name (optional, default:category_id)
+type: sorting type (optional, default: asc)
+
+Response
+( Array<category> )
+[
+{ "id": 2, “title": "…", }
+]
+
+Requirements
+Value of q parameter should be searched in title field
+– Get the categories whose active field is 1,
+– If q is omitted, get all records according to the paging params
+
+-------------------------------
+
+/categories/admin
+
+C02 -> http://localhost:8080/categories/? q=blabla& page=1& size=10&sort=date&type=asc
+
+@GetMapping
+@PreAuthorize-> ADMIN, MANAGER
+
+It should return categories
+
+Payload
+q: search query (optional)
+page: active page number (optional, default: 0)
+size: record count in a page (optional, default: 20)
+sort : sort field name (optional, default: category_id)
+type: sorting type (optional, default: asc)
+
+Response
+( Array<category> )
+[
+{ "id": 2, “title": "…", }
+]
+
+Requirements
+– Value of q parameter should be searched in title field
+– Get all categories
+– If q is omitted, get all records according to the paging params
+
+-------------------------------
+
+/categories/:id
+
+C03 -> http://localhost:8080/categories/4
+
+@GetMapping
+@PreAuthorize-> ANONYMOUS
+
+It will return a category
+
+Payload
+(path)
+id: categoryId
+
+Response
+(category)
+{ "id": 2, " title": "…",
+“properties”: [
+{name: “..”, type:””},
+{name: “..”, type:””},
+]
+}
+
+Requirements
+
+-------------------------------
+
+/categories
+
+C04 -> http://localhost:8080/categories
+
+@PostMapping
+@PreAuthorize-> ADMIN, MANAGER
+
+It will create a category
+
+Payload
+(body)
+{"title": "…",
+“properties”: [
+{name: “..”, type:””},
+{name: “..”, type:””},
+]
+}
+
+Response
+(category)
+{
+"id": 2,
+"title": "…",
+“properties”: [ ]
+}
+
+Requirements
+- It will return the created category object
+
+-------------------------------
+
+/categories/:id
+
+C05 -> http://localhost:8080/categories/4
+
+@PutMapping
+@PreAuthorize-> ADMIN, MANAGER
+
+It will update the category
+
+Payload
+(path & body)
+id: categoryId
+{ "id": 2, " title": "…", }
+
+Response
+(category)
+{ "id": 2, " title": "…", }
+
+Requirements
+- It will return the updated category object
+- The category whose builtIn property is true can not be updated.
+
+-------------------------------
+
+/categories/:id
+
+C06 -> http://localhost:8080/categories/4
+
+@DeleteMapping
+@PreAuthorize-> ADMIN, MANAGER
+
+It will delete the category
+
+Payload
+(path)
+id: categoryId
+
+Response
+(category)
+{ "id": 2, " title": "…", }
+
+Requirements
+- It will return the deleted category object
+- If the category has related records in adverts table, delete operation is not permitted
+- The category whose builtIn property is true can not be deleted.
+
+-------------------------------
+
+/categories/:id/properties
+
+C07 -> http://localhost:8080/categories/4/properties
+
+@GetMapping
+@PreAuthorize-> ADMIN, MANAGER
+
+It will get propery keys of a category
+
+Payload
+(path)
+id: categoryId
+
+Response
+(Array[property_keys])
+[
+{ "id": 2, " name": "…",
+“type”: “…” }
+]
+
+Requirements
+
+-------------------------------
+
+/categories/:id/properties
+
+C08 -> http://localhost:8080/categories/33/properties
+
+@PostMapping
+@PreAuthorize-> ADMIN, MANAGER
+
+It will create a propery key
+
+Payload(path)
+id: category id
+
+(Body)
+name: name of property
+type: type of property
+
+Response
+(property_key)
+{ "id": 2, " name": "…",
+“type”: “…” }
+
+Requirements
+- It will return the created property key object
+
+-------------------------------
+
+/categories/properties/:id
+
+C09 -> http://localhost:8080/categories/properties/45
+
+@PutMapping
+@PreAuthorize-> ADMIN, MANAGER
+
+It will update a propery key
+
+Payload(path)
+id: property-key-id
+
+(Body)
+name: name of property
+type: type of property
+
+Response
+(property_key)
+{ "id": 2, " name": "…"}
+
+Requirements
+- It will return the updated property key object
+- The property key whose builtIn property is true can not be updated.
+
+-------------------------------
+
+/categories/properties/:id
+
+C10 -> http://localhost:8080/categories/properties/45
+
+@DeleteMapping
+@PreAuthorize-> ADMIN, MANAGER
+
+It will delete a propery key
+
+Payload(path)
+id: property-key-id
+
+Response
+(property_key)
+{ "id": 2, " name": "…"}
+
+Requirements
+- It will return the deleted property key object
+- The property key whose builtIn property is true can not be updated.
+- Delete related records in category_property_values table
+
+-------------------------------
+
+/categories/:slug
+
+C11 -> http://localhost:8080/categories/villa
+
+@GetMapping
+@PreAuthorize-> ANONYMOUS
+
+It will return a category by slug
+
+Payload(path)
+slug: category slug
+
+Response
+(category)
+{ "id": 2, " title": "…",
+“properties”: []
+}
+
+Requirements
+
+------------------------------------  ADVERT TYPES  ------------------------------------
+
+/advert-types
+
+T01 -> http://localhost:8080/advert-types
+
+@GetMapping
+@PreAuthorize-> ANONYMOUS
+
+It should return advert types
+
+Payload
+
+Response
+( Array<advert-type> )
+[
+{ "id": 2, “title": "…", }
+]
+
+Requirements
+
+-------------------------------
+
+/advert-types/:id
+
+T02 -> http://localhost:8080/advert-types/23
+
+@GetMapping
+@PreAuthorize-> MANAGER, ADMIN
+
+It should return an advert type
+
+Payload
+Id: advert type id
+
+Response
+( advert-type )
+{ "id": 2, “title": "…", }
+
+Requirements
+
+-------------------------------
+
+/advert-types
+
+T03 -> http://localhost:8080/advert-types
+
+@PostMapping
+@PreAuthorize-> MANAGER, ADMIN
+
+It will create an advert type
+
+Payload
+title: string
+
+Response
+( advert-type )
+{ "id": 2, “title": "…", }
+
+Requirements
+It will return the created advert type object
+
+-------------------------------
+
+/advert-types/:id
+
+T04 -> http://localhost:8080/advert-types/23
+
+@PutMapping
+@PreAuthorize-> MANAGER, ADMIN
+
+It will update an advert type
+
+Payload
+id: advert type id
+
+Response
+( advert-type )
+{ "id": 2, “title": "…", }
+
+Requirements
+It will return the updated advert type object
+
+-------------------------------
+
+/advert-types/:id
+
+T05 -> http://localhost:8080/advert-types/45
+
+@DeleteMapping
+@PreAuthorize-> MANAGER, ADMIN
+
+It will delete an advert type
+
+Payload
+id: advert type id
+
+Response
+( advert-type )
+{ "id": 2, “title": "…", }
+
+Requirements
+- It will return the deleted advert type object
+- If the advert type is related to the records in advert table, the record can not be deleted
+
+------------------------------------  ADDRESS  ------------------------------------
+
+/countries
+
+U01 -> http://localhost:8080/countries
+
+@GetMapping
+@PreAuthorize-> ANONYMOUS
+
+It should return countries
+
+Payload
+
+Response
+( Array<country> )
+[
+{ "id": 2, “title": "…", }
+]
+
+Requirements
+
+-------------------------------
+
+/cities
+
+U02 -> http://localhost:8080/countries
+
+@GetMapping
+@PreAuthorize-> ANONYMOUS
+
+It should return cities
+
+Payload
+
+Response
+( Array<city> )
+[
+{ "id": 2, “title": "…", }
+]
+
+Requirements
+
+-------------------------------
+
+/districts
+
+U03 -> http://localhost:8080/districts
+
+@GetMapping
+@PreAuthorize-> ANONYMOUS
+
+It should return districts
+
+Payload
+
+Response
+( Array<district> )
+[
+{ "id": 2, “title": "…", }
+]
+
+Requirements
+
+------------------------------------  TOUR REQUESTS  ------------------------------------
+
+/tour-requests/auth
+
+S01 -> http://localhost:8080/tour-requests/auth?q=blabla &page=1&size=10&sort=date&type=asc
+
+@GetMapping
+@PreAuthorize-> CUSTOMER
+
+It should return the authenticated user’s tour requests
+
+Payload
+q: search query (optional)
+page: active page number (optional, default: 0)
+size: record count in a page (optional, default: 20)
+sort: sortfield name (optional, default: category_id)
+type: sorting type (optional, default: asc)
+
+Response
+( Array<tour-request> )
+[
+{
+"id": 2,
+“tour_date": "…",
+“advert”: {…},
+“owner_user”: {…}
+},
+]
+
+Requirements
+
+-------------------------------
+
+/tour-requests/admin
+
+S02 -> http://localhost:8080/tour-requests/auth?q=blabla &page=1&size=10&sort=date&type=asc
+
+@GetMapping
+@PreAuthorize-> MANAGER,ADMIN
+
+It should return tour requests
+
+Payload
+q: search query (optional)
+page: active page number (optional, default: 0)
+size: record count in a page (optional, default: 20)
+sort: sortfield name (optional, default: category_id)
+type: sorting type (optional, default: asc)
+
+Response
+( Array<tour-request> )
+[
+{
+"id": 2,
+“tour_date": "…",
+“advert”: {…},
+“owner_user”: {…},
+“guest_use”: {…}
+},
+]
+
+Requirements
+
+-------------------------------
+
+/tour-requests/:id/auth
+
+S03 -> http://localhost:8080/tour-requests/advert-types/23/auth
+
+@GetMapping
+@PreAuthorize-> CUSTOMER
+
+It should return the authenticated user’s tour request detail
+
+Payload
+id: tour request id
+
+Response
+(tour-request)
+{
+"id": 2,
+“tour_date": "…",
+“advert”: {…},
+“owner_user”: {…},
+“guest_user”: {…}
+},
+
+Requirements
+
+-------------------------------
+
+/tour-requests/:id/admin
+
+S04 -> http://localhost:8080/tour-requests/advert-types/23/auth
+
+@GetMapping
+@PreAuthorize-> ADMIN,MANAGER
+
+It should return a tour request detail
+
+Payload
+id: tour request id
+
+Response
+(tour-request)
+{
+"id": 2,
+“tour_date": "…",
+“advert”: {…},
+“owner_user”: {…},
+“guest_user”: {…}
+},
+
+Requirements
+
+-------------------------------
+
+/tour-requests
+
+S05 -> http://localhost:8080/tour-requests
+
+@PostMapping
+@PreAuthorize-> CUSTOMER
+
+It will create a tour request
+
+Payload
+(body)
+tour_date: date
+tour_time: time
+advert_id: int
+
+Response
+(tour_request)
+{ "id": 2, “tour_date": "…", }
+
+Requirements
+- It will return the created tour request object
+- Default status value is 0 (pending)
+
+-------------------------------
+
+/tour-requests/:id/auth
+
+S06 -> http://localhost:8080/tour-requests/45
+
+@PutMapping
+@PreAuthorize-> CUSTOMER
+
+It will update a tour request
+
+Payload
+(body)
+tour_date: date
+tour_time: time
+advert_id: int
+
+Response
+(tour_request)
+{ "id": 2, “tour_date": "…", }
+
+Requirements
+It will return the updated tour request object
+- Only the tour requests whose status pending or rejected can be updated.
+- If a request is updated, the status field should reset to “pending”
+
+-------------------------------
+
+/ tour-requests /:id/cancel
+
+S07 -> http://localhost:8080/tour-request/45/cancel
+
+@PatchMapping
+@PreAuthorize-> CUSTOMER
+
+It will cancel the authenticated user’s tour request
+
+Payload
+(path)
+d: tour request id
+
+Response
+(tour_request)
+{ "id": 2, " tour_date": "…",
+
+Requirements
+It will return the canceled tour request object
+
+-------------------------------
+
+/tour-requests/:id/approve
+
+S08 -> http://localhost:8080/tour-requests/4/approve
+
+@PatchMapping
+@PreAuthorize-> CUSTOMER
+
+It should approve the tour request
+
+Payload
+Id: tour request id
+
+Response
+(tour_request)
+[
+{
+"id": 2,
+“tour_date": "…",
+“advert”: {…},
+“owner_user”: {…}
+},
+]
+
+Requirements
+
+-------------------------------
+
+/tour-requests/:id/decline
+
+S09 -> http://localhost:8080/tour-requests/4/decline
+
+@PatchMapping
+@PreAuthorize-> CUSTOMER
+
+It should decline the tour request
+
+Payload
+Id: tour request id
+
+Response
+(tour_request)
+[
+{
+"id": 2,
+“tour_date": "…",
+“advert”: {…},
+“owner_user”: {…}
+},
+]
+
+Requirements
+
+-------------------------------
+
+/ tour-requests /:id
+
+S10 -> http://localhost:8080/tour-requests/45
+
+@DeleteMapping
+@PreAuthorize-> CUSTOMER
+
+It will delete a tour request
+
+Payload
+(path)
+id: tour request id
+
+Response
+{ "id": 2, " tour_date": "…"}
+
+Requirements
+It will return the deleted tour request object
+
+------------------------------------  USERS  ------------------------------------
+
+/login
+
+F01 -> http://localhost:8080/users/login
+
+@PostMapping
+@PreAuthorize-> ANONYMOUS
+
+it will authenticate the user
+
+Payload(body)
+email required
+password required
+
+Response(user)
+{ "token": "slskfdjsdfkl…"}
+
+Requirements
+- If username and password is correct, It will return authentication token
+
+-------------------------------
+
+/register
+
+F02 -> http://localhost:8080/users/register
+
+@PostMapping
+@PreAuthorize-> ANONYMOUS
+
+It will create the user
+
+Payload(body)
+firstName required
+lastName required
+phone required
+email required
+password required
+
+Response(user)
+{ "id": 2, “firstName": "…", }
+
+Requirements
+It will return the created user object
+- Default role is Customer
+- Phone field should be in form of “(XXX) XXX-XXXX
+- Password field should be at least 8 characters long, include at least one letter, one number and one special character
+- Email field should be in form of email
+
+-------------------------------
+
+/forgot-password
+
+F03 -> http://localhost:8080/users/forgot-password
+
+@PostMapping
+@PreAuthorize-> ANONYMOUS
+
+It will generate and email reset-password code
+
+Payload(body)
+email required
+
+Response(nothing)
+
+Requirements
+Never send an error even if given email is not found.
+It should generate a password reset code and save it to users table and send it to user’s email
+
+-------------------------------
+
+/reset-password
+
+F04 -> http://localhost:8080/users/reset-password
+
+@PostMapping
+@PreAuthorize-> ANONYMOUS
+
+It will update password
+
+Payload(body)
+code required
+password required
+
+Response(nothing)
+
+Requirements
+If given code is equal to the code generated before in database, reset password, otherwise send an error message indicates that the code is not valid.
+
+-------------------------------
+
+/users/auth
+
+F05 -> http://localhost:8080/users/auth
+
+@GetMapping
+@PreAuthorize-> CUSTOMER,ADMIN,MANAGER
+
+It will return authenticated user object
+
+Payload
+(body)
+
+Response(user)
+{ "id": 2, “firstName": "…", }
+
+Requirements
+- It will return the authenticated user object
+
+-------------------------------
+
+/users/auth
+
+F06 -> http://localhost:8080/users/auth
+
+@PutMapping
+@PreAuthorize-> CUSTOMER,ADMIN,MANAGER
+
+It will update the authenticated user
+
+Payload
+(path & body)
+{ "name": "…", }
+
+Response(user)
+{ "id": 2, “firstName": "…", }
+
+
+Requirements
+- It will return the updated user object
+- The user whose builtIn property is true can not be updated.
+
+-------------------------------
+
+/users/auth
+
+F07 -> http://localhost:8080/users/auth
+
+@PatchMapping
+@PreAuthorize-> CUSTOMER,ADMIN,MANAGER
+
+It will update the authenticated user’s password
+
+Payload
+(path & body)
+{ “password": "…", }
+
+Response(user)
+{ "id": 2, “firstName": "…", }
+
+
+Requirements
+The user whose builtIn property is true can not be updated.
+
+-------------------------------
+
+/users/auth
+
+F08 -> http://localhost:8080/users/auth
+
+@PatchMapping
+@PreAuthorize-> CUSTOMER
+
+It will delete authenticated user
+
+Payload
+(path & body)
+{ “password": "…", }
+
+Response(user)
+
+Requirements
+- The user whose builtIn property is true can not be updated.
+- Ifthe user has related records in adverts table or tour requests it couldn’t be deleted,
+- The related records in favorites and logs should also be deleted.
+
+-------------------------------
+
+/users/admin
+
+F09 -> http://localhost:8080/users/admin?q=john&page=1&size=10&sort=createDate&type=desc
+
+@GetMapping
+@PreAuthorize-> ADMIN,MANAGER
+
+It will return users
+
+Payload(Queryvarchar)
+q: search query (optional)
+page: active page number (optional, default: 0)
+size: record count in a page (optional, default: 20)
+sort: sort field name (optional, default: createDate)
+type: sorting type (optional, default: desc)
+
+Response
+( Array<user> )
+[
+{ "id": 2, “firstName": "…", }
+]
+
+Requirements
+Value of q parameter is serched in first name, last name, email and phone
+
+-------------------------------
+
+/users/:id/admin
+
+F10 -> http://localhost:8080/users/4/admin
+
+@GetMapping
+@PreAuthorize-> ADMIN,MANAGER
+
+It will return a user
+
+Payload
+(path)
+id: userId
+
+Response
+(user)
+{ "id": 2, “firstName": "…",
+adverts:[],
+tour_requests: [],
+favorites: [],
+logs:[]
+}
+
+Requirements
+
+-------------------------------
+
+/users/:id/admin
+
+F11 -> http://localhost:8080/users/4/admin
+
+@PutMapping
+@PreAuthorize-> ADMIN,MANAGER
+
+It will update the user
+
+Payload
+(path & body)
+id: userId
+{ "id": 2, "name": "…", }
+
+Response
+(user)
+{ "id": 2, “firstName": "…", }
+
+Requirements
+- It will return the updated user object
+- An admin can update any type of user, while an Manager can update only Customer-type users.
+- The user whose builtIn property is true can not be updated.
+
+-------------------------------
+
+/users/:id/admin
+
+F12 -> http://localhost:8080/users/4/admin
+
+@DeleteMapping
+@PreAuthorize-> ADMIN,MANAGER
+
+It will delete the user
+
+Payload
+(path)
+id: userId
+
+Response
+(user)
+{ "id": 2, "name": "…", }
+
+Requirements
+- The user whose builtIn property is true can not be updated.
+- If the user has related records in adverts table or tour requests it couldn’t be deleted,
+- The related records in favorites and logs shoul also be deleted
+- Manager users can delete only customers, whereas admin users can delete all users.
+
+------------------------------------  REPORTS  ------------------------------------
+
+/report
+
+G01 -> http://localhost:8080/report
+
+@GetMapping
+@PreAuthorize-> ADMIN,MANAGER
+
+It will get some statistics
+
+Payload
+()
+
+Response
+(dashboard)
+{
+categories: 1231,
+adverts: 234,
+advertTypes: 12,
+tourRequests: 1324,
+customers: 124,
+}
+
+
+Requirements
+It will return following object
+• Number of published categories
+• Numeber of published adverts
+• Number of advert types
+• Number of tour requests
+• Number of customers
+
+-------------------------------
+
+/report/adverts
+
+G02 -> http://localhost:8080/report/adverts?date1=2023-02-01&date2=2023&category=villa&type=rent&status=pending
+
+@GetMapping
+@PreAuthorize-> ADMIN,MANAGER
+
+it will get adverts
+
+Payload
+(query)
+date1: beginning date
+date2: ending date
+category:
+type:
+status:
+
+Response
+(report)
+
+Requirements
+
+-------------------------------
+
+/report/most-popular-properties
+
+G03 -> http://localhost:8080/report/most-popular-properties?amount=10
+
+@GetMapping
+@PreAuthorize-> ADMIN,MANAGER
+
+It will get most popular properties
+
+Payload
+(query)
+amount: number of advers to return ( required )
+
+Response
+(Array[adverts])
+[
+{ "id": 2, “title": "…", }
+]
+
+Requirements
+• It will return the adverts which have the most tour requests
+• It should be sorted by amount of tour requests by descendeing order
+
+-------------------------------
+
+/report/users
+
+G04 -> http://localhost:8080/report/users?role=manager
+
+@GetMapping
+@PreAuthorize-> ADMIN,MANAGER
+
+It will get users
+
+Payload
+(query)
+role: user role
+
+Response
+(Array[user])
+[
+{ "id": 2, “firstName":"…"}
+]
+
+Requirements
+• It will return users
+
+-------------------------------
+
+/report/tour-requests
+
+G05 -> http://localhost:8080/report/tour-requests?date1=2023-02-01&date2=2023&status=pending
+
+@GetMapping
+@PreAuthorize-> ADMIN,MANAGER
+
+It will get tour requests
+
+Payload
+(query)
+date1: beginning date
+date2: ending date
+status:
+
+Response
+(Array[tour-request])
+[
+{ "id": 2, “tour_date": "…", }
+]
+
+Requirements
+• It will return users
+
+------------------------------------  CONTACT MESSAGE  ------------------------------------
+
+/contact-messages
+
+J01 -> http://localhost:8080/contact-messages
+
+@PostMapping
+@PreAuthorize-> ANONYMOUS
+
+It will create a contact message
+
+Payload
+(body)
+{
+first_name: required,
+last_name: nullable,
+email: required,
+message: required
+}
+
+Response
+
+Requirements
+Default status value is 0
+
+-------------------------------
+
+/contact-messages
+
+J02 -> http://localhost:8080/contact-messages?q=blabla&status=0&page=1&size=10&sort=date&type=asc
+
+@GetMapping
+@PreAuthorize-> MANAGER,ADMIN
+
+It will get contact messages
+
+Payload
+(Queryvarchar)
+q: search query (optional)
+page: active page number (optional, default: 0)
+size: record countin a page (optional, default: 20)
+sort : sort field name (optional, default: category_id)
+type: sorting type (optional, default: asc
+
+Response
+(Array<ContactMessage>)
+
+Requirements
+Default status value is 0
+
+-------------------------------
+
+/contact-messages/:id
+
+J03 -> http://localhost:8080/contact-messages/4
+
+@GetMapping
+@PreAuthorize-> MANAGER,ADMIN
+
+It will get a contact message by given id
+
+Payload
+(path)
+id: contact message id
+
+Response
+(Array<ContactMessage>)
+
+Requirements
+It should update the status field of the message to 1
+
+-------------------------------
+
+/contact-messages/:id
+
+J04 -> http://localhost:8080/contact-messages/4
+
+@DeleteMapping
+@PreAuthorize-> MANAGER,ADMIN
+
+It will delete a contact message
+
+Payload
+(path)
+id: contact message id
+
+Response
+(Array<ContactMessage>)
+
+Requirements
+It should update the status field of the message to 1
+
+------------------------------------  FAVORITES  ------------------------------------
+
+/favorites/auth
+
+K01 -> http://localhost:8080/favorites/auth
+
+@GetMapping
+@PreAuthorize-> CUSTOMER
+
+It will get authenticated user`s favorites
+
+Payload
+
+Response
+Array [Advert]
+[
+{
+id: 3,
+title:””,
+…
+}
+]
+
+Requirements
+
+-----------------------------
+
+/favorites/admin/id
+
+K02 -> http://localhost:8080/favorites/admin/23
+
+@GetMapping
+@PreAuthorize->MANAGER,ADMIN
+
+It will get user`s favorites
+
+Payload
+Id: user_id
+
+Response
+Array [Advert]
+[
+{
+id: 3,
+title:””,
+…
+}
+]
+
+Requirements
+
+--------------------------
+
+/favorites/:id/auth
+
+K03 -> http://localhost:8080/favorites/12/auth
+
+@PostMapping
+@PreAuthorize-> CUSTOMER
+
+It will add/remove an advert to/from authenticated user`s favorites
+
+Payload
+(body)
+id: advert id (required)
+
+Response
+Model
+{
+id: 3,
+title: “blabla”,
+…
+}
+
+Requirements
+- It should add/remove to/from favorites table.
+- If given advert id is found in favorites table, it should be removed otherwise it should be added.
+
+--------------------------
+
+/favorites/auth
+
+K04 -> http://localhost:8080/favorites/auth
+
+@DeleteMapping
+@PreAuthorize-> CUSTOMER
+
+It will remove all favorites of authenticated user
+
+Payload
+
+
+Response
+
+
+Requirements
+
+
+--------------------------
+
+/favorites/admin
+
+K05 -> http://localhost:8080/favorites/admin
+
+@DeleteMapping
+@PreAuthorize-> ADMIN,MANAGER
+
+It will remove all favorites of a user
+
+Payload
+
+Response
+
+Requirements
+
+--------------------------
+
+/favorites/:id/amin
+
+K06 -> http://localhost:8080/favorites/12/admin
+
+@DeleteMapping
+@PreAuthorize-> ADMIN,MANAGER
+
+It will remove a favorite of a user
+
+Payload
+
+Response
+
+Requirements
+
+------------------------------------  OTHER  ------------------------------------
+
+/settings/db-reset
+
+X01 -> http://localhost:8080/settings/db-reset
+
+@PpstMapping
+@PreAuthorize-> ADMIN
+
+It will remove a favorite of a user
+
+Payload
+
+Response
+
+Requirements
+It should delete all records in all tables except those whose built-in fields are true

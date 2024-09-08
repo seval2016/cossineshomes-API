@@ -186,21 +186,6 @@ public class MethodHelper {
         return resultMap;
     }
 
-    public void getPropertiesForAdvertResponse(CategoryPropertyValue categoryPropertyValue, CategoryPropertyValueService categoryPropertyValueService, Map<String, String> propertyNameAndValue) {
-        String propertyKeyName = categoryPropertyValueService.getPropertyKeyNameByPropertyValue(categoryPropertyValue.getId());
-        String propertyValue = categoryPropertyValue.getValue();
-        propertyNameAndValue.put(propertyKeyName, propertyValue);
-        //  categoryPropertyValue.getCategoryPropertyKeys().getName();
-    }
-
-    public Map<String, String> getAdvertResponseProperties(Advert advert, CategoryPropertyValueService categoryPropertyValueService) {
-        Map<String, String> properties = new HashMap<>();
-        for (int i = 0; i < advert.getCategoryPropertyValuesList().size(); i++) {
-            getPropertiesForAdvertResponse(advert.getCategoryPropertyValuesList().get(i), categoryPropertyValueService, properties);
-        }
-        return properties;
-    }
-
     public User getUserAndCheckRoles(HttpServletRequest request, String name) {
         User user = getUserByHttpRequest(request);
         checkRoles(user, RoleType.valueOf(name));

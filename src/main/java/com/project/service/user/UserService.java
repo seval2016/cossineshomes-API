@@ -218,28 +218,4 @@ public class UserService {
         user.setPasswordHash(passwordEncoder.encode(passwordUpdateRequest.getNewPassword()));
         userRepository.save(user);
     }
-
-   /* public void deleteAuthenticatedUser(HttpServletRequest request) {
-        //!!! Kullanıcı kimliğini alıyoruz.
-        String username = (String) request.getAttribute("username");
-        User user = userRepository.findByUsernameEquals(username);
-
-        //!!! builtIn kullanıcılar silinemez.
-        methodHelper.checkBuiltIn(user);
-
-        //!!! İlgili kayıtlar varsa (adverts, tour requests) kullanıcı silinemez.
-        boolean hasAdverts = advertsRepository.existsByUserId(user.getId());
-        boolean hasTourRequests = tourRequestRepository.existsByUserId(user.getId());
-
-        if (hasAdverts || hasTourRequests) {
-            throw new BadRequestException(ErrorMessages.USER_CANNOT_BE_DELETED);
-        }
-
-        //!!! İlgili kayıtları (favorites, logs) siliyoruz.
-        favoritesRepository.deleteByUserId(user.getId());
-        logsRepository.deleteByUserId(user.getId());
-
-        //!!! Kullanıcıyı sil.
-        userRepository.delete(user);
-    }*/
 }
