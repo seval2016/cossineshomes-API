@@ -2,34 +2,23 @@ package com.project.service.business;
 
 import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.user.User;
-import com.project.entity.enums.RoleType;
-import com.project.entity.enums.AdvertStatus;
-import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.AdvertMapper;
-import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.business.*;
 
-import com.project.repository.business.*;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.MethodHelper;
-import com.project.payload.messages.ErrorMessages;
 import com.project.service.helper.PageableHelper;
 import com.project.service.user.UserService;
-import com.project.service.validator.UniquePropertyValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 

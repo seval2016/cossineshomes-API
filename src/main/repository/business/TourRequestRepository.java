@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface TourRequestRepository extends JpaRepository<TourRequest,Long> {
 
     @Query("SELECT tr FROM TourRequest tr WHERE tr.guestUser.id = ?1")

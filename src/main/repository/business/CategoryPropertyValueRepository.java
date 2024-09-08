@@ -18,6 +18,6 @@ public interface CategoryPropertyValueRepository extends JpaRepository<CategoryP
     List<CategoryPropertyValue> findAllByValue(String value);
 
     @Modifying
-    @Query("DELETE FROM CategoryPropertyValue cpv WHERE cpv.builtIn = false")
+    @Query("DELETE FROM CategoryPropertyValue")
     void deleteAllCategoryPropertyValuesExceptBuiltIn();
 }

@@ -1,14 +1,11 @@
 package com.project.controller.business;
 
 import com.project.entity.concretes.business.Advert;
-import com.project.entity.concretes.user.User;
 import com.project.payload.mappers.AdvertMapper;
-import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.business.AdvertResponse;
 import com.project.payload.response.business.CategoryAdvertResponse;
 import com.project.payload.response.business.CityAdvertResponse;
-import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.AdvertRepository;
 import com.project.service.business.AdvertService;
 import com.project.service.user.UserService;
@@ -17,14 +14,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 

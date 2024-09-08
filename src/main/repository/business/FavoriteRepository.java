@@ -5,10 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
 
+@Repository
 public interface FavoriteRepository extends JpaRepository<Favorite,Long> {
     @Query("SELECT f FROM Favorite f WHERE f.id = :id")
     List<Favorite> findFavorite(@Param("id") Long id);
@@ -38,6 +40,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite,Long> {
     List<Favorite> findAllByAdvert_Id(Long advertId);
 
     @Modifying
-    @Query("DELETE FROM Favorite f WHERE f.builtIn = false")
+    @Query("DELETE FROM Favorite")
     void deleteAllFavoritesExceptBuiltIn();
 }

@@ -1,40 +1,41 @@
-"2024-09-08 21:44:24,767 INFO  [main] com.project.CossinesHomesApplication:Starting CossinesHomesApplication using Java 17.0.9 on Seval with PID 11732 (C:\Users\seval\IdeaProjects\CossinesHomes\target\classes started by seval in C:\Users\seval\IdeaProjects\CossinesHomes)
-""2024-09-08 21:44:24,777 INFO  [main] com.project.CossinesHomesApplication:No active profile set, falling back to 1 default profile: "default"
-""2024-09-08 21:44:27,817 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-""2024-09-08 21:44:28,054 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Finished Spring Data repository scanning in 209 ms. Found 14 JPA repository interfaces.
-""2024-09-08 21:44:29,375 INFO  [main] org.springframework.boot.web.embedded.tomcat.TomcatWebServer:Tomcat initialized with port(s): 8080 (http)
-""2024-09-08 21:44:29,394 INFO  [main] org.apache.catalina.core.StandardService:Starting service [Tomcat]
-""2024-09-08 21:44:29,395 INFO  [main] org.apache.catalina.core.StandardEngine:Starting Servlet engine: [Apache Tomcat/9.0.68]
-""2024-09-08 21:44:29,642 INFO  [main] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]:Initializing Spring embedded WebApplicationContext
-""2024-09-08 21:44:29,642 INFO  [main] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext:Root WebApplicationContext: initialization completed in 4698 ms
-""2024-09-08 21:44:30,108 INFO  [main] org.hibernate.jpa.internal.util.LogHelper:HHH000204: Processing PersistenceUnitInfo [name: default]
-""2024-09-08 21:44:30,337 INFO  [main] org.hibernate.Version:HHH000412: Hibernate ORM core version 5.6.12.Final
-""2024-09-08 21:44:30,988 INFO  [main] org.hibernate.annotations.common.Version:HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
-""2024-09-08 21:44:31,460 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Starting...
-""2024-09-08 21:44:31,964 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Start completed.
-""2024-09-08 21:44:32,012 INFO  [main] org.hibernate.dialect.Dialect:HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL81Dialect
-""2024-09-08 21:44:34,461 INFO  [main] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator:HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-""2024-09-08 21:44:34,473 INFO  [main] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean:Initialized JPA EntityManagerFactory for persistence unit 'default'
-""2024-09-08 21:44:37,176 WARN  [main] org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration:spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-""2024-09-08 21:44:37,813 INFO  [main] org.springframework.security.web.DefaultSecurityFilterChain:Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@7ca8f5d7, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@2dc319cf, org.springframework.security.web.context.SecurityContextPersistenceFilter@62f73b0c, org.springframework.security.web.header.HeaderWriterFilter@116efe65, org.springframework.web.filter.CorsFilter@1690929, org.springframework.security.web.authentication.logout.LogoutFilter@23d07ad3, com.project.security.jwt.AuthTokenFilter@50a095cb, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1d45c4b7, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@46146832, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@34d26a68, org.springframework.security.web.session.SessionManagementFilter@693ed09d, org.springframework.security.web.access.ExceptionTranslationFilter@576a8b00, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@7674f9d4]
-""2024-09-08 21:44:38,394 WARN  [main] org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext:Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'favoriteRepository' defined in com.project.repository.business.FavoriteRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Invocation of init method failed; nested exception is org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract void com.project.repository.business.FavoriteRepository.deleteFavoriteIfExists(java.lang.Long,java.lang.Long); Reason: Validation failed for query for method public abstract void com.project.repository.business.FavoriteRepository.deleteFavoriteIfExists(java.lang.Long,java.lang.Long)!; nested exception is java.lang.IllegalArgumentException: Validation failed for query for method public abstract void com.project.repository.business.FavoriteRepository.deleteFavoriteIfExists(java.lang.Long,java.lang.Long)!
-""2024-09-08 21:44:38,460 INFO  [main] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean:Closing JPA EntityManagerFactory for persistence unit 'default'
-""2024-09-08 21:44:38,469 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Shutdown initiated...
-""2024-09-08 21:44:38,563 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Shutdown completed.
-""2024-09-08 21:44:38,580 INFO  [main] org.apache.catalina.core.StandardService:Stopping service [Tomcat]
-""2024-09-08 21:44:38,629 INFO  [main] org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener:
+"2024-09-09 00:13:00,929 INFO  [main] com.project.CossinesHomesApplication:Starting CossinesHomesApplication using Java 17.0.9 on Seval with PID 1424 (C:\Users\seval\IdeaProjects\CossinesHomes\target\classes started by seval in C:\Users\seval\IdeaProjects\CossinesHomes)
+""2024-09-09 00:13:00,938 INFO  [main] com.project.CossinesHomesApplication:No active profile set, falling back to 1 default profile: "default"
+""2024-09-09 00:13:03,305 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+""2024-09-09 00:13:03,569 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Finished Spring Data repository scanning in 223 ms. Found 15 JPA repository interfaces.
+""2024-09-09 00:13:04,818 INFO  [main] org.springframework.boot.web.embedded.tomcat.TomcatWebServer:Tomcat initialized with port(s): 8080 (http)
+""2024-09-09 00:13:04,874 INFO  [main] org.apache.catalina.core.StandardService:Starting service [Tomcat]
+""2024-09-09 00:13:04,874 INFO  [main] org.apache.catalina.core.StandardEngine:Starting Servlet engine: [Apache Tomcat/9.0.68]
+""2024-09-09 00:13:05,114 INFO  [main] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]:Initializing Spring embedded WebApplicationContext
+""2024-09-09 00:13:05,118 INFO  [main] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext:Root WebApplicationContext: initialization completed in 4006 ms
+""2024-09-09 00:13:05,457 INFO  [main] org.hibernate.jpa.internal.util.LogHelper:HHH000204: Processing PersistenceUnitInfo [name: default]
+""2024-09-09 00:13:05,608 INFO  [main] org.hibernate.Version:HHH000412: Hibernate ORM core version 5.6.12.Final
+""2024-09-09 00:13:05,869 INFO  [main] org.hibernate.annotations.common.Version:HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+""2024-09-09 00:13:06,026 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Starting...
+""2024-09-09 00:13:06,480 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Start completed.
+""2024-09-09 00:13:06,515 INFO  [main] org.hibernate.dialect.Dialect:HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL81Dialect
+""2024-09-09 00:13:09,370 INFO  [main] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator:HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+""2024-09-09 00:13:09,378 INFO  [main] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean:Initialized JPA EntityManagerFactory for persistence unit 'default'
+""2024-09-09 00:13:11,930 WARN  [main] org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext:Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'imageController' defined in file [C:\Users\seval\IdeaProjects\CossinesHomes\target\classes\com\project\controller\business\ImageController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'imageService' defined in file [C:\Users\seval\IdeaProjects\CossinesHomes\target\classes\com\project\service\business\ImageService.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'imageRepository' defined in com.project.repository.business.ImageRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Invocation of init method failed; nested exception is org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn(); Reason: Validation failed for query for method public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn()!; nested exception is java.lang.IllegalArgumentException: Validation failed for query for method public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn()!
+""2024-09-09 00:13:11,935 INFO  [main] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean:Closing JPA EntityManagerFactory for persistence unit 'default'
+""2024-09-09 00:13:11,939 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Shutdown initiated...
+""2024-09-09 00:13:11,958 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Shutdown completed.
+""2024-09-09 00:13:11,969 INFO  [main] org.apache.catalina.core.StandardService:Stopping service [Tomcat]
+""2024-09-09 00:13:12,018 INFO  [main] org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener:
 
 Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
-""2024-09-08 21:44:38,723 ERROR [main] org.springframework.boot.SpringApplication:Application run failed
-"org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'favoriteRepository' defined in com.project.repository.business.FavoriteRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Invocation of init method failed; nested exception is org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract void com.project.repository.business.FavoriteRepository.deleteFavoriteIfExists(java.lang.Long,java.lang.Long); Reason: Validation failed for query for method public abstract void com.project.repository.business.FavoriteRepository.deleteFavoriteIfExists(java.lang.Long,java.lang.Long)!; nested exception is java.lang.IllegalArgumentException: Validation failed for query for method public abstract void com.project.repository.business.FavoriteRepository.deleteFavoriteIfExists(java.lang.Long,java.lang.Long)!
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1804)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620)
+""2024-09-09 00:13:12,107 ERROR [main] org.springframework.boot.SpringApplication:Application run failed
+"org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'imageController' defined in file [C:\Users\seval\IdeaProjects\CossinesHomes\target\classes\com\project\controller\business\ImageController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'imageService' defined in file [C:\Users\seval\IdeaProjects\CossinesHomes\target\classes\com\project\service\business\ImageService.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'imageRepository' defined in com.project.repository.business.ImageRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Invocation of init method failed; nested exception is org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn(); Reason: Validation failed for query for method public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn()!; nested exception is java.lang.IllegalArgumentException: Validation failed for query for method public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn()!
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:800)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:229)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1372)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
 	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
 	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
 	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
 	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:936)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:955)
 	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:918)
 	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:583)
 	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
@@ -44,7 +45,38 @@ Error starting ApplicationContext. To display the conditions report re-run your 
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1306)
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1295)
 	at com.project.CossinesHomesApplication.main(CossinesHomesApplication.java:27)
-Caused by: org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract void com.project.repository.business.FavoriteRepository.deleteFavoriteIfExists(java.lang.Long,java.lang.Long); Reason: Validation failed for query for method public abstract void com.project.repository.business.FavoriteRepository.deleteFavoriteIfExists(java.lang.Long,java.lang.Long)!; nested exception is java.lang.IllegalArgumentException: Validation failed for query for method public abstract void com.project.repository.business.FavoriteRepository.deleteFavoriteIfExists(java.lang.Long,java.lang.Long)!
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'imageService' defined in file [C:\Users\seval\IdeaProjects\CossinesHomes\target\classes\com\project\service\business\ImageService.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'imageRepository' defined in com.project.repository.business.ImageRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Invocation of init method failed; nested exception is org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn(); Reason: Validation failed for query for method public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn()!; nested exception is java.lang.IllegalArgumentException: Validation failed for query for method public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn()!
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:800)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:229)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1372)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1391)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1311)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:887)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791)
+	... 19 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'imageRepository' defined in com.project.repository.business.ImageRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Invocation of init method failed; nested exception is org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn(); Reason: Validation failed for query for method public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn()!; nested exception is java.lang.IllegalArgumentException: Validation failed for query for method public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn()!
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1804)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1391)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1311)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:887)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791)
+	... 33 common frames omitted
+Caused by: org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn(); Reason: Validation failed for query for method public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn()!; nested exception is java.lang.IllegalArgumentException: Validation failed for query for method public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn()!
 	at org.springframework.data.repository.query.QueryCreationException.create(QueryCreationException.java:101)
 	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:107)
 	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lambda$mapMethodsToQuery$1(QueryExecutorMethodInterceptor.java:95)
@@ -69,8 +101,8 @@ Caused by: org.springframework.data.repository.query.QueryCreationException: Cou
 	at org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean.afterPropertiesSet(JpaRepositoryFactoryBean.java:144)
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863)
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800)
-	... 16 common frames omitted
-Caused by: java.lang.IllegalArgumentException: Validation failed for query for method public abstract void com.project.repository.business.FavoriteRepository.deleteFavoriteIfExists(java.lang.Long,java.lang.Long)!
+	... 44 common frames omitted
+Caused by: java.lang.IllegalArgumentException: Validation failed for query for method public abstract void com.project.repository.business.ImageRepository.deleteAllImagesExceptBuiltIn()!
 	at org.springframework.data.jpa.repository.query.SimpleJpaQuery.validateQuery(SimpleJpaQuery.java:96)
 	at org.springframework.data.jpa.repository.query.SimpleJpaQuery.<init>(SimpleJpaQuery.java:66)
 	at org.springframework.data.jpa.repository.query.JpaQueryFactory.fromMethodWithQueryString(JpaQueryFactory.java:51)
@@ -78,22 +110,23 @@ Caused by: java.lang.IllegalArgumentException: Validation failed for query for m
 	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$CreateIfNotFoundQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:253)
 	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$AbstractQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:93)
 	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:103)
-	... 38 common frames omitted
-Caused by: java.lang.IllegalArgumentException: org.hibernate.hql.internal.ast.QuerySyntaxException: Favorites is not mapped [DELETE FROM Favorites f WHERE f.user.id = :user_id AND f.advert.id = :advert_id]
+	... 66 common frames omitted
+Caused by: java.lang.IllegalArgumentException: org.hibernate.QueryException: could not resolve property: builtIn of: com.project.entity.concretes.business.Image [DELETE FROM com.project.entity.concretes.business.Image i WHERE i.builtIn=false]
 	at org.hibernate.internal.ExceptionConverterImpl.convert(ExceptionConverterImpl.java:138)
 	at org.hibernate.internal.ExceptionConverterImpl.convert(ExceptionConverterImpl.java:181)
 	at org.hibernate.internal.ExceptionConverterImpl.convert(ExceptionConverterImpl.java:188)
 	at org.hibernate.internal.AbstractSharedSessionContract.createQuery(AbstractSharedSessionContract.java:757)
 	at org.hibernate.internal.AbstractSharedSessionContract.createQuery(AbstractSharedSessionContract.java:114)
-	at jdk.internal.reflect.GeneratedMethodAccessor92.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at org.springframework.orm.jpa.ExtendedEntityManagerCreator$ExtendedEntityManagerInvocationHandler.invoke(ExtendedEntityManagerCreator.java:362)
 	at jdk.proxy2/jdk.proxy2.$Proxy121.createQuery(Unknown Source)
 	at org.springframework.data.jpa.repository.query.SimpleJpaQuery.validateQuery(SimpleJpaQuery.java:90)
-	... 44 common frames omitted
-Caused by: org.hibernate.hql.internal.ast.QuerySyntaxException: Favorites is not mapped [DELETE FROM Favorites f WHERE f.user.id = :user_id AND f.advert.id = :advert_id]
-	at org.hibernate.hql.internal.ast.QuerySyntaxException.generateQueryException(QuerySyntaxException.java:79)
+	... 72 common frames omitted
+Caused by: org.hibernate.QueryException: could not resolve property: builtIn of: com.project.entity.concretes.business.Image [DELETE FROM com.project.entity.concretes.business.Image i WHERE i.builtIn=false]
+	at org.hibernate.QueryException.generateQueryException(QueryException.java:120)
 	at org.hibernate.QueryException.wrapWithQueryString(QueryException.java:103)
 	at org.hibernate.hql.internal.ast.QueryTranslatorImpl.doCompile(QueryTranslatorImpl.java:220)
 	at org.hibernate.hql.internal.ast.QueryTranslatorImpl.compile(QueryTranslatorImpl.java:144)
@@ -102,42 +135,24 @@ Caused by: org.hibernate.hql.internal.ast.QuerySyntaxException: Favorites is not
 	at org.hibernate.engine.query.spi.QueryPlanCache.getHQLQueryPlan(QueryPlanCache.java:162)
 	at org.hibernate.internal.AbstractSharedSessionContract.getQueryPlan(AbstractSharedSessionContract.java:636)
 	at org.hibernate.internal.AbstractSharedSessionContract.createQuery(AbstractSharedSessionContract.java:748)
-	... 51 common frames omitted
-Caused by: org.hibernate.hql.internal.ast.QuerySyntaxException: Favorites is not mapped
-	at org.hibernate.hql.internal.ast.util.SessionFactoryHelper.requireClassPersister(SessionFactoryHelper.java:170)
-	at org.hibernate.hql.internal.ast.tree.FromElementFactory.addFromElement(FromElementFactory.java:91)
-	at org.hibernate.hql.internal.ast.tree.FromClause.addFromElement(FromClause.java:77)
-	at org.hibernate.hql.internal.ast.HqlSqlWalker.createFromElement(HqlSqlWalker.java:334)
-	at org.hibernate.hql.internal.antlr.HqlSqlBaseWalker.fromElement(HqlSqlBaseWalker.java:3782)
-	at org.hibernate.hql.internal.antlr.HqlSqlBaseWalker.fromElementList(HqlSqlBaseWalker.java:3671)
-	at org.hibernate.hql.internal.antlr.HqlSqlBaseWalker.fromClause(HqlSqlBaseWalker.java:746)
-	at org.hibernate.hql.internal.antlr.HqlSqlBaseWalker.deleteStatement(HqlSqlBaseWalker.java:475)
+	... 80 common frames omitted
+Caused by: org.hibernate.QueryException: could not resolve property: builtIn of: com.project.entity.concretes.business.Image
+	at org.hibernate.persister.entity.AbstractPropertyMapping.propertyException(AbstractPropertyMapping.java:78)
+	at org.hibernate.persister.entity.AbstractPropertyMapping.toType(AbstractPropertyMapping.java:72)
+	at org.hibernate.persister.entity.AbstractEntityPersister.toType(AbstractEntityPersister.java:2053)
+	at org.hibernate.hql.internal.ast.tree.FromElementType.getPropertyType(FromElementType.java:412)
+	at org.hibernate.hql.internal.ast.tree.FromElement.getPropertyType(FromElement.java:524)
+	at org.hibernate.hql.internal.ast.tree.DotNode.getDataType(DotNode.java:723)
+	at org.hibernate.hql.internal.ast.tree.DotNode.prepareLhs(DotNode.java:268)
+	at org.hibernate.hql.internal.ast.tree.DotNode.resolve(DotNode.java:208)
+	at org.hibernate.hql.internal.ast.HqlSqlWalker.resolve(HqlSqlWalker.java:1066)
+	at org.hibernate.hql.internal.antlr.HqlSqlBaseWalker.expr(HqlSqlBaseWalker.java:1319)
+	at org.hibernate.hql.internal.antlr.HqlSqlBaseWalker.exprOrSubquery(HqlSqlBaseWalker.java:4797)
+	at org.hibernate.hql.internal.antlr.HqlSqlBaseWalker.comparisonExpr(HqlSqlBaseWalker.java:4261)
+	at org.hibernate.hql.internal.antlr.HqlSqlBaseWalker.logicalExpr(HqlSqlBaseWalker.java:2180)
+	at org.hibernate.hql.internal.antlr.HqlSqlBaseWalker.whereClause(HqlSqlBaseWalker.java:841)
+	at org.hibernate.hql.internal.antlr.HqlSqlBaseWalker.deleteStatement(HqlSqlBaseWalker.java:483)
 	at org.hibernate.hql.internal.antlr.HqlSqlBaseWalker.statement(HqlSqlBaseWalker.java:303)
 	at org.hibernate.hql.internal.ast.QueryTranslatorImpl.analyze(QueryTranslatorImpl.java:276)
 	at org.hibernate.hql.internal.ast.QueryTranslatorImpl.doCompile(QueryTranslatorImpl.java:192)
-	... 57 common frames omitted
-"2024-09-08 21:48:16,642 INFO  [main] com.project.CossinesHomesApplication:Starting CossinesHomesApplication using Java 17.0.9 on Seval with PID 18256 (C:\Users\seval\IdeaProjects\CossinesHomes\target\classes started by seval in C:\Users\seval\IdeaProjects\CossinesHomes)
-""2024-09-08 21:48:16,647 INFO  [main] com.project.CossinesHomesApplication:No active profile set, falling back to 1 default profile: "default"
-""2024-09-08 21:48:19,800 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-""2024-09-08 21:48:20,257 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Finished Spring Data repository scanning in 429 ms. Found 14 JPA repository interfaces.
-""2024-09-08 21:48:21,614 INFO  [main] org.springframework.boot.web.embedded.tomcat.TomcatWebServer:Tomcat initialized with port(s): 8080 (http)
-""2024-09-08 21:48:21,639 INFO  [main] org.apache.catalina.core.StandardService:Starting service [Tomcat]
-""2024-09-08 21:48:21,640 INFO  [main] org.apache.catalina.core.StandardEngine:Starting Servlet engine: [Apache Tomcat/9.0.68]
-""2024-09-08 21:48:21,910 INFO  [main] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]:Initializing Spring embedded WebApplicationContext
-""2024-09-08 21:48:21,911 INFO  [main] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext:Root WebApplicationContext: initialization completed in 5144 ms
-""2024-09-08 21:48:22,258 INFO  [main] org.hibernate.jpa.internal.util.LogHelper:HHH000204: Processing PersistenceUnitInfo [name: default]
-""2024-09-08 21:48:22,361 INFO  [main] org.hibernate.Version:HHH000412: Hibernate ORM core version 5.6.12.Final
-""2024-09-08 21:48:22,843 INFO  [main] org.hibernate.annotations.common.Version:HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
-""2024-09-08 21:48:23,396 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Starting...
-""2024-09-08 21:48:24,052 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Start completed.
-""2024-09-08 21:48:24,108 INFO  [main] org.hibernate.dialect.Dialect:HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL81Dialect
-""2024-09-08 21:48:27,109 INFO  [main] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator:HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-""2024-09-08 21:48:27,117 INFO  [main] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean:Initialized JPA EntityManagerFactory for persistence unit 'default'
-""2024-09-08 21:48:29,578 WARN  [main] org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration:spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-""2024-09-08 21:48:30,249 INFO  [main] org.springframework.security.web.DefaultSecurityFilterChain:Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@7a491a60, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@80b6098, org.springframework.security.web.context.SecurityContextPersistenceFilter@1693d505, org.springframework.security.web.header.HeaderWriterFilter@41dc34c8, org.springframework.web.filter.CorsFilter@5c30decf, org.springframework.security.web.authentication.logout.LogoutFilter@24ce5d4c, com.project.security.jwt.AuthTokenFilter@3adbd038, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@17b387ef, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@489b7559, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7827cdfc, org.springframework.security.web.session.SessionManagementFilter@7c3ae369, org.springframework.security.web.access.ExceptionTranslationFilter@391b03b, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@99f75e4]
-""2024-09-08 21:48:31,424 INFO  [main] org.springframework.boot.web.embedded.tomcat.TomcatWebServer:Tomcat started on port(s): 8080 (http) with context path ''
-""2024-09-08 21:48:31,451 INFO  [main] com.project.CossinesHomesApplication:Started CossinesHomesApplication in 15.695 seconds (JVM running for 16.377)
-""2024-09-08 21:48:46,266 INFO  [SpringApplicationShutdownHook] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean:Closing JPA EntityManagerFactory for persistence unit 'default'
-""2024-09-08 21:48:46,273 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Shutdown initiated...
-""2024-09-08 21:48:46,283 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Shutdown completed.
-"
+	... 86 common frames omitted

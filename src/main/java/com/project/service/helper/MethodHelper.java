@@ -1,7 +1,6 @@
 package com.project.service.helper;
 
 import com.project.entity.concretes.business.Advert;
-import com.project.entity.concretes.business.CategoryPropertyValue;
 import com.project.entity.concretes.business.Favorite;
 import com.project.entity.concretes.user.User;
 import com.project.entity.concretes.user.UserRole;
@@ -14,7 +13,6 @@ import com.project.payload.request.user.AuthenticatedUsersRequest;
 import com.project.payload.request.user.CustomerRequest;
 import com.project.repository.business.FavoriteRepository;
 import com.project.repository.user.UserRepository;
-import com.project.service.business.CategoryPropertyValueService;
 import com.project.service.user.UserRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
