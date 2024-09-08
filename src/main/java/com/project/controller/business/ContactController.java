@@ -33,6 +33,6 @@ public class ContactController {
             @RequestParam(value = "size", defaultValue = "20") int size,
             @RequestParam(value = "sort", defaultValue = "category_id") String sortField,
             @RequestParam(value = "type", defaultValue = "asc") String sortType) {
-        return contactService.getAllContactMessages(page,size,sortField,sortType);
+        return contactService.getAllContactMessages(query, status, page, size, sortField, sortType);
     }//J02
 }

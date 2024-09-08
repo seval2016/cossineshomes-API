@@ -40,13 +40,20 @@ public class ContactService {
 
     }
 
-    public Page<ContactResponse> getAllContactMessages(int page, int size, String sortField, String sortType) {
+    public Page<ContactResponse> getAllContactMessages(String query, int status, int page, int size, String sortField, String sortType) {
         // Sıralama yönünü belirlemek için sortType parametresini kullanıyoruz
         Sort.Direction direction = Sort.Direction.fromString(sortType);
 
         // Sayfa, boyut ve sıralama bilgileriyle pageable nesnesini oluşturuyoruz
-        Pageable pageable = PageRequest.of(page,size, Sort.by(direction,sortField));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
 
-        return contactRepository.findAll(pageable).map(contactMapper::contactToResponse);
+        // Hem query hem de status ile filtreleme yapıyoruz
+        if (query == null || query.isEmpty()) {
+            // Eğer query boşsa sadece status'a göre filtreleme yap
+            return contactRepository.findByStatus(status, pageable).map(contactMapper::contactToResponse);
+        }
+
+        // Query ve status'a göre filtreleme yap
+        return contactRepository.findByStatusAndMessageContaining(status, query, pageable).map(contactMapper::contactToResponse);
     }
 }
