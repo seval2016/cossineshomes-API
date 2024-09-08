@@ -3,6 +3,8 @@ package com.project.payload.messages;
 public class SuccessMessages {
 
 
+
+
     private SuccessMessages() {
     }
 
@@ -48,6 +50,15 @@ public class SuccessMessages {
     public static final String TOUR_REQUEST_DECLINE = "Tour Request is Declined Successfully";
     public static final String TOUR_REQUEST_CANCELLED = "Tour Request is Canceled Successfully";
     public static final String TOUR_REQUEST_DELETED="Tour Request is Deleted Successfully";
+
+    // Contact Messages
+    public static final String CONTACT_MESSAGE_CREATED = "Contact Message is Created Successfully";
+    public static final String CONTACT_MESSAGE_UPDATED = "Contact Message is Created Successfully";
+    public static final String CONTACT_MESSAGE_DELETED = "Contact Message is Created Successfully";
+    public static final String CONTACT_MESSAGE_CANCELLED = "Contact Message is Created Successfully";
+
+
+
 
 
 }

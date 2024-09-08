@@ -6,6 +6,7 @@ import com.project.payload.mappers.AdvertMapper;
 import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.business.*;
 
+import com.project.repository.business.*;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.MethodHelper;
 import com.project.service.helper.PageableHelper;
