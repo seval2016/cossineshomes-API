@@ -2,7 +2,6 @@ package com.project.payload.messages;
 
 public class SuccessMessages {
 
-
     private SuccessMessages() {
     }
 
@@ -14,7 +13,7 @@ public class SuccessMessages {
     public static final String USER_CREATED = "User is Saved Successfully";
     public static final String USER_FOUND = "User is Found Successfully";
     public static final String USER_DELETED = "User is Deleted Successfully";
-    public static final String USER_UPDATED = " User is Updated Successfully";  // bu satir ve alttaki satirin description kismini yer degistirdim, gozden gecirelim
+    public static final String USER_UPDATED = " User is Updated Successfully";
     public static final String USER_UPDATE_MESSAGE = "Your information has been updated successfully";
 
     // Customer Messages
@@ -28,7 +27,7 @@ public class SuccessMessages {
     public static final String MANAGER_DELETED = "Manager is Deleted Successfully";
 
     // Advert Messages
-    public static final String ADVERT_SAVED = "Advert is Created and Wait for Approve";  // ADVERT_CREATE de yazilabilir, gozden gecirelim , mesaj olarak da "created" yerine "saved" yazilabilir
+    public static final String ADVERT_SAVED = "Advert is Created and Wait for Approve";
     public static final String ADVERT_UPDATED = "Advert is Updated Successfully";
     public static final String ADVERT_DELETED = "Advert is Deleted Successfully";
     public static final String ADVERT_FOUND = "Advert is Found Successfully";
@@ -56,8 +55,9 @@ public class SuccessMessages {
     public static final String CONTACT_MESSAGE_CANCELLED = "Contact Message is Created Successfully";
 
 
-//Favorites
-public static final String ALL_FAVORITES_DELETED = "All Favorites Deleted Successfully";
-
+    //Favorites
+    public static final String ALL_FAVORITES_DELETED = "All Favorites Deleted Successfully";
+    public static final String ALL_FAVORITES_DELETED_BY_ID = "All Favorites Deleted Succesfully with id %s";
+    public static final String FAVORITE_DELETED_BY_ID = "Favorite Deleted Successfully with id %s";
 
 }

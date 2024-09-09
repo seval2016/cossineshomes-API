@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -46,9 +47,27 @@ public class FavoriteController {
     }//K03
 
     @DeleteMapping("/auth")
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER')")//http://localhost:8080/favorites/admin
     public ResponseEntity<String> deleteAllFavorites(HttpServletRequest request) {
         String resultMessage = favoriteService.deleteAllFavorites(request);
         return new ResponseEntity<>(resultMessage, HttpStatus.OK);
     }//K04
+
+    @DeleteMapping("/admin")//http://localhost:8080/favorites/admin
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> deleteAllFavoritesOfUser(@RequestParam("userId") long userId) {
+        try {
+            favoriteService.deleteAllFavoritesByUserId(userId);
+            return ResponseEntity.ok("All favorites for user with ID " + userId + " have been removed.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while deleting favorites for user with ID " + userId);
+        }
+    }//K05
+
+    @DeleteMapping("/{id}/admin")//http://localhost:8080/favorites/12/admin
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")//id numarasına sahip bir favori kaydı silmek için kullanılır.
+    public ResponseEntity<String> deleteFavoriteByAdmin(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(favoriteService.deleteFavoriteByAdmin(id));
+    }//K06
 }

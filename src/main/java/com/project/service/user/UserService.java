@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -218,4 +219,5 @@ public class UserService {
         user.setPasswordHash(passwordEncoder.encode(passwordUpdateRequest.getNewPassword()));
         userRepository.save(user);
     }
+
 }
