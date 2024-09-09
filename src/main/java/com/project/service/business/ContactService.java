@@ -1,7 +1,10 @@
 package com.project.service.business;
 
 
+import com.project.contactmessage.messages.Messages;
 import com.project.entity.concretes.business.Contact;
+import com.project.entity.enums.ContactStatus;
+import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.ContactMapper;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.ContactRequest;
@@ -36,8 +39,6 @@ public class ContactService {
                 .httpStatus(HttpStatus.CREATED)
                 .object(contactMapper.contactToResponse(createdMessage))
                 .build();
-
-
     }
 
     public Page<ContactResponse> getAllContactMessages(String query, int status, int page, int size, String sortField, String sortType) {
@@ -55,5 +56,36 @@ public class ContactService {
 
         // Query ve status'a göre filtreleme yap
         return contactRepository.findByStatusAndMessageContaining(status, query, pageable).map(contactMapper::contactToResponse);
+    }
+
+    public Contact findContactByIdAndUpdateStatus(Long id) {
+        //verilen id'nin var olup olmadığını kontrol eder
+        Contact contact = contactRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Contact not found with id: " + id));
+
+        //Eğer id var ise status durumunu 1 olarak günceller
+        contact.setStatus(ContactStatus.OPENED.getStatusValue());
+        return contactRepository.save(contact);
+    }
+
+    public Contact markContactMessageAsDeleted(Long id) {
+        // İlgili mesajı bul
+        Contact contact = contactRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Contact message not found with id: " + id));
+
+        // Mesajın status alanını 1 olarak güncelle (silindi olarak işaretle)
+        contact.setStatus(ContactStatus.OPENED.getStatusValue());  // Status is set to 1 (opened)
+        return contactRepository.save(contact); // Güncellenmiş mesajı veritabanına kaydet
+    }
+
+    public String deleteContactMessageById(Long id) {
+        getContactMessageById(id);
+        contactRepository.deleteById(id);
+        return Messages.CONTACT_MESSAGE_DELETED_SUCCESSFULLY;
+    }
+
+    public Contact getContactMessageById(Long id){
+        return contactRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(Messages.NOT_FOUND_MESSAGE));
     }
 }

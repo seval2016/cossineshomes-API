@@ -1,6 +1,7 @@
 package com.project.repository.business;
 
 import com.project.entity.concretes.business.Favorite;
+import com.project.entity.concretes.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -42,4 +43,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite,Long> {
     @Modifying
     @Query("DELETE FROM Favorite")
     void deleteAllFavoritesExceptBuiltIn();
+
+    List<Favorite> findByUser(User user);
 }

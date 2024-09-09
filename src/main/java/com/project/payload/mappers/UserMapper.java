@@ -1,9 +1,12 @@
 package com.project.payload.mappers;
 
 import com.project.entity.concretes.user.User;
+import com.project.entity.concretes.user.UserRole;
+import com.project.entity.enums.RoleType;
 import com.project.payload.request.abstracts.BaseUserRequest;
 import com.project.payload.request.user.UserRequest;
 import com.project.payload.request.user.UserRequestWithoutPassword;
+import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.user.CustomerResponse;
 import com.project.payload.response.UserResponse;
 
@@ -73,5 +76,25 @@ public class UserMapper {
         user.setLastName(userRequestWithoutPassword.getLastName());
         user.setPhone(userRequestWithoutPassword.getPhone());
         user.setEmail(userRequestWithoutPassword.getEmail());
+    }
+
+    public User mapUserResponseToUser(BaseUserResponse authenticatedUser) {
+        return User.builder()
+                .id(authenticatedUser.getUserId())
+                .username(authenticatedUser.getUsername())
+                .firstName(authenticatedUser.getFirstname())
+                .lastName(authenticatedUser.getLastname())
+                .email(authenticatedUser.getEmail())
+                .phone(authenticatedUser.getPhone())
+                .userRole(authenticatedUser.getUserRole()
+                        .stream()
+                        .map(roleName -> {
+                            UserRole userRole = new UserRole();
+                            userRole.setRoleName(roleName);
+                            userRole.setRole(RoleType.valueOf(roleName.toUpperCase()));
+                            return userRole;
+                        })
+                        .collect(Collectors.toList()))
+                .build();
     }
 }

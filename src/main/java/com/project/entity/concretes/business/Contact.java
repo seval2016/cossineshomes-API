@@ -50,5 +50,4 @@ public class Contact {
         createAt = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
     }
 
-
 }
