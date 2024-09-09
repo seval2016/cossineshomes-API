@@ -2,6 +2,7 @@ package com.project.repository.business;
 
 import com.project.entity.concretes.business.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -21,7 +22,8 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     @Query("SELECT i FROM Image i WHERE i.advert.id = :advertId AND i.featured = true")
     Optional<Image> findFeaturedImageByAdvertId(@Param("advertId") Long advertId);
 
-    @Query("DELETE FROM Image")
+    @Modifying
+    @Query("DELETE FROM Image i WHERE i.featured = false")
     void deleteAllImagesExceptBuiltIn();
 }
 

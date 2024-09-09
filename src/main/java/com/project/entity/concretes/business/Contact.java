@@ -1,23 +1,20 @@
 package com.project.entity.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.project.entity.enums.AdvertStatus;
 import com.project.entity.enums.ContactStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
+import lombok.*;
+
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "contacts")
-@Data
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
