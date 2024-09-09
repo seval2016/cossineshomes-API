@@ -3,8 +3,6 @@ package com.project.payload.messages;
 public class SuccessMessages {
 
 
-
-
     private SuccessMessages() {
     }
 
@@ -58,7 +56,8 @@ public class SuccessMessages {
     public static final String CONTACT_MESSAGE_CANCELLED = "Contact Message is Created Successfully";
 
 
-
+//Favorites
+public static final String ALL_FAVORITES_DELETED = "All Favorites Deleted Successfully";
 
 
 }

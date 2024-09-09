@@ -32,5 +32,8 @@ public class AdvertResponse {
     private boolean isActive;
     private String cityName;
 
-
+    public AdvertResponse(Long id, String title) {
+        this.id = id;
+        this.title = title;
+    }
 }

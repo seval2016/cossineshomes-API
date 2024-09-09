@@ -1,5 +1,6 @@
 package com.project.repository.business;
 
+import com.project.entity.concretes.business.Advert;
 import com.project.entity.concretes.business.Favorite;
 import com.project.entity.concretes.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,8 +29,8 @@ public interface FavoriteRepository extends JpaRepository<Favorite,Long> {
     @Query("SELECT COUNT(f) > 0 FROM Favorite f WHERE f.user.id = :userId AND f.advert.id = :advertId")
     boolean existsByUserIdAndAdvertId(@Param("userId") Long userId, @Param("advertId") Long advertId);
 
-    @Query("SELECT f FROM Favorite f WHERE f.user.id = :user_id")
-    List<Favorite> findFavoritesByUserId(@Param("user_id") Long userId);
+    @Query("SELECT f.advert FROM Favorite f WHERE f.user.id = :userId")
+    List<Advert> findFavoritesByUserId(@Param("userId") Long userId);
 
     @Modifying
     @Query("DELETE FROM Favorite f WHERE f.user.id = :user_id")
@@ -45,4 +46,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite,Long> {
     void deleteAllFavoritesExceptBuiltIn();
 
     List<Favorite> findByUser(User user);
+
+    Favorite findByUserAndAdvert(User user, Advert advert);
 }
