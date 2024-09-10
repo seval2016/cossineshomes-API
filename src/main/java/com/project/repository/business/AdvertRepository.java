@@ -52,19 +52,21 @@ public interface AdvertRepository extends JpaRepository<Advert, Long> {
     void deleteAllAdvertsExceptBuiltIn();
 
 
-    /*
-
-    @Query("SELECT c.title AS categoryName, COUNT(a) AS amount " +
-            "FROM Category c " +
-            "LEFT JOIN Advert a ON a.category.id = c.id " +
-            "GROUP BY c.id, c.title")
-    List<CategoryAdvertResponse> findAdvertsGroupedByCategory();
-
-    @Query("SELECT a FROM Advert a WHERE a.id = :id AND a.user.id = :userId")
-    Optional<Advert> findByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
-
-    DoubleStream findAdvertsForUser(Long id, Pageable pageable);
-
-     */
+    @Query("SELECT a FROM Advert a WHERE " +
+            "(LOWER(a.title) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(a.description) LIKE LOWER(CONCAT('%', :q, '%'))) " +
+            "AND (:categoryId IS NULL OR a.category.id = :categoryId) " +
+            "AND (:advertTypeId IS NULL OR a.advertType.id = :advertTypeId) " +
+            "AND (:priceStart IS NULL OR a.price >= :priceStart) " +
+            "AND (:priceEnd IS NULL OR a.price <= :priceEnd) " +
+            "AND (:status IS NULL OR a.status = :status)")
+    Page<Advert> findAdvertsByCriteria(
+            @Param("q") String q,
+            @Param("categoryId") Long categoryId,
+            @Param("advertTypeId") Long advertTypeId,
+            @Param("priceStart") Double priceStart,
+            @Param("priceEnd") Double priceEnd,
+            @Param("status") Integer status,
+            Pageable pageable
+    );
 
 }

@@ -100,6 +100,24 @@ public class AdvertController {
         return ResponseEntity.ok(advertResponses);
     }//A05
 
+        @GetMapping("/adverts/admin")
+        @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
+        public ResponseEntity<Page<AdvertResponse>> getAdverts(
+                @RequestParam(value = "q", required = false) String q,
+                @RequestParam(value = "category_id", required = false) Long categoryId,
+                @RequestParam(value = "advert_type_id", required = false) Long advertTypeId,
+                @RequestParam(value = "price_start", required = false) Double priceStart,
+                @RequestParam(value = "price_end", required = false) Double priceEnd,
+                @RequestParam(value = "status", required = false) Integer status,
+                @RequestParam(value = "page", defaultValue = "0") int page,
+                @RequestParam(value = "size", defaultValue = "20") int size,
+                @RequestParam(value = "sort", defaultValue = "category_id") String sort,
+                @RequestParam(value = "type", defaultValue = "asc") String type) {
+
+            Page<AdvertResponse> adverts = advertService.getFilteredAdverts(q, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type);
+            return ResponseEntity.ok(adverts);
+        }//A06
+
     /*@PostMapping("/save") // Yeni bir ilan oluşturur.
     @PreAuthorize("hasRole('CUSTOMER')") // http://localhost:8080/adverts/save
     public ResponseEntity<AdvertResponse> createAdvert(@RequestBody AdvertRequest advertRequest, HttpServletRequest request) {
