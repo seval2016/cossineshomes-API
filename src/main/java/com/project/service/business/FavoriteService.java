@@ -6,24 +6,20 @@ import com.project.entity.concretes.user.User;
 import com.project.payload.mappers.AdvertMapper;
 import com.project.payload.mappers.UserMapper;
 import com.project.payload.messages.SuccessMessages;
-import com.project.payload.response.UserResponse;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.business.AdvertResponse;
 import com.project.repository.business.AdvertRepository;
 import com.project.repository.business.FavoriteRepository;
-import com.project.repository.business.ImageRepository;
 import com.project.repository.user.UserRepository;
 import com.project.service.AuthenticationService;
 import com.project.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

@@ -25,4 +25,8 @@ public class CountryService {
             return dto;
         }).collect(Collectors.toList());
     }
+
+    public Country getCountryById(Long countryId) {
+        return null;
+    }
 }

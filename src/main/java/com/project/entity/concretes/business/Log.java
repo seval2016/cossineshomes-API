@@ -21,7 +21,7 @@ public class Log {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(nullable = false, length = 255)
     private String log;
@@ -34,7 +34,7 @@ public class Log {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt;
 }

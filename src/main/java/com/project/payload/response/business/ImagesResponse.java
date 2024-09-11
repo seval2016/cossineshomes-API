@@ -6,7 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class ImageResponse {
+public class ImagesResponse {
 
     private Long id;
     private String name;

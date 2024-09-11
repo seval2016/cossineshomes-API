@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -64,9 +63,9 @@ public class AdvertResponse {
 
     private Map<String,String > properties;
 
-    private List<ImageResponse> images;
+    private List<ImagesResponse> images;
 
-    private ImageResponse featuredImage;
+    private ImagesResponse featuredImage;
 
     private List<Favorite> favoritesList;
 

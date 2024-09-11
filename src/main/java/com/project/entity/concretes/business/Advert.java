@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.entity.enums.AdvertStatus;
 import com.project.entity.concretes.user.User;
-import com.project.payload.response.business.ImageResponse;
 import com.project.service.helper.SlugUtils;
 import lombok.*;
 
@@ -15,7 +14,6 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -42,19 +40,19 @@ public class Advert {
     private String slug;
 
     @Column(nullable = false)
-    private Double price= 0.0;
+    private Double price = 0.0;
 
     @Column(nullable = false)
     private int status = AdvertStatus.PENDING.getValue();
 
     @Column(nullable = false)
-    private boolean builtIn=false;
+    private boolean builtIn = false;
 
     @Column(nullable = false)
-    private boolean isActive=true;
+    private boolean isActive = true;
 
     @Column(nullable = false)
-    private int viewCount=0;
+    private int viewCount = 0;
 
     @Column(nullable = false)
     private String location;
@@ -91,26 +89,26 @@ public class Advert {
     private Category category;
 
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Image> images;
+    private List<Images> images;
 
-    @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<TourRequest> tourRequestList;
 
-    @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL , fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Favorite> favoritesList;
 
-    @OneToMany(mappedBy = "adverts",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<CategoryPropertyValue> categoryPropertyValuesList;
 
-    @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Image> imagesList = new ArrayList<>();
+    private List<Images> imagesList = new ArrayList<>();
 
-    //,orphanRemoval = true
-    @OneToMany(mappedBy = "advertId",cascade = CascadeType.ALL)
+    // Corrected mapping
+    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Log> logList;
 
@@ -128,10 +126,8 @@ public class Advert {
     @PostPersist
     @PostUpdate
     public void generateSlug() {
-        if (this.slug == null) {
+        if (this.slug == null || this.slug.isEmpty()) {
             this.slug = SlugUtils.toSlug(this.title) + "-" + this.id;
         }
     }
-
 }
-

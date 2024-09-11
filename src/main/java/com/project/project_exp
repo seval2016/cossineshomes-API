@@ -256,7 +256,7 @@ Response
 [
 { "id": 2,
 “title": "…",
-“image”: “…” …
+“images”: “…” …
 }
 ]
 
@@ -342,7 +342,7 @@ Response
 [
 { "id": 2,
 “title": "…",
-“image”: “…” …
+“images”: “…” …
 }
 ]
 
@@ -377,7 +377,7 @@ Response
 [
 { "id": 2,
 “title": "…",
-“image”: “…” …
+“images”: “…” …
 }
 ]
 
@@ -413,7 +413,7 @@ Response
 [
 { "id": 2,
 “title": "…",
-“image”: “…” …
+“images”: “…” …
 }
 ]
 
@@ -644,14 +644,14 @@ I01 -> http://localhost:8080/images/5
 @GetMapping
 @PreAuthorize-> ANONYMOUS
 
-It will get an image of an advert
+It will get an images of an advert
 
 Payload
 (path)
 image_id: not null
 
 Response
-( image)
+( images)
 
 Requirements
 
@@ -664,7 +664,7 @@ I02 -> http://localhost:8080/images/5
 @PostMapping
 @PreAuthorize-> CUSTOMER, ADMIN, MANAGER
 
-It will upload image(s) of a product
+It will upload images(s) of a product
 
 Payload
 (path & body)
@@ -705,17 +705,17 @@ I04 -> http://localhost:8080/images/5
 @PutMapping
 @PreAuthorize-> CUSTOMER, ADMIN, MANAGER
 
-It will set the featured field of an image
+It will set the featured field of an images
 
 Payload
 (path)
 Image_ids: not null
 
 Response
-( image)
+( images)
 
 Requirements
-An advert can have only one featured image.
+An advert can have only one featured images.
 
 
 ------------------------------------  CATEGORIES  ------------------------------------

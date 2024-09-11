@@ -27,4 +27,8 @@ public class CityService {
             return dto;
         }).collect(Collectors.toList());
     }
+
+    public City getCityById(Long cityId) {
+        return null;
+    }
 }

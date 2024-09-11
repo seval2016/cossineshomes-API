@@ -18,19 +18,20 @@ public class CategoryPropertyValue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
     private String value;
 
+    // CategoryPropertyKey ile ManyToOne ilişkiyi kuruyoruz
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "category_property_key_id", nullable = false)
-    private CategoryPropertyKey categoryPropertyKeys;
+    private CategoryPropertyKey categoryPropertyKey;
 
+    // Advert ile ManyToOne ilişkiyi kuruyoruz
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
-    private Advert adverts;
+    private Advert advert;
 
 
 }

@@ -18,10 +18,10 @@ public class AdvertMapper {
 
     private final TourRequestMapper tourRequestMapper;
     private final MethodHelper methodHelper;
-    private final ImageMapper imageMapper;
+    private final ImagesMapper imagesMapper;
 
     // Yeni bir Advert nesnesi oluşturur (DTO -> POJO)
-    public Advert mapAdvertRequestToAdvert(AdvertRequest advertRequest, AdvertType advertType, Country country, City city, District district, Category category, User user, List<Image> images) {
+    public Advert mapAdvertRequestToAdvert(AdvertRequest advertRequest, AdvertType advertType, Country country, City city, District district, Category category, User user, List<Images> images) {
          return Advert.builder()
                 .title(advertRequest.getTitle())
                 .description(advertRequest.getDescription())
@@ -61,9 +61,9 @@ public class AdvertMapper {
                 .location(advert.getLocation())
                 .categoryId(advert.getCategory().getId())
                 .categoryPropertyKeys(advert.getCategory().getCategoryPropertyKeys())
-                .featuredImage(imageMapper.mapToImageResponse(getFeaturedImage(advert.getImagesList())))
+                .featuredImage(imagesMapper.mapToImageResponse(getFeaturedImage(advert.getImagesList())))
                 .images(advert.getImagesList().stream()
-                        .map(imageMapper::mapToImageResponse)
+                        .map(imagesMapper::mapToImageResponse)
                         .collect(Collectors.toList()))
                 .favoritesCount(advert.getFavoritesList().size())
                 .tourRequestCount(advert.getTourRequestList().size())
@@ -71,9 +71,9 @@ public class AdvertMapper {
                 .build();
     }
 
-    private Image getFeaturedImage(List<Image> images) {
+    private Images getFeaturedImage(List<Images> images) {
         return images.stream()
-                .filter(Image::isFeatured)
+                .filter(Images::isFeatured)
                 .findFirst()
                 .orElse(images.get(0));
     }
@@ -95,13 +95,33 @@ public class AdvertMapper {
                 .advertTypeId(advert.getAdvertType().getId())
                 .categoryId(advert.getCategory().getId())
                 .categoryPropertyKeys(advert.getCategory().getCategoryPropertyKeys())
-                .featuredImage(imageMapper.mapToImageResponse(getFeaturedImage(advert.getImagesList())))
+                .featuredImage(imagesMapper.mapToImageResponse(getFeaturedImage(advert.getImagesList())))
                 .images(advert.getImagesList().stream()
-                        .map(imageMapper::mapToImageResponse)
+                        .map(imagesMapper::mapToImageResponse)
                         .collect(Collectors.toList()))
                 .favoritesCount(advert.getFavoritesList().size())
                 .tourRequestCount(advert.getTourRequestList().size())
                 .build();
 
     }
+
+    public Advert mapAdvertRequestToUpdateAdvert(Long id, AdvertRequest advertRequest, Category category, City city, Country country, AdvertType advertType, District district, User user) {
+        return Advert.builder()
+                .id(id)
+                .user(user)
+                .country(country)
+                .builtIn(false)
+                .viewCount(0)
+                .city(city)
+                .advertType(advertType)
+                .price(advertRequest.getPrice())
+                .title(advertRequest.getTitle())
+                .description(advertRequest.getDescription())
+                .district(district)
+                .status(AdvertStatus.PENDING.getValue())
+                .category(category)
+                .location(advertRequest.getLocation())
+                .build();
+    }
+
 }

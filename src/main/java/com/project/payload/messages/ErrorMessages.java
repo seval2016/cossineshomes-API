@@ -3,6 +3,7 @@ package com.project.payload.messages;
 public class ErrorMessages {
 
 
+    public static final String BEGIN_TIME_CAN_NOT_BE_AFTER_END_TIME = "Start time can not be later than end time";
 
     private ErrorMessages() {
     }
@@ -106,14 +107,13 @@ public class ErrorMessages {
     public static final String TOUR_REQUEST_UPDATE_ERROR = "Error : Tour Request is not updated. Please check your input.";
     public static final String TOUR_REQUEST_DELETE_ERROR = "Error : Tour Request is not deleted. Please ensure it exists.";
 
+    public static final String CONFLICT_TOUR_REQUEST_TIME = "Error: There is an appointment for the tour you requested";
 
     // Image Errors
     public static final String IMAGE_NOT_FOUND = "Error : The requested image does not exist.";
     public static final String IMAGE_UPLOAD_ERROR = "Error uploading the image. Please try again.";
     public static final String IMAGE_DELETE_ERROR = "Error deleting the image. Please ensure it exists.";
-    public static final String IMAGE_FORMAT_ERROR = "Error : Invalid image format. Please upload a valid image file.";
-
-
+    public static final String IMAGE_FORMAT_FAILED= "Error : The image format is invalid or not supported";
     // AdvertType Errors
     public static final String ADVERT_TYPE_NOT_FOUND = "Error : Advert Type does not exist.";
     public static final String ADVERT_TYPE_CREATION_ERROR = "Error : Advert Type is not created. Please try again.";

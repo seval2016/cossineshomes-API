@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class ResetService {
 
     private final AdvertRepository advertRepository;
-    private final ImageRepository imageRepository;
+    private final ImagesRepository imagesRepository;
     private final CategoryRepository categoryRepository;
     private final AdvertTypeRepository advertTypeRepository;
     private final CategoryPropertyKeyRepository categoryPropertyKeyRepository;
@@ -29,8 +29,6 @@ public class ResetService {
         // Advert tablosundaki verileri sil (builtIn=true olanlar hariç)
         advertRepository.deleteAllAdvertsExceptBuiltIn();
 
-        // Image tablosundaki verileri sil (builtIn=true olanlar hariç)
-        imageRepository.deleteAllImagesExceptBuiltIn();
 
         // Category tablosundaki verileri sil (builtIn=true olanlar hariç)
         categoryRepository.deleteAllCategoriesExceptBuiltIn();

@@ -25,4 +25,8 @@ public class DistrictService {
             return dto;
         }).collect(Collectors.toList());
     }
+
+    public District getDistrictByIdForAdvert(Long districtId) {
+        return null;
+    }
 }

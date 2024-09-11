@@ -42,7 +42,8 @@ public class CategoryPropertyKey {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @OneToMany(mappedBy = "categoryPropertyKeys", cascade = CascadeType.ALL)
+    // mappedBy değerini doğru alan ile güncelledim
+    @OneToMany(mappedBy = "categoryPropertyKey", cascade = CascadeType.ALL)
     private List<CategoryPropertyValue> categoryPropertyValues = new ArrayList<>();
 }
 

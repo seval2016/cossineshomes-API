@@ -1,53 +1,58 @@
 package com.project.payload.mappers;
 
 import com.project.entity.concretes.business.Advert;
+import com.project.entity.concretes.business.Images;
 import com.project.entity.concretes.business.TourRequest;
 import com.project.entity.concretes.user.User;
 import com.project.entity.enums.TourRequestStatus;
 import com.project.payload.request.business.TourRequestRequest;
-import com.project.payload.response.UserResponse;
-import com.project.payload.response.business.AdvertResponse;
-import com.project.payload.response.business.AdvertResponseForTourRequest;
 import com.project.payload.response.business.TourRequestResponse;
+import com.project.service.helper.MethodHelper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class TourRequestMapper {
 
-    //POJO -> DTO
-    public TourRequestResponse mapTourRequestToTourRequestResponse(TourRequest tourRequest) {
-        if (tourRequest == null) {
-            return null;
-        }
+    private final ImagesMapper imagesMapper;
 
-        Advert advert = tourRequest.getAdvert();
-
-        return TourRequestResponse.builder()
-                .id(tourRequest.getId())
-                .tourDate(tourRequest.getTourDate())
-                .tourTime(tourRequest.getTourTime())
-                .status(tourRequest.getStatus())
-                .createAt(tourRequest.getCreateAt().atStartOfDay())
-                .updateAt(advert.getUpdateAt())
-                .ownerUserId(tourRequest.getOwnerUser())
-                .guestUserId(tourRequest.getGuestUser())
-                .advertId(advert)
-                .advertTitle(advert.getTitle())
-                .featuredImage(advert.getFeaturedImage())
-                .advertDistrict(advert.getDistrict())
-                .advertCity(advert.getCity())
-                .advertCountry(advert.getCountry())
-                .build();
+    private Images getFeaturedImage(List<Images> images) {
+        return images.stream()
+                .filter(Images::isFeatured)
+                .findFirst()
+                .orElse(images.get(0));
     }
 
+    //POJO -> DTO
+    public TourRequestResponse mapTourRequestToTourRequestResponse(TourRequest tourRequest) {
+        Advert advert = tourRequest.getAdvert();
+
+        // İlanın resim listesinden öne çıkan resmi alıyoruz, null kontrolü eklenmiştir
+        Images featuredImage = advert != null && advert.getImagesList() != null
+                ? getFeaturedImage(advert.getImagesList())
+                : null;
+
+        return TourRequestResponse.builder()
+                .advertId(tourRequest.getAdvert())
+                .advertTitle(tourRequest.getAdvert().getTitle())
+                .advertCountry(tourRequest.getAdvert().getCountry())
+                .advertCity(tourRequest.getAdvert().getCity())
+                .advertDistrict(tourRequest.getAdvert().getDistrict())
+                .featuredImage(imagesMapper.mapToImageResponse(getFeaturedImage(tourRequest.getAdvert().getImagesList())))
+                .tourDate(tourRequest.getTourDate())
+                .tourTime(tourRequest.getTourTime())
+                .guestUserId(tourRequest.getGuestUser())
+                .ownerUserId(tourRequest.getOwnerUser())
+                .status(tourRequest.getStatus())
+                .id(tourRequest.getId())
+                .createAt(tourRequest.getCreateAt())
+                .updateAt(tourRequest.getUpdateAt())
+                .build();
+    }
 
     public TourRequest mapTourRequestRequestToTourRequest(TourRequestRequest request, Advert advert, User ownerUser, User guestUser){
         return TourRequest.builder()
@@ -60,6 +65,4 @@ public class TourRequestMapper {
                 .createAt(LocalDate.now())
                 .build();
     }
-
-
 }

@@ -1,29 +1,25 @@
 package com.project.controller.business;
 
-import com.project.entity.concretes.business.Advert;
 import com.project.payload.mappers.AdvertMapper;
 import com.project.payload.request.business.AdvertRequest;
-import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.business.AdvertResponse;
 import com.project.payload.response.business.CategoryAdvertResponse;
 import com.project.payload.response.business.CityAdvertResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.AdvertRepository;
 import com.project.service.business.AdvertService;
+import com.project.service.helper.MethodHelper;
 import com.project.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -37,6 +33,7 @@ public class AdvertController {
     private final UserService userService;
     private final AdvertRepository advertRepository;
     private final AdvertMapper advertMapper;
+    private final MethodHelper methodHelper;
 
     //Belirli filtreleme kriterlerine göre ilanları getirir.
     @GetMapping //http://localhost:8080/adverts?q=beyoğlu&category_id=12&advert_type_id=3&price_start=500&price_end=1500 location=34 & status=1;page=1&size=10&sort=date&type=asc
@@ -59,7 +56,7 @@ public class AdvertController {
     @GetMapping("/cities")
     @PreAuthorize("permitAll()") // http://localhost:8080/adverts/cities
     public ResponseEntity<List<CityAdvertResponse>> getAdvertsGroupedByCities() {
-        List<CityAdvertResponse> cityAdverts = advertService.getAdvertsGroupedByCities();
+        List<CityAdvertResponse> cityAdverts = methodHelper.getAdvertsGroupedByCities();
         return ResponseEntity.ok(cityAdverts);
     }//A02
 
@@ -124,13 +121,13 @@ public class AdvertController {
         return ResponseEntity.ok(advertResponse);
     }//A08
 
-    @GetMapping("/{id}/auth")// http://localhost:8080/2/auth
+    @GetMapping("/{id}/admin")// http://localhost:8080/2/auth
     @PreAuthorize("hasAnyAuthority('CUSTOMER')")
     public ResponseEntity<AdvertResponse> getAdvertById(@PathVariable Long id, HttpServletRequest request) {
 
         return advertService.getAdvertById(id, request);
 
-    }//A11
+    }//A09
 
    @PostMapping("/save") // Yeni bir ilan oluşturur.
     @PreAuthorize("hasRole('CUSTOMER')") // http://localhost:8080/adverts/save
@@ -142,19 +139,18 @@ public class AdvertController {
      // Yeni endpoint: authenticated user's advert update
     @PostMapping("/auth/{id}") // http://localhost:8080/adverts/auth/23
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseMessage<AdvertResponse> updateAuthenticatedAdvert(@PathVariable Long id, @RequestBody AdvertRequest advertRequest,
-                                                                     HttpServletRequest request) {
-
-        return advertService.updateAuthenticatedAdvert(id, advertRequest, request);
-    } //A11
+    public ResponseMessage<AdvertResponse> updateUsersAdvertById(@RequestParam @Valid AdvertRequest advertRequest,
+                                                                 @RequestParam MultipartFile[] files,
+                                                                 HttpServletRequest httpServletRequest,@PathVariable Long id) {
+        return advertService.updateAuthenticatedAdvert(advertRequest, files, httpServletRequest, id);
+    }//A11
 
     @PutMapping("/admin/{id}") // İlan güncelleme işlemi
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')") // http://localhost:8080/adverts/admin/23
     public ResponseMessage<AdvertResponse> updateAdvertById(@RequestBody @Valid AdvertRequest advertRequest,
-                                                            @RequestPart("files") File[] files,
-                                                            @PathVariable Long id,
-                                                            HttpServletRequest httpServletRequest) {
-        return advertService.updateAdvert(advertRequest,id,httpServletRequest,files);
+                                                            @RequestPart("files") MultipartFile[] files,
+                                                            HttpServletRequest httpServletRequest,@PathVariable Long id) {
+        return advertService.updateAdvert(advertRequest,files,httpServletRequest,id);
     } //A12
 
     @DeleteMapping("/admin/{id}")  // http://localhost:8080/adverts/admin/5

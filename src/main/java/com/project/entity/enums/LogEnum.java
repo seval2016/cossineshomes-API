@@ -1,6 +1,6 @@
 package com.project.entity.enums;
 
-public enum LogDesc{
+public enum LogEnum {
 
     CREATED("Advert is created and wait for approve"),
     UPDATED("Advert is updated"),
@@ -13,7 +13,7 @@ public enum LogDesc{
 
     private final String description;
 
-    LogDesc(String description) {
+    LogEnum(String description) {
         this.description = description;
     }
 
@@ -21,8 +21,8 @@ public enum LogDesc{
         return description;
     }
 
-    public static LogDesc fromDescription(String description) {
-        for (LogDesc logDescription : LogDesc.values()) {
+    public static LogEnum fromDescription(String description) {
+        for (LogEnum logDescription : LogEnum.values()) {
             if (logDescription.getDescription().equals(description)) {
                 return logDescription;
             }

@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class Image {
+public class Images {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class Image {
     private String type;
 
     @Column(nullable = false)
-    private boolean featured=false;
+    private boolean featured;
 
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)

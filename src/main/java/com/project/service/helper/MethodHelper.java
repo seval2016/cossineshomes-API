@@ -1,26 +1,34 @@
 package com.project.service.helper;
 
-import com.project.entity.concretes.business.Advert;
-import com.project.entity.concretes.business.Favorite;
+import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.user.User;
 import com.project.entity.concretes.user.UserRole;
 import com.project.entity.enums.AdvertStatus;
 import com.project.entity.enums.RoleType;
 import com.project.exception.BadRequestException;
 import com.project.exception.ConflictException;
+
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
+import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.request.user.AuthenticatedUsersRequest;
 import com.project.payload.request.user.CustomerRequest;
+import com.project.payload.response.business.CityAdvertResponse;
+import com.project.repository.business.AdvertRepository;
 import com.project.repository.business.FavoriteRepository;
 import com.project.repository.user.UserRepository;
+import com.project.service.business.*;
 import com.project.service.user.UserRoleService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,6 +38,12 @@ public class MethodHelper {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRoleService userRoleService;
+    private final AdvertRepository advertRepository;
+    private final CategoryService categoryService;
+    private final CityService cityService;
+    private final CountryService countryService;
+    private final AdvertTypesService advertTypesService;
+    private final DistrictService districtService;
 
     //!!! isUserExist
     public User isUserExist(Long userId){
@@ -240,5 +254,45 @@ public class MethodHelper {
         return caseNumber;
     }
 
+    public Advert isAdvertExistById(Long id){
+        return advertRepository.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_ADVERT_WITH_ID_MESSAGE,id)));
+    }
+
+    public List<Images> getImagesForAdvert(MultipartFile[] files, List<Images> currentImages) {
+        // images işlem lojiklerini buraya yazın
+        List<Images> imageList = new ArrayList<>();
+        for (MultipartFile file : files) {
+            Images image = new Images();
+            // image.setData(file.getBytes()); // Dosya verisini ayarla
+            imageList.add(image);
+        }
+        return imageList;
+    }
+
+    public List<CityAdvertResponse> getAdvertsGroupedByCities() {
+        return advertRepository.findAdvertsGroupedByCities();
+    }
+
+    public Map<String, Object> getAdvertDetails(AdvertRequest advertRequest, HttpServletRequest httpServletRequest, Map<String, Object> detailsMap) {
+        if (detailsMap == null) {
+            detailsMap = new HashMap<>();
+        }
+        Category category = categoryService.getCategoryById(advertRequest.getCategoryId());
+        City city = cityService.getCityById(advertRequest.getCityId());
+        User user = getUserByHttpRequest(httpServletRequest);
+        Country country = countryService.getCountryById(advertRequest.getCountryId());
+        AdvertType advertType = advertTypesService.getAdvertTypeByIdForAdvert(advertRequest.getAdvertTypeId());
+        District district = districtService.getDistrictByIdForAdvert(advertRequest.getDistrictId());
+
+        detailsMap.put("category", category);
+        detailsMap.put("city", city);
+        detailsMap.put("user", user);
+        detailsMap.put("country", country);
+        detailsMap.put("advertType", advertType);
+        detailsMap.put("district", district);
+
+        return detailsMap;
+    }
 
 }

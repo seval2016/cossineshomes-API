@@ -1,7 +1,6 @@
 package com.project.payload.request.business;
 
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -12,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class ImageRequest {
+public class ImagesRequest {
 
     @NotNull
     private Long advertId;
