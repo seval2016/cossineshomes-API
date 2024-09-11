@@ -1,6 +1,5 @@
 package com.project.entity.concretes.business;
 
-import ch.qos.logback.core.joran.spi.HostClassAndPropertyDouble;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.beans.PropertyChangeEvent;
 
 @Entity
 @Table(name = "category_property_values")
@@ -28,11 +26,11 @@ public class CategoryPropertyValue {
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "category_property_key_id", nullable = false)
-    private CategoryPropertyKey categoryPropertyKey;
+    private CategoryPropertyKey categoryPropertyKeys;
 
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
-    private Advert advert;
+    private Advert adverts;
 
 
 }

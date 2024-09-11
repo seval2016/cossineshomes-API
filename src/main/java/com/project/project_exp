@@ -453,7 +453,6 @@ Requirements
 -------------------------------
 
 /adverts/:id/auth
-
 A08 -> http://localhost:8080/adverts/23/auth
 
 @GetMapping

@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.DoubleStream;
 
 @Repository
 public interface AdvertRepository extends JpaRepository<Advert, Long> {
@@ -69,4 +71,10 @@ public interface AdvertRepository extends JpaRepository<Advert, Long> {
             Pageable pageable
     );
 
+    Optional<Advert> findBySlug(String slug);
+
+    Optional<Advert> findByIdAndUserId(Long id, Long id1);
+
+    @Query("SELECT a FROM Advert a WHERE a.user.id= ?1 ")
+    Page<Advert> findAdvertsForUser(Long id, Pageable pageable);
 }

@@ -34,10 +34,4 @@ public class Image {
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
-
-    // Yeni eklenen getUrl metodu
-    public String getUrl() {
-        return "/images/" + this.id;
-    }
-
 }

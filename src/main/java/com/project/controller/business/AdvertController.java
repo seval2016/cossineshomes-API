@@ -2,10 +2,12 @@ package com.project.controller.business;
 
 import com.project.entity.concretes.business.Advert;
 import com.project.payload.mappers.AdvertMapper;
+import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.business.AdvertResponse;
 import com.project.payload.response.business.CategoryAdvertResponse;
 import com.project.payload.response.business.CityAdvertResponse;
+import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.AdvertRepository;
 import com.project.service.business.AdvertService;
 import com.project.service.user.UserService;
@@ -14,11 +16,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -77,27 +82,14 @@ public class AdvertController {
 
     @GetMapping("/auth")
     @PreAuthorize("hasAnyAuthority('CUSTOMER')")
-    public ResponseEntity<Page<AdvertResponse>> getAuthenticatedUserAdverts(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(defaultValue = "category_id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortType,
-            HttpServletRequest request) {
+    public Page<AdvertResponse> getAllAdvertForAuthUserByPage(
+            HttpServletRequest request,
+            @RequestParam(value = "page",required = false,defaultValue = "0") int page,
+            @RequestParam(value = "size",required = false, defaultValue = "20") int size,
+            @RequestParam(value = "sort",required = false,defaultValue = "category.id") String sort,
+            @RequestParam(value = "type",required = false,defaultValue = "asc") String type){
 
-        // Get the authenticated user from the request
-        BaseUserResponse currentUser = userService.getAuthenticatedUser(request);
-
-        // Set sorting and pagination
-        Sort sort = Sort.by(Sort.Direction.fromString(sortType), sortField);
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        // Fetch adverts for the authenticated user
-        Page<Advert> adverts = advertRepository.findByUser(currentUser, pageable);
-
-        // Map the adverts to AdvertResponse
-        Page<AdvertResponse> advertResponses = adverts.map(advertMapper::mapAdvertToAdvertResponse);
-
-        return ResponseEntity.ok(advertResponses);
+        return advertService.getAllAdvertForAuthUser(request,page,size,sort,type);
     }//A05
 
         @GetMapping("/adverts/admin")
@@ -118,26 +110,48 @@ public class AdvertController {
             return ResponseEntity.ok(adverts);
         }//A06
 
-    /*@PostMapping("/save") // Yeni bir ilan oluşturur.
+    @GetMapping("/{slug}")
+    @PreAuthorize("permitAll()") //http://localhost:8080/adverts/lux-villa-in-river-park
+    public ResponseEntity<AdvertResponse> getAdvertBySlug(@PathVariable String slug) {
+        AdvertResponse advertResponse = advertService.getAdvertBySlug(slug);
+        return ResponseEntity.ok(advertResponse);
+    }//A07
+
+    @GetMapping("/{id}/auth")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<AdvertResponse> getAuthenticatedUserAdvert(@PathVariable Long id, HttpServletRequest request) {
+        AdvertResponse advertResponse = advertService.getAdvertByIdAndAuthenticatedUser(id, request);
+        return ResponseEntity.ok(advertResponse);
+    }//A08
+
+    @GetMapping("/{id}/auth")// http://localhost:8080/2/auth
+    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
+    public ResponseEntity<AdvertResponse> getAdvertById(@PathVariable Long id, HttpServletRequest request) {
+
+        return advertService.getAdvertById(id, request);
+
+    }//A11
+
+   @PostMapping("/save") // Yeni bir ilan oluşturur.
     @PreAuthorize("hasRole('CUSTOMER')") // http://localhost:8080/adverts/save
     public ResponseEntity<AdvertResponse> createAdvert(@RequestBody AdvertRequest advertRequest, HttpServletRequest request) {
         AdvertResponse advertResponse = advertService.createAdvert(advertRequest,request);
         return new ResponseEntity<>(advertResponse, HttpStatus.CREATED);
     }//A10
 
-    // Yeni endpoint: authenticated user's advert update
+     // Yeni endpoint: authenticated user's advert update
     @PostMapping("/auth/{id}") // http://localhost:8080/adverts/auth/23
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseMessage<AdvertResponse> updateAuthenticatedAdvert(@PathVariable Long id, @RequestBody AdvertRequest advertRequest,
-                                                        HttpServletRequest request) {
+                                                                     HttpServletRequest request) {
 
         return advertService.updateAuthenticatedAdvert(id, advertRequest, request);
     } //A11
 
-   /* @PutMapping("/admin/{id}") // İlan güncelleme işlemi
+    @PutMapping("/admin/{id}") // İlan güncelleme işlemi
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')") // http://localhost:8080/adverts/admin/23
     public ResponseMessage<AdvertResponse> updateAdvertById(@RequestBody @Valid AdvertRequest advertRequest,
-                                                            @RequestPart("files") MultipartFile[] files,
+                                                            @RequestPart("files") File[] files,
                                                             @PathVariable Long id,
                                                             HttpServletRequest httpServletRequest) {
         return advertService.updateAdvert(advertRequest,id,httpServletRequest,files);
@@ -148,5 +162,5 @@ public class AdvertController {
     public ResponseEntity<AdvertResponse> deleteAdvertById(@PathVariable Long id,HttpServletRequest request) {
         AdvertResponse response = advertService.deleteAdvert(id,request);
         return ResponseEntity.ok(response);
-    } //A13*/
+    } //A13
 }

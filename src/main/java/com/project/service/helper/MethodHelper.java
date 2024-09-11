@@ -4,6 +4,7 @@ import com.project.entity.concretes.business.Advert;
 import com.project.entity.concretes.business.Favorite;
 import com.project.entity.concretes.user.User;
 import com.project.entity.concretes.user.UserRole;
+import com.project.entity.enums.AdvertStatus;
 import com.project.entity.enums.RoleType;
 import com.project.exception.BadRequestException;
 import com.project.exception.ConflictException;
@@ -213,5 +214,31 @@ public class MethodHelper {
             favoritesRepository.save(favorite);
         }
     }
+
+    public int updateAdvertStatus(int caseNumber, Advert advert) {
+        AdvertStatus status;
+        switch (caseNumber) {
+            case 0:
+                status = AdvertStatus.PENDING;
+                advert.setActive(false);
+                System.out.println("Advert status set to PENDING. Advert is now inactive.");
+                break;
+            case 1:
+                status = AdvertStatus.PENDING;
+                advert.setActive(true);
+                System.out.println("Advert status set to ACTIVATED. Advert is now active.");
+                break;
+            case 2:
+                status = AdvertStatus.REJECTED;
+                advert.setActive(false);
+                System.out.println("Advert status set to REJECTED. Advert is inactive.");
+                break;
+            default:
+                System.out.println("Invalid case number.");
+                return AdvertStatus.PENDING.getValue();
+        }
+        return caseNumber;
+    }
+
 
 }

@@ -8,7 +8,10 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "categories")
@@ -20,7 +23,7 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(nullable = false, length = 100)
     private String title;
@@ -50,6 +53,20 @@ public class Category {
 
     // Advert listesi ekleniyor
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Advert> adverts;
+    private List<Advert> adverts= new ArrayList<>();
+
+    @OneToMany(mappedBy = "category" , cascade=CascadeType.ALL, orphanRemoval = true)
+    private Set<CategoryPropertyKey> categoryPropertyKeys = new HashSet<>();
+
+    @PrePersist
+    protected void onCreate() {
+        createAt = LocalDateTime.now();
+        updateAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updateAt = LocalDateTime.now();
+    }
 }
 

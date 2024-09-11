@@ -2,6 +2,7 @@ package com.project.service.business;
 
 import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.user.User;
+import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.AdvertMapper;
 import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.business.*;
@@ -16,9 +17,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.math.BigDecimal;
 
 import java.util.List;
@@ -38,7 +42,8 @@ public class AdvertService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final MethodHelper methodHelper;
-     private final UserService userService;
+    private final UserService userService;
+    private final ImageRepository imageRepository;
 
     //!!! 1. İlanları Getirme
     public Page<AdvertResponse> getAdverts(String q, Long categoryId, Long advertTypeId, BigDecimal priceStart, BigDecimal priceEnd, Integer status, int page, int size, String sort, String type) {
@@ -63,7 +68,10 @@ public class AdvertService {
         District district = districtRepository.findById(advertRequest.getDistrictId()).orElseThrow();
         Category category = categoryRepository.findById(advertRequest.getCategoryId()).orElseThrow();
 
-        Advert advert = advertMapper.mapAdvertRequestToAdvert(advertRequest, advertType, country, city, district, category, user);
+        // imageIds listesinden resimleri bulup setliyoruz
+        List<Image> images = imageRepository.findAllById(advertRequest.getImageIds());
+
+        Advert advert = advertMapper.mapAdvertRequestToAdvert(advertRequest, advertType, country, city, district, category, user, images);
         Advert savedAdvert = advertRepository.save(advert);
 
         return advertMapper.mapAdvertToAdvertResponse(savedAdvert);
@@ -79,11 +87,16 @@ public class AdvertService {
                 .collect(Collectors.toList());
     }
 
+    public Page<AdvertResponse> getAuthenticatedUserAdverts(int page, int size, String sortField, String sortType) {
+    return null;
+    }
+
     private int calculatePopularityPoint(Advert advert) {
         int totalTourRequests = advert.getTourRequestList().size();
         int totalViews = advert.getViewCount();
         return (3 * totalTourRequests) + totalViews;
     }
+
     public List<AdvertResponse> getMostPopularAdverts(Integer amount) {
         // default olarak limit on tane ilan gösterilecek
         int limit = amount != null ? amount : 10;
@@ -101,87 +114,53 @@ public class AdvertService {
         return advertPage.map(advertMapper::mapAdvertToAdvertResponse);
     }
 
-/*
+    public AdvertResponse getAdvertBySlug(String slug) {
+        Advert advert = advertRepository.findBySlug(slug)
+                .orElseThrow(() -> new EntityNotFoundException("Advert not found with slug: " + slug));
 
-public Page<AdvertResponse> getAuthenticatedUserAdverts(int page, int size, String sortField, String sortType) {
-        User currentUser = userService.getAuthenticatedUser();  // Oturum açmış kullanıcıyı al
-
-        Sort sort = Sort.by(Sort.Direction.fromString(sortType), sortField);
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        Page<Advert> adverts = advertRepository.findByUser(currentUser, pageable);
-        return adverts.map(advertMapper::mapAdvertToAdvertResponse);
-    }
-    public ResponseMessage<AdvertResponse> updateAuthenticatedAdvert(Long id, AdvertRequest advertRequest, HttpServletRequest request) {
-        //!!! id var mi kontrolu :
-        User user = methodHelper.isUserExist(id);
-
-        // İlanı veri tabanından al
-        Advert advert = advertRepository.findByIdAndUserId(id, user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("İlan bulunamadı veya bu kullanıcıya ait değil"));
-
-        //!!! built_IN kontrolu
-        methodHelper.checkBuiltIn(user);
-
-        // İlanı güncellerken status alanını PENDING olarak değiştir
-        advert.setStatus(AdvertStatus.PENDING.getValue());
-
-        // İlgili varlıkları veri tabanından getir
-        AdvertType advertType = advertTypeRepository.findById(advertRequest.getAdvertTypeId()).orElseThrow();
-        Country country = countryRepository.findById(advertRequest.getCountryId()).orElseThrow();
-        City city = cityRepository.findById(advertRequest.getCityId()).orElseThrow();
-        District district = districtRepository.findById(advertRequest.getDistrictId()).orElseThrow();
-        Category category = categoryRepository.findById(advertRequest.getCategoryId()).orElseThrow();
-
-
-        // İlanı güncelle
-        advertMapper.mapAdvertRequestToAdvert(advertRequest, advertType, country, city, district, category, user);
-
-        // Güncellenmiş ilanı kaydet
-        Advert savedAdvert = advertRepository.save(advert);
-
-        // Güncellenmiş ilanı response olarak döndür
-        return ResponseMessage.<AdvertResponse>builder()
-                .message(SuccessMessages.ADVERT_UPDATED)
-                .httpStatus(HttpStatus.OK)
-                .object(advertMapper.mapAdvertToAdvertResponse(savedAdvert))
-                .build();
-    }
-
-    public List<AdvertResponse> getPopularAdverts(int value) {
-
-        List<Advert> advertList = advertRepository.findAll();
-
-        return advertList.stream()
-                .filter(t -> methodHelper.calculatePopularityPoint(t.getTourRequestList().size(), t.getViewCount()) >= value)
-                .map(advertMapper::mapAdvertToAdvertResponse)
-                .collect(Collectors.toList());
-    }
-
-    public AdvertResponse deleteAdvert(Long id, HttpServletRequest request) {
-        User user = methodHelper.getUserByHttpRequest(request);
-        methodHelper.checkRoles(user, RoleType.ADMIN, RoleType.MANAGER);
-        Advert advert = isAdvertExistById(id);
-
-        if (advert.isBuiltIn()) {
-            throw new ResourceNotFoundException(ErrorMessages.THIS_ADVERT_DOES_NOT_UPDATE);
-        }
-        advertRepository.deleteById(id);
-
+        // Convert the Advert entity to AdvertResponse DTO
         return advertMapper.mapAdvertToAdvertResponse(advert);
     }
 
-    public Advert isAdvertExistById(Long id) {
-        return advertRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_ADVERT_WITH_ID_MESSAGE, id)));
+
+    public AdvertResponse getAdvertByIdAndAuthenticatedUser(Long id, HttpServletRequest request) {
+        String userName = (String) request.getAttribute("username");
+        User user = userRepository.findByUsernameEquals(userName);
+
+        Advert advert = advertRepository.findByIdAndUserId(id, user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Advert not found or you're not the owner"));
+
+        return advertMapper.mapAdvertToAdvertResponseForAll(advert);
     }
 
+
     public Page<AdvertResponse> getAllAdvertForAuthUser(HttpServletRequest request, int page, int size, String sort, String type) {
+
+        Pageable pageable=pageableHelper.getPageableWithProperties(page,size,sort,type);
+
+        User user= methodHelper.getUserByHttpRequest(request);
+
+        return advertRepository.findAdvertsForUser(user.getId(),pageable).map(
+                (advert)->{
+                    AdvertResponse response= advertMapper.mapAdvertToAdvertResponse(advert);
+                    response.setFavoritesCount(advert.getFavoritesList().size());
+                    return response;
+                });
+    }
+
+    public ResponseMessage<AdvertResponse> updateAuthenticatedAdvert(Long id, AdvertRequest advertRequest, HttpServletRequest request) {
+            return null;
+    }
+
+    public ResponseMessage<AdvertResponse> updateAdvert(AdvertRequest advertRequest, Long id, HttpServletRequest httpServletRequest, File[] files) {
+            return null;
+    }
+
+    public AdvertResponse deleteAdvert(Long id, HttpServletRequest request) {
         return null;
     }
 
-    public ResponseMessage<AdvertResponse> updateAdvert(AdvertRequestForAdmin advertRequest, Long id, HttpServletRequest httpServletRequest, MultipartFile[] files) {
-    return null;
+    public ResponseEntity<AdvertResponse> getAdvertById(Long id, HttpServletRequest request) {
+        return null;
     }
- */
 }

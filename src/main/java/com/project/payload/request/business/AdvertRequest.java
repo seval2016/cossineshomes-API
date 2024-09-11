@@ -34,7 +34,7 @@ public class AdvertRequest {
     private Long advertTypeId;
 
     @NotNull
-    private Integer countryId;
+    private Long countryId;
 
     @NotNull
     private Long cityId;
@@ -56,5 +56,8 @@ public class AdvertRequest {
 
     @NotNull
     private boolean isActive;
+
+    @NotNull
+    private List<Long> imageIds;
 
 }

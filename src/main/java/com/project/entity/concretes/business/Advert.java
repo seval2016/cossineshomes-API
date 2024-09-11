@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.entity.enums.AdvertStatus;
 import com.project.entity.concretes.user.User;
 import com.project.payload.response.business.ImageResponse;
+import com.project.service.helper.SlugUtils;
 import lombok.*;
 
 
@@ -13,6 +14,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -41,9 +44,8 @@ public class Advert {
     @Column(nullable = false)
     private Double price= 0.0;
 
-    @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false)
-    private AdvertStatus status = AdvertStatus.PENDING;
+    private int status = AdvertStatus.PENDING.getValue();
 
     @Column(nullable = false)
     private boolean builtIn=false;
@@ -88,13 +90,29 @@ public class Advert {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "featured_image_id")
-    private Image featuredImage;
+    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Image> images;
 
     @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL)
     @JsonIgnore
     private List<TourRequest> tourRequestList;
+
+    @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL , fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<Favorite> favoritesList;
+
+    @OneToMany(mappedBy = "adverts",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<CategoryPropertyValue> categoryPropertyValuesList;
+
+    @OneToMany(mappedBy = "advert",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Image> imagesList = new ArrayList<>();
+
+    //,orphanRemoval = true
+    @OneToMany(mappedBy = "advertId",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Log> logList;
 
     @PrePersist
     protected void onCreate() {
@@ -106,5 +124,14 @@ public class Advert {
     protected void onUpdate() {
         updateAt = LocalDateTime.now();
     }
+
+    @PostPersist
+    @PostUpdate
+    public void generateSlug() {
+        if (this.slug == null) {
+            this.slug = SlugUtils.toSlug(this.title) + "-" + this.id;
+        }
+    }
+
 }
 

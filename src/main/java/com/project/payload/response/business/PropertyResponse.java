@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class PropertyResponse {
-    private Long keyId;
+    private String name;
     private String value;
 }

@@ -1,11 +1,16 @@
 package com.project.entity.concretes.business;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,6 +25,9 @@ public class CategoryPropertyKey {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "name can not be null")
+    @NotBlank(message = "name can not be white space")
+    @Size(min=2, max=80, message = "name '${validatedValue}' must be between {min} and {max} long")
     @Column(nullable = false, length = 80)
     private String name;
 
@@ -29,11 +37,12 @@ public class CategoryPropertyKey {
     @Column(nullable = false)
     private boolean builtIn = false;
 
-    @ManyToOne
+    @JsonIgnore // sonsuz döngüye girilmesin diye @JsonIgnore eklendi
+    @ManyToOne( fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @OneToMany(mappedBy = "categoryPropertyKey")
-    private List<CategoryPropertyValue> propertyValues;
+    @OneToMany(mappedBy = "categoryPropertyKeys", cascade = CascadeType.ALL)
+    private List<CategoryPropertyValue> categoryPropertyValues = new ArrayList<>();
 }
 
