@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,22 +26,23 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 150)
     private String title;
 
-    @Column(length = 100)
+    @Column(length = 50)
     private String icon;
 
     @Column(nullable = false)
-    private boolean builtIn;
+    private boolean builtIn=false;
 
     @Column(nullable = false)
-    private int seq;
+    private int seq=0;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
+    @Size(min = 5, max = 200)
     private String slug;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
     private boolean is_active;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
@@ -48,7 +50,7 @@ public class Category {
     private LocalDateTime createAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
-    @Column(name = "update_at", nullable = false)
+    @Column(name = "update_at")
     private LocalDateTime updateAt;
 
     // Advert listesi ekleniyor
