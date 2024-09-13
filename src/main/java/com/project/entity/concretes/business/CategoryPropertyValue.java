@@ -23,15 +23,15 @@ public class CategoryPropertyValue {
     @Column(nullable = false)
     private String value;
 
-    // CategoryPropertyKey ile ManyToOne ilişkiyi kuruyoruz
-    @ManyToOne
-    @JoinColumn(name = "category_property_key_id", nullable = false)
-    private CategoryPropertyKey categoryPropertyKey;
-
     // Advert ile ManyToOne ilişkiyi kuruyoruz
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
+
+    // CategoryPropertyKey ile ManyToOne ilişkiyi kuruyoruz
+    @ManyToOne
+    @JoinColumn(name = "category_property_key_id", nullable = false)
+    private CategoryPropertyKey categoryPropertyKey;
 
 
 }

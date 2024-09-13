@@ -29,4 +29,6 @@ public interface CategoryPropertyValueRepository extends JpaRepository<CategoryP
     @Modifying
     @Query("DELETE FROM CategoryPropertyValue")
     void deleteAllCategoryPropertyValuesExceptBuiltIn();
+
+    void deleteByPropertyKeyId(Long id);
 }

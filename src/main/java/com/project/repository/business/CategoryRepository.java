@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-
+/*
     // Kategori adını kullanarak kategori bul
     List<Category> findByTitle(String title);
 
@@ -22,11 +23,22 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     // Güncellenme tarihine göre sıralı kategoriler
     List<Category> findAllByOrderByUpdateAtDesc();
-    // Kategori başlığına göre arama yapan sorgu
-    Page<Category> findByTitleContainingIgnoreCase(String title, Pageable pageable);  // 10,09,24 eklendi
 
+    // Kategori başlığına göre arama yapan sorgu
+    Page<Category> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+*/
     Optional<Category> findBySlug(String slug);
     @Modifying
     @Query("DELETE FROM Category c WHERE c.builtIn = false")
     void deleteAllCategoriesExceptBuiltIn();
+
+    @Query("SELECT c FROM Category c WHERE LOWER(c.title) LIKE LOWER(CONCAT('%', :query, '%'))")
+    Page<Category> findByTitleContaining(@Param("query") String query, Pageable pageable);
+
+    @Query("SELECT c FROM Category c WHERE LOWER(c.title) LIKE LOWER(CONCAT('%', :title, '%')) AND c.isActive = TRUE")
+    Page<Category> findByTitleContainingAndIsActiveTrue(@Param("title") String title, Pageable pageable);
+
+    boolean existsByTitle(String title);
+
+    boolean existsBySlug(String slug);
 }

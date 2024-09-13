@@ -2,6 +2,7 @@ package com.project.payload.messages;
 
 public class SuccessMessages {
 
+
     private SuccessMessages() {
     }
 
@@ -38,6 +39,14 @@ public class SuccessMessages {
     public static final String CATEGORY_SAVED= "Category is Saved Successfully";
     public static final String CATEGORY_UPDATED = "Category is updated successfully ";
     public static final String CATEGORY_DELETED = "Category is Deleted Successfully";
+    public static final String CATEGORY_FOUNDED = "Category successfully found.";
+    public static final String CATEGORY_PROPERTY_KEYS_FETCHED = "Category property keys have been successfully retrieved.";
+    public static final String CATEGORY_PROPERTY_KEY_CREATED_SUCCESS = "Category property key has been successfully created.";
+    public static final String CATEGORY_PROPERTY_KEYS_RETRIEVED = "Category property keys have been successfully retrieved.";
+    public static final String CATEGORY_PROPERTY_KEY_UPDATED_SUCCESS = "The property key was successfully updated.";
+    public static final String CATEGORY_PROPERTY_KEY_DELETED_SUCCESS = "Property key deleted successfully.";
+
+
 
     // Tour Request Messages
     public static final String TOUR_REQUEST_SAVED = "Tour Request is Created Successfully";

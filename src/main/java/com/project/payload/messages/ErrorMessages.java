@@ -5,6 +5,8 @@ public class ErrorMessages {
 
     public static final String BEGIN_TIME_CAN_NOT_BE_AFTER_END_TIME = "Start time can not be later than end time";
 
+
+
     private ErrorMessages() {
     }
 
@@ -91,6 +93,11 @@ public class ErrorMessages {
     public static final String CATEGORY_CREATION_ERROR = "Error : Category is not created. Please try again.";
     public static final String CATEGORY_UPDATE_ERROR = "Error : Category is not updated.";
     public static final String CATEGORY_DELETE_ERROR = "Error : Category is not deleted.";
+    public static final String CATEGORY_CANNOT_UPDATE =  "Error : Cannot be updated because the category is built_in";;
+    public static final String CATEGORY_HAS_ADVERTS = "Category has related adverts, deletion is not allowed.";
+    public static final String CATEGORY_PROPERTY_KEY_ALREADY_EXIST = "A category property key with the same name already exists.";
+    public static final String CATEGORY_PROPERTY_KEY_CANNOT_UPDATE = "The category property key cannot be updated because it is marked as built-in.";
+    public static final String CATEGORY_PROPERTY_KEY_NOT_FOUND = "The property key with the specified ID was not found.";
 
 
     // Favorite Errors
