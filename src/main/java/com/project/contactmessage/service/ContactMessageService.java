@@ -3,6 +3,7 @@ package com.project.contactmessage.service;
 import com.project.contactmessage.dto.ContactMessageRequest;
 import com.project.contactmessage.dto.ContactMessageResponse;
 import com.project.contactmessage.entity.ContactMessage;
+import com.project.contactmessage.entity.ContactStatus;
 import com.project.contactmessage.mapper.ContactMessageMapper;
 import com.project.contactmessage.messages.Messages;
 import com.project.contactmessage.repository.ContactMessageRepository;
@@ -11,13 +12,12 @@ import com.project.exception.ResourceNotFoundException;
 import com.project.payload.response.business.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.List;
+import org.springframework.data.domain.Sort;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class ContactMessageService {
     private final ContactMessageRepository contactMessageRepository;
     private final ContactMessageMapper contactMessageMapper;
 
-    public ResponseMessage<ContactMessageResponse> save(ContactMessageRequest contactMessageRequest) {
+    public ResponseMessage<ContactMessageResponse> createMessage(ContactMessageRequest contactMessageRequest) {
         // DTO'yu POJO'ya dönüştür
         ContactMessage contactMessage = contactMessageMapper.requestToContactMessage(contactMessageRequest);
 
@@ -41,35 +41,24 @@ public class ContactMessageService {
                 .build();
     }
 
-    public Page<ContactMessageResponse> getAll(int page, int size, String sort, String type) {
-        // Pageable nesnesini oluştur
-        Pageable pageable = contactMessageMapper.createPageable(page, size, sort, type);
+    public Page<ContactMessageResponse> getAllContactMessages(String query, int status, int page, int size, String sortField, String sortType) {
+        // Sıralama yönünü belirlemek için sortType parametresini kullanıyoruz
+        Sort.Direction direction = Sort.Direction.fromString(sortType);
 
-        // Veritabanından verileri al ve dönüşüm yap
-        return contactMessageRepository.findAll(pageable)
-                .map(contactMessageMapper::contactMessageToResponse);
+        // Sayfa, boyut ve sıralama bilgileriyle pageable nesnesini oluşturuyoruz
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
+        // Hem query hem de status ile filtreleme yapıyoruz
+        if (query == null || query.isEmpty()) {
+            // Eğer query boşsa sadece status'a göre filtreleme yap
+            return contactMessageRepository.findByStatus(status, pageable).map(contactMessageMapper::contactMessageToResponse);
+        }
+
+        // Query ve status'a göre filtreleme yap
+        return contactMessageRepository.findByStatusAndMessageContaining(status, query, pageable).map(contactMessageMapper::contactMessageToResponse);
     }
 
-    public Page<ContactMessageResponse> searchByEmail(String email, int page, int size, String sort, String type) {
-        // Pageable nesnesini oluştur
-        Pageable pageable = contactMessageMapper.createPageable(page, size, sort, type);
-
-        // Email'e göre arama yap ve dönüşüm yap
-        return contactMessageRepository.findByContactEmailEquals(email, pageable)
-                .map(contactMessageMapper::contactMessageToResponse);
-    }
-
-    public Page<ContactMessageResponse> searchBySubject(String subject, int page, int size, String sort, String type) {
-        // Pageable nesnesini oluştur
-        Pageable pageable = contactMessageMapper.createPageable(page, size, sort, type);
-
-        // Konuya göre arama yap ve dönüşüm yap
-        return contactMessageRepository.findByContactSubjectEquals(subject, pageable)
-                .map(contactMessageMapper::contactMessageToResponse);
-    }
-
-    public String deleteById(Long id) {
-        // İd ile mesajı al ve sil
+    public String deleteContactMessageById(Long id) {
         getContactMessageById(id);
         contactMessageRepository.deleteById(id);
         return Messages.CONTACT_MESSAGE_DELETED_SUCCESSFULLY;
@@ -81,31 +70,13 @@ public class ContactMessageService {
                 new ResourceNotFoundException(Messages.NOT_FOUND_MESSAGE));
     }
 
-    public List<ContactMessage> searchBetweenDates(String beginDateString, String endDateString) {
-        try {
-            // Tarihleri LocalDate türüne çevir
-            LocalDate beginDate = LocalDate.parse(beginDateString);
-            LocalDate endDate = LocalDate.parse(endDateString);
+    public ContactMessage findContactByIdAndUpdateStatus(Long id) {
+        //verilen id'nin var olup olmadığını kontrol eder
+        ContactMessage contact = contactMessageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Contact not found with id: " + id));
 
-            // Tarihler arasında mesajları ara
-            return contactMessageRepository.findMessagesBetweenDates(beginDate, endDate);
-        } catch (DateTimeParseException e) {
-            throw new ConflictException(Messages.WRONG_DATE_MESSAGE);
-        }
-    }
-
-    public List<ContactMessage> searchBetweenTimes(String startHourString, String startMinuteString, String endHourString, String endMinuteString) {
-        try {
-            // Saat ve dakikaları Integer türüne çevir
-            int startHour = Integer.parseInt(startHourString);
-            int startMinute = Integer.parseInt(startMinuteString);
-            int endHour = Integer.parseInt(endHourString);
-            int endMinute = Integer.parseInt(endMinuteString);
-
-            // Saatler arasında mesajları ara
-            return contactMessageRepository.findMessagesBetweenTimes(startHour, startMinute, endHour, endMinute);
-        } catch (NumberFormatException e) {
-            throw new ConflictException(Messages.WRONG_TIME_MESSAGE);
-        }
+        //Eğer id var ise status durumunu 1 olarak günceller
+        contact.setStatus(ContactStatus.OPENED.getStatusValue());
+        return contactMessageRepository.save(contact);
     }
 }

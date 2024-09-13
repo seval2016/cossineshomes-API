@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,93 +17,42 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/contactMessages")
+@RequestMapping("/contacts")
 @RequiredArgsConstructor
 public class ContactMessageController {
     private final ContactMessageService contactMessageService;
 
-    @PostMapping("/save") //http://localhost:8080/contactMessages/save + POST + JSON
-    public ResponseMessage<ContactMessageResponse> save(@Valid @RequestBody ContactMessageRequest contactMessageRequest) {
-        return contactMessageService.save(contactMessageRequest);
+    // --> J01 - It will create a contact message
+    @PostMapping("/contact-messages/create") //http://localhost:8080/contacts//contact-messages/create + POST + JSON
+    public ResponseMessage<ContactMessageResponse> createMessage(@Valid @RequestBody ContactMessageRequest contactMessageRequest) {
+        return contactMessageService.createMessage(contactMessageRequest);
     }
 
     //Pageable -> veriyi sıralayarak değil sayfalara bölerek gösterme teknolojisine denir.
-    @GetMapping("/getAll") // http://localhost:8080/contactMessages/getAll + GET
-    public Page<ContactMessageResponse> getAll(
+    @GetMapping("/contact-messages/getAll") //http://localhost:8080/contacts/contact-messages/getAll + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+    public Page<ContactMessageResponse> getAllContactMessages(
+            @RequestParam(value = "q", required = false) String query,
+            @RequestParam(value = "status", defaultValue = "0") int status,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "dateTime") String sort,
-            @RequestParam(value = "type", defaultValue = "desc") String type
-    ) {
-        return contactMessageService.getAll(page, size, sort, type);
+            @RequestParam(value = "size", defaultValue = "20") int size,
+            @RequestParam(value = "sort", defaultValue = "category_id") String sortField,
+            @RequestParam(value = "type", defaultValue = "asc") String sortType) {
+        return contactMessageService.getAllContactMessages(query, status, page, size, sortField, sortType);
     }
 
-    @GetMapping("/searchByEmail")  // http://localhost:8080/contactMessages/searchByEmail?email=aaa@bbb.com  + GET
-    public Page<ContactMessageResponse> searchByEmail(
-            @RequestParam(value = "email") String email,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "dateTime") String sort,
-            @RequestParam(value = "type", defaultValue = "desc") String type
-    ) {
-        return contactMessageService.searchByEmail(email, page, size, sort, type);
-    }
+        //Bu, mesajın bir yönetici ya da yetkili tarafından okunduğunda durum değişikliği yapılması
+        @GetMapping("/contact-messages/{id}")//http://localhost:8080/contacts/contact-messages/4  + GET
+        @PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
+        public ResponseEntity<ContactMessage> getContactMessageById(@PathVariable Long id) {
+            return ResponseEntity.ok(contactMessageService.findContactByIdAndUpdateStatus(id));
+        }//J03
 
-    @GetMapping("/searchBySubject")  // http://localhost:8080/contactMessages/searchBySubject?subject=odev + GET
-    public Page<ContactMessageResponse> searchBySubject(
-            @RequestParam(value = "subject") String subject,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "dateTime") String sort,
-            @RequestParam(value = "type", defaultValue = "desc") String type
-    ) {
-        return contactMessageService.searchBySubject(subject, page, size, sort, type);
-    }
-
-
-    @DeleteMapping("/deleteById/{contactMessageId}") // http://localhost:8080/contactMessages/deleteById/2 + DELETE
-    public ResponseEntity<String> deleteByIdPath(@PathVariable Long contactMessageId) {
-        return ResponseEntity.ok(contactMessageService.deleteById(contactMessageId));
-    }
-
-    @DeleteMapping("/deleteByIdParam")
-    // http://localhost:8080/contactMessages/deleteByIdParam?contactMessageId=4 + DELETE
-    public ResponseEntity<String> deleteByIdParam(@RequestParam(value = "contactMessageId") Long contactMessageId) {
-        return ResponseEntity.ok(contactMessageService.deleteById(contactMessageId));
-    }
-
-
-    @GetMapping("/searchBetweenDates")
-    //http://localhost:8080/contactMessages/searchBetweenDates?beginDate=2023-09-13&endDate=2023-09-15
-    public ResponseEntity<List<ContactMessage>> searchBetweenDates(
-            @RequestParam(value = "beginDate") String beginDateString,
-            @RequestParam(value = "endDate") String endDateString) {
-        List<ContactMessage> contactMessages = contactMessageService.searchBetweenDates(beginDateString, endDateString);
-        return ResponseEntity.ok(contactMessages);
-    }
-
-    @GetMapping("/searchBetweenTimes") // http://localhost:8080/contactMessages/searchBetweenTimes?startHour=09&startMinute=00&endHour=17&endMinute=30  + GET
-
-    public ResponseEntity<List<ContactMessage>> searchBetweenTimes(
-            @RequestParam(value="startHour") String startHourString,
-            @RequestParam(value="startMinute") String startMinuteString,
-            @RequestParam(value="endHour") String endHourString,
-            @RequestParam(value="endMinute") String endMinuteString
-    ){
-        List<ContactMessage> contactMessages = contactMessageService.searchBetweenTimes(startHourString,startMinuteString,endHourString,endMinuteString);
-        return ResponseEntity.ok(contactMessages);
-    }
-
-    @GetMapping("/getByIdParam")//http://localhost:8080/contactMessages/getByIdParam?contactMessageId=1  + GET
-    public ResponseEntity<ContactMessage> getById(@RequestParam(value = "contactMessageId") Long contactMessageId){
-        return ResponseEntity.ok(contactMessageService.getContactMessageById(contactMessageId));
-    }
-
-    @GetMapping("/getById/{contactMessageId}")//http://localhost:8080/contactMessages/getById/1  + GET
-    public ResponseEntity<ContactMessage> getByIdPath(@PathVariable Long contactMessageId) {
-        return ResponseEntity.ok(contactMessageService.getContactMessageById(contactMessageId));
-    }
-
-
-
+        @DeleteMapping("/delete/{id}")//http://localhost:8080/contacts/delete/2
+        @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+        public ResponseEntity<String> deleteContactMessage(@PathVariable Long id) {
+            String response = contactMessageService.deleteContactMessageById(id);
+            return ResponseEntity.ok(response);
+        }//J04
+        
 }

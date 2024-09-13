@@ -14,11 +14,10 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 public class ContactMessageResponse {
 
-    private String name;
+    private String firstName;
+    private String lastName;
     private String email;
-    private String subject;
     private String message;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime dateTime;
+    private LocalDateTime createdAt;
+    private int status= 0;
 }

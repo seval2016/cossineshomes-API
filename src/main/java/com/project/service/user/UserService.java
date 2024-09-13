@@ -34,13 +34,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final MethodHelper methodHelper;
     private final UserRepository userRepository;
     private final UniquePropertyValidator uniquePropertyValidator;
     private final UserMapper userMapper;
     private final UserRoleService userRoleService;
     private final PasswordEncoder passwordEncoder;
     private final PageableHelper pageableHelper;
-    private final MethodHelper methodHelper;
+
 
     public ResponseMessage<UserResponse> saveUser(UserRequest userRequest, String userRole) {
 

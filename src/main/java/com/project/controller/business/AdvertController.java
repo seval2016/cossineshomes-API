@@ -37,7 +37,7 @@ public class AdvertController {
     private final AdvertMapper advertMapper;
     private final MethodHelper methodHelper;
 
-    //Belirli filtreleme kriterlerine göre ilanları getirir.
+    // --> A01 - Belirli filtreleme kriterlerine göre ilanları getirir.
     @GetMapping //http://localhost:8080/adverts?q=beyoğlu&category_id=12&advert_type_id=3&price_start=500&price_end=1500 location=34 & status=1;page=1&size=10&sort=date&type=asc
     public ResponseEntity<Page<AdvertResponse>> getAdverts(
             @RequestParam(required = false) String q,
@@ -53,7 +53,7 @@ public class AdvertController {
 
         Page<AdvertResponse> adverts = advertService.getAdverts(q, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type);
         return ResponseEntity.ok(adverts);
-    }//A01
+    }
 
     @GetMapping("/cities")
     @PreAuthorize("permitAll()") // http://localhost:8080/adverts/cities
@@ -71,8 +71,7 @@ public class AdvertController {
 
     @GetMapping("/popular/{amount}")
     @PreAuthorize("permitAll()")
-    public ResponseEntity<List<AdvertResponse>> getMostPopularAdverts(
-            @PathVariable(value = "amount", required = false) Integer amount) {
+    public ResponseEntity<List<AdvertResponse>> getMostPopularAdverts(@PathVariable(value = "amount", required = false) Integer amount) {
         // Pageable için varsayılan sayfa boyutu: amount ya da 10
         Pageable pageable = PageRequest.of(0, (amount != null) ? amount : 10);
 
@@ -82,8 +81,7 @@ public class AdvertController {
 
     @GetMapping("/auth")
     @PreAuthorize("hasAnyAuthority('CUSTOMER')")
-    public Page<AdvertResponse> getAllAdvertForAuthUserByPage(
-            HttpServletRequest request,
+    public Page<AdvertResponse> getAllAdvertForAuthUserByPage(HttpServletRequest request,
             @RequestParam(value = "page",required = false,defaultValue = "0") int page,
             @RequestParam(value = "size",required = false, defaultValue = "20") int size,
             @RequestParam(value = "sort",required = false,defaultValue = "category.id") String sort,
@@ -142,17 +140,19 @@ public class AdvertController {
      // Yeni endpoint: authenticated user's advert update
     @PostMapping("/auth/{id}") // http://localhost:8080/adverts/auth/23
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseMessage<AdvertResponse> updateUsersAdvertById(@RequestParam @Valid AdvertRequest advertRequest,
-                                                                 @RequestParam MultipartFile[] files,
-                                                                 HttpServletRequest httpServletRequest,@PathVariable Long id) {
+    public ResponseMessage<AdvertResponse> updateUsersAdvertById(
+            @RequestParam @Valid AdvertRequest advertRequest,
+            @RequestParam MultipartFile[] files,
+            HttpServletRequest httpServletRequest,@PathVariable Long id){
         return advertService.updateAuthenticatedAdvert(advertRequest, files, httpServletRequest, id);
     }//A11
 
     @PutMapping("/admin/{id}") // İlan güncelleme işlemi
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')") // http://localhost:8080/adverts/admin/23
-    public ResponseMessage<AdvertResponse> updateAdvertById(@RequestBody @Valid AdvertRequest advertRequest,
-                                                            @RequestPart("files") MultipartFile[] files,
-                                                            HttpServletRequest httpServletRequest,@PathVariable Long id) {
+    public ResponseMessage<AdvertResponse> updateAdvertById(
+            @RequestBody @Valid AdvertRequest advertRequest,
+            @RequestPart("files") MultipartFile[] files,
+            HttpServletRequest httpServletRequest,@PathVariable Long id) {
         return advertService.updateAdvert(advertRequest,files,httpServletRequest,id);
     } //A12
 

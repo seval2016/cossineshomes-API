@@ -1,4 +1,4 @@
-package com.project.entity.enums;
+package com.project.contactmessage.entity;
 
 public enum ContactStatus {
 

@@ -31,6 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.ByteArrayOutputStream;
@@ -292,14 +293,25 @@ public class MethodHelper {
             detailsMap = new HashMap<>();
         }
         Category category = categoryService.getCategoryById(advertRequest.getCategoryId());
-        City city = cityService.getCityById(advertRequest.getCityId());
+
+        // ResponseEntity'den body'yi alıyoruz
+        ResponseEntity<List<City>> responseEntity = cityService.getCityById(advertRequest.getCityId());
+        List<City> cityList = responseEntity.getBody();
+
+        // Eğer cityList boş değilse ilk şehri alıyoruz
+        if (cityList != null && !cityList.isEmpty()) {
+            City city = cityList.get(0);  // İlk şehri seçiyoruz
+            detailsMap.put("city", city);
+        } else {
+            throw new EntityNotFoundException("No city found for the given city ID: " + advertRequest.getCityId());
+        }
+
         User user = getUserByHttpRequest(httpServletRequest);
         Country country = countryService.getCountryById(advertRequest.getCountryId());
         AdvertType advertType = advertTypesService.getAdvertTypeByIdForAdvert(advertRequest.getAdvertTypeId());
         District district = districtService.getDistrictByIdForAdvert(advertRequest.getDistrictId());
 
         detailsMap.put("category", category);
-        detailsMap.put("city", city);
         detailsMap.put("user", user);
         detailsMap.put("country", country);
         detailsMap.put("advertType", advertType);
@@ -383,7 +395,6 @@ public class MethodHelper {
         }
     }
 
-
     public <T> ResponseEntity<byte[]> excelResponse(Page<T> list) {
 
         try {
@@ -416,6 +427,7 @@ public class MethodHelper {
         }
 
     }
+
     private HttpHeaders returnHeader(){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));

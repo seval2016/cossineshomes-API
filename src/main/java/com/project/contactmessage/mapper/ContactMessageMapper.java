@@ -17,11 +17,11 @@ public class ContactMessageMapper {
 
     public ContactMessage requestToContactMessage(ContactMessageRequest contactMessageRequest){
         return ContactMessage.builder()
-                .contactName(contactMessageRequest.getName())
-                .contactSubject(contactMessageRequest.getSubject())
-                .contactMessage(contactMessageRequest.getMessage())
-                .contactEmail(contactMessageRequest.getEmail())
-                .dateTime(LocalDateTime.now())
+                .firstName(contactMessageRequest.getFirstName())
+                .lastName(contactMessageRequest.getLastName())
+                .message(contactMessageRequest.getMessage())
+                .email(contactMessageRequest.getEmail())
+                .createAt(LocalDateTime.now())
                 .build();
     }
 
@@ -29,11 +29,10 @@ public class ContactMessageMapper {
     public ContactMessageResponse contactMessageToResponse(ContactMessage contactMessage){
 
         return ContactMessageResponse.builder()
-                .name(contactMessage.getContactName())
-                .subject(contactMessage.getContactSubject())
-                .message(contactMessage.getContactMessage())
-                .email(contactMessage.getContactEmail())
-                .dateTime(LocalDateTime.now())
+                .firstName(contactMessage.getFirstName())
+                .message(contactMessage.getMessage())
+                .email(contactMessage.getEmail())
+                .createdAt(LocalDateTime.now())
                 .build();
 
     }

@@ -6,7 +6,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
@@ -16,23 +18,35 @@ import java.time.LocalDateTime;
 @Entity
 public class ContactMessage{
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long contactMessageId;
+    @Setter(AccessLevel.NONE)
+    private Long id;
 
     @NotNull
-    private String contactName;
+    @Size(max = 30 , message = "Your name must be a maximum of 30 characters.")
+    private String firstName;
 
     @NotNull
-    private String contactEmail;
+    @Size(max = 30 , message = "Your lastname must be a maximum of 30 characters.")
+    private String lastName;
 
     @NotNull
-    private String contactSubject;
+    @Size(max = 60 , message = "Your email must be a maximum of 60 characters.")
+    @Email
+    private String email;
 
     @NotNull
-    private String contactMessage;
+    @Size(max = 300 , message = "Your message must be a maximum of 300 characters.")
+    private String message;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm",timezone = "US")
-    private LocalDateTime dateTime;
+    @NotNull
+    private int status=0;
+
+    @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH-mm", timezone = "Turkey")
+    private LocalDateTime createAt;
+
 
 }
