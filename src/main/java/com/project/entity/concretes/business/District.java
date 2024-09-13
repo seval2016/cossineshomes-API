@@ -1,9 +1,6 @@
 package com.project.entity.concretes.business;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -21,6 +18,8 @@ public class District {
 
     @Column(nullable = false, length = 30)
     private String name;
+
+    private Boolean builtIn;
 
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false)

@@ -21,4 +21,7 @@ public class Country {
 
     @Column(nullable = false, length =30)
     private String name;
+
+    @Column(name = "built_in", nullable = false)
+    private boolean builtIn = false;
 }

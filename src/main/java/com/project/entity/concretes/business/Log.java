@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -37,5 +38,6 @@ public class Log {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt= LocalDateTime.now();
+    @CreationTimestamp  // Otomatik olarak kayıt sırasında tarih atanır
+    private LocalDateTime createAt;
 }

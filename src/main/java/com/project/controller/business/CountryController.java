@@ -1,14 +1,15 @@
 package com.project.controller.business;
 
 
-import com.project.payload.response.business.CountryResponse;
+import com.project.entity.concretes.business.Country;
+import com.project.payload.response.business.ResponseMessage;
+
 import com.project.service.business.CountryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,13 +18,38 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CountryController {
 
-    @Autowired
-    private CountryService countryService;
+    private final CountryService countryService;
 
-    @PreAuthorize("permitAll()")
-    @GetMapping
-    public List<CountryResponse> getAllCountries() {
+    @GetMapping("/countries") // Tüm ülkeleri getirme
+    @PreAuthorize("permitAll()")//http://localhost:8080/countries
+    public ResponseMessage<List<Country>> getAllCountries() {
         return countryService.getAllCountries();
     }
-    //U01
+
+    // Türkiye'nin built-in olarak işaretlenmesi
+    @PostMapping("/builtin")
+    public ResponseEntity<Void> setBuiltInForCountry() {
+        countryService.setBuiltInForCountry();
+        return ResponseEntity.ok().build();
+    }
+    // Toplam ülke sayısını döndürme
+    @GetMapping("/count")
+    public ResponseEntity<Integer> countAllCountries() {
+        int count = countryService.countAllCountries();
+        return ResponseEntity.ok(count);
+
+    }
+    // Ülkeleri sıfırlamak için (deleteAll)
+    @DeleteMapping("/reset")
+    public ResponseEntity<Void> resetCountryTables() {
+        countryService.resetCountryTables();
+        return ResponseEntity.ok().build();
+    }
+
+    // ID'ye göre ülke getirme
+    @GetMapping("/{id}")
+    public ResponseEntity<Country> getCountryById(@PathVariable Long id) {
+        Country country = countryService.getCountryById(id);
+        return ResponseEntity.ok(country);
+    }
 }

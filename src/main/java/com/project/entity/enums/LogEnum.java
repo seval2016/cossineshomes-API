@@ -2,7 +2,7 @@ package com.project.entity.enums;
 
 public enum LogEnum {
 
-    CREATED("Advert is created and wait for approve"),
+    CREATED("Advert is created and waiting for approval"),
     UPDATED("Advert is updated"),
     DELETED("Advert is deleted"),
     DECLINED("Advert is declined by manager"),
@@ -23,10 +23,26 @@ public enum LogEnum {
 
     public static LogEnum fromDescription(String description) {
         for (LogEnum logDescription : LogEnum.values()) {
-            if (logDescription.getDescription().equals(description)) {
+            // Büyük/küçük harf duyarlılığını kaldırmak için equalsIgnoreCase kullanılabilir
+            if (logDescription.getDescription().equalsIgnoreCase(description)) {
                 return logDescription;
             }
         }
-        throw new IllegalArgumentException("Invalid log description: " + description);
+        // Hata mesajını özelleştirme
+        throw new IllegalArgumentException("Invalid log description: '" + description + "'. Available descriptions: "
+                + getAvailableDescriptions());
+    }
+
+    // Tüm açıklamaları string formatında döndüren yardımcı bir metot
+    private static String getAvailableDescriptions() {
+        StringBuilder descriptions = new StringBuilder();
+        for (LogEnum logEnum : LogEnum.values()) {
+            descriptions.append(logEnum.getDescription()).append(", ");
+        }
+        // Son virgülü ve boşluğu kaldırma
+        if (descriptions.length() > 0) {
+            descriptions.setLength(descriptions.length() - 2);
+        }
+        return descriptions.toString();
     }
 }

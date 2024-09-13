@@ -1,5 +1,6 @@
 package com.project.payload.response.business;
 
+import com.project.entity.concretes.business.City;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,5 +14,5 @@ public class DistrictResponse {
 
     private Long id;
     private String name;
-    private Long cityId;
+    private City city;
 }

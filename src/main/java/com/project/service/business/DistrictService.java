@@ -1,9 +1,16 @@
 package com.project.service.business;
 
+
 import com.project.entity.concretes.business.District;
+import com.project.exception.ResourceNotFoundException;
+import com.project.payload.mappers.DistrictMapper;
+
+import com.project.payload.messages.ErrorMessages;
 import com.project.payload.response.business.DistrictResponse;
+import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.DistrictRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,20 +20,47 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DistrictService {
 
-    private DistrictRepository districtRepository;
+    private final DistrictRepository districtRepository;
+    private final DistrictMapper districtMapper;
+    private final CityService cityService;
 
-    public List<DistrictResponse> getAllDistricts() {
-        List<District> districts = districtRepository.findAll();
-        return districts.stream().map(district -> {
-            DistrictResponse dto = new DistrictResponse();
-            dto.setId(district.getId());
-            dto.setName(district.getName());
-            dto.setCityId(district.getCity().getId());
-            return dto;
-        }).collect(Collectors.toList());
+    public List<DistrictResponse> getAllDistrict() {
+        return districtRepository.findAll()
+                .stream()
+                .map(districtMapper::mapDistrictToDistrictResponse)
+                .collect(Collectors.toList());
+    }
+
+    public ResponseMessage<List<District>> getByDistrict(Long cityId) {
+        // Belirtilen cityId'ye ait ilçeleri getir
+        List<District> districtList = districtRepository.getByDistrict(cityId);
+
+        return ResponseMessage.<List<District>>builder()
+                .httpStatus(HttpStatus.OK)
+                .object(districtList)
+                .message("Districts were brought successfully.")
+                .build();
     }
 
     public District getDistrictByIdForAdvert(Long districtId) {
-        return null;
+        return districtRepository.findById(districtId).orElseThrow(()->new ResourceNotFoundException(ErrorMessages.DISTRICT_NOT_FOUND));
     }
+
+    public void resetDistrictTables() {
+        districtRepository.deleteAll();
+    }
+
+    public int countAllDistricts() {
+        return districtRepository.countAllDistricts();
+    }
+
+    public void setBuiltInForDistrict() {
+        // Türkiye'nin ID'si 1 olduğundan emin olun
+        Long districtId = 1L;
+
+        District district = districtRepository.findById(districtId).orElseThrow(() -> new RuntimeException(ErrorMessages.DISTRICT_NOT_FOUND));
+        district.setBuiltIn(Boolean.TRUE);
+        districtRepository.save(district);
+    }
+
 }
