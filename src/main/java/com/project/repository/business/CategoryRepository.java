@@ -28,9 +28,12 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Page<Category> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 */
     Optional<Category> findBySlug(String slug);
+
+    /*
     @Modifying
     @Query("DELETE FROM Category c WHERE c.builtIn = false")
     void deleteAllCategoriesExceptBuiltIn();
+    */
 
     @Query("SELECT c FROM Category c WHERE LOWER(c.title) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<Category> findByTitleContaining(@Param("query") String query, Pageable pageable);

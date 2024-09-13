@@ -13,6 +13,7 @@ import java.util.Set;
 @Repository
 public interface CategoryPropertyKeyRepository extends JpaRepository<CategoryPropertyKey, Long> {
 
+
     // Belirli bir kategoriye ait tüm anahtarları getir
     List<CategoryPropertyKey> findByCategoryId(Long categoryId);
 
@@ -21,9 +22,11 @@ public interface CategoryPropertyKeyRepository extends JpaRepository<CategoryPro
 
     // Anahtar adını kullanarak anahtar bul
     List<CategoryPropertyKey> findByName(String name);
-    @Modifying
+
+   /* @Modifying
     @Query("DELETE FROM CategoryPropertyKey apk WHERE apk.builtIn=false")
     void deleteAllCategoryPropertyKeysExceptBuiltIn();
+    */
 
     Set<CategoryPropertyKey> findByCategory_Id(Long id);
 }

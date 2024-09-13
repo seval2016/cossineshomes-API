@@ -41,9 +41,11 @@ public interface FavoriteRepository extends JpaRepository<Favorite,Long> {
 
     List<Favorite> findAllByAdvert_Id(Long advertId);
 
+    /*
     @Modifying
     @Query("DELETE FROM Favorite")
     void deleteAllFavoritesExceptBuiltIn();
+    */
 
     List<Favorite> findByUser(User user);
 

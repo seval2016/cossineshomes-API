@@ -2,6 +2,8 @@ package com.project.payload.messages;
 
 public class SuccessMessages {
 
+    public static final String PASSWORD_RESET_SUCCESSFULLY="";
+
 
     private SuccessMessages() {
     }

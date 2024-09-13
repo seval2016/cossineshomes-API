@@ -1,48 +1,79 @@
 package com.project.service.business;
 
+import com.project.entity.concretes.business.Advert;
+import com.project.entity.concretes.business.AdvertType;
+import com.project.entity.concretes.business.Category;
+import com.project.entity.concretes.business.CategoryPropertyKey;
+import com.project.entity.concretes.user.User;
 import com.project.repository.business.*;
 import com.project.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ResetService {
 
     private final AdvertRepository advertRepository;
-    private final ImagesRepository imagesRepository;
+    private final ImagesRepository imageRepository;
     private final CategoryRepository categoryRepository;
     private final AdvertTypesRepository advertTypesRepository;
     private final CategoryPropertyKeyRepository categoryPropertyKeyRepository;
     private final CategoryPropertyValueRepository categoryPropertyValueRepository;
-    private final FavoriteRepository favoriteRepository;
+    private final FavoriteRepository favoritesRepository;
     private final UserRepository userRepository;
     private final TourRequestRepository tourRequestRepository;
 
-    public void resetDatabase() {
-        // Favorites tablosundaki verileri sil (builtIn=true olanlar hariç)
-        favoriteRepository.deleteAllFavoritesExceptBuiltIn();
+    @Transactional
+    public ResponseEntity<String> resetDatabase() {
 
-        // Kullanıcıları sil (builtIn=true olanlar hariç)
-        userRepository.deleteAllUsersExceptBuiltIn();
+        categoryPropertyValueRepository.deleteAll();
+        favoritesRepository.deleteAll();
+        imageRepository.deleteAll();
+        tourRequestRepository.deleteAll();
 
-        // Advert tablosundaki verileri sil (builtIn=true olanlar hariç)
-        advertRepository.deleteAllAdvertsExceptBuiltIn();
+        List<Advert> alladverts= advertRepository.findAll();
+        for(Advert advert : alladverts){
+            if(!advert.isBuiltIn()){
+                advertRepository.delete(advert);
+            }
+        }
 
+        List<Category> allCategory=categoryRepository.findAll();
+        for (Category category:allCategory){
+            if (!category.isBuiltIn()){
+                categoryRepository.delete(category);
+            }
+        }
 
-        // Category tablosundaki verileri sil (builtIn=true olanlar hariç)
-        categoryRepository.deleteAllCategoriesExceptBuiltIn();
+        List<AdvertType> allAdvertTypes = advertTypesRepository.findAll();
+            // Silinmesi gereken AdvertType'leri filtreleyin
+             List<AdvertType> toBeDeleted = allAdvertTypes.stream()
+                .filter(advertType -> !advertType.isBuiltIn()) // Sadece false olanları seç
+                .collect(Collectors.toList());
+            // Toplu olarak silme işlemi
+             advertTypesRepository.deleteAll(toBeDeleted);
 
-        // AdvertType tablosundaki verileri sil (builtIn=true olanlar hariç)
-        advertTypesRepository.deleteAllAdvertTypesExceptBuiltIn();
+        List<CategoryPropertyKey> allCategoryPropertyKey =categoryPropertyKeyRepository.findAll();
+        for (CategoryPropertyKey categoryPropertyKey:allCategoryPropertyKey){
+            if (!categoryPropertyKey.isBuiltIn()){
+                categoryPropertyKeyRepository.delete(categoryPropertyKey);
+            }
+        }
 
-        // CategoryPropertyKey tablosundaki verileri sil (builtIn=true olanlar hariç)
-        categoryPropertyKeyRepository.deleteAllCategoryPropertyKeysExceptBuiltIn();
+        List<User> allUser=userRepository.findAll();
+        for (User user:allUser){
+            if (!user.isBuiltIn()){
+                userRepository.delete(user);
+            }
+        }
 
-        // CategoryPropertyValue tablosundaki verileri sil (builtIn=true olanlar hariç)
-        categoryPropertyValueRepository.deleteAllCategoryPropertyValuesExceptBuiltIn();
+        return ResponseEntity.ok("Reset DB successfully");
 
-        // TourRequest tablosundaki verileri sil (builtIn=true olanlar hariç)
-        tourRequestRepository.deleteAllTourRequestsExceptBuiltIn();
     }
 }

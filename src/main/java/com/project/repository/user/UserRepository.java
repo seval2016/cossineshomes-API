@@ -40,5 +40,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void deleteAllUsersExceptBuiltIn();
 
     List<User> findByUserRole_Role(RoleType roleType);
+
+    Optional<Object> findByResetPasswordCode(String code);
 }
 

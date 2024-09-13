@@ -10,11 +10,11 @@ import java.util.Optional;
 
 @Repository
 public interface AdvertTypesRepository extends JpaRepository<AdvertType, Long> {
-
+/*
     @Modifying
     @Query("DELETE FROM AdvertType a_type WHERE a_type.builtIn = false")
     void deleteAllAdvertTypesExceptBuiltIn();
-
+*/
     boolean existsByTitle(String title);
 
     Optional<AdvertType>  findByTitle(String type);

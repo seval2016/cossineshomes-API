@@ -22,9 +22,11 @@ public interface TourRequestRepository extends JpaRepository<TourRequest,Long> {
     @Query("SELECT tr FROM TourRequest tr WHERE ( tr.guestUser.id = ?1 ) AND ( tr.id = ?2 )")
     TourRequest findByIdForGuestUser(Long id, Long tourId);
 
+    /*
     @Modifying
     @Query("DELETE FROM TourRequest")
     void deleteAllTourRequestsExceptBuiltIn();
+    */
 
     @Query("SELECT t FROM TourRequest t WHERE " +
             "(:date1 IS NULL OR :date2 IS NULL OR t.createAt BETWEEN :date1 AND :date2) AND " +

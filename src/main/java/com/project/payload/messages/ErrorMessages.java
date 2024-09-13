@@ -3,10 +3,12 @@ package com.project.payload.messages;
 public class ErrorMessages {
 
 
+    public static final String RESET_CODE_IS_NOT_FOUND="";
     public static final String BEGIN_TIME_CAN_NOT_BE_AFTER_END_TIME = "Start time can not be later than end time";
     public static final String EXCEL_COULD_NOT_BE_CREATED = "Excel file could not be created.";
     public static final String EXCEL_COULD_NOT_BE_CREATED_TYPE_IS_NOT_ADVERT = "Excel file could not be created, type is not advert.";
     public static final String ADVERT_STATUS_NOT_FOUND = "Advert status not found.";
+    public static final void THERE_IS_NO_USER_REGISTERED_WITH_THIS_EMAIL_ADRESS = ;
 
 
     private ErrorMessages() {

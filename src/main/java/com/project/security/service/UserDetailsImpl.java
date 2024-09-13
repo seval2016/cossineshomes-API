@@ -18,22 +18,27 @@ import java.util.Objects;
 @NoArgsConstructor
 public class UserDetailsImpl implements UserDetails { //security entity class
 
-        private Long id;
-        private String username;
-        private String name;
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private Boolean builtIn;
         @JsonIgnore
-        private String password;
+        private String passwordHash;
         private Collection<? extends  GrantedAuthority> authorities;
+    private String phone;
 
     public UserDetailsImpl(Long id, String username, String name, String password, String role) {
-        this.id = id;
-        this.username = username;
-        this.name = name;
-        this.password = password;
-
+        this.id=id;
+        this.firstName=firstName;
+        this.lastName=lastName;
+        this.email=email;
+        this.passwordHash=passwordHash;
+        this.builtIn=builtIn;
         List<GrantedAuthority> grantedAuthorities=new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(role));
         this.authorities=grantedAuthorities;
+        this.phone=phone;
     }
 
     @Override
@@ -43,12 +48,12 @@ public class UserDetailsImpl implements UserDetails { //security entity class
 
     @Override
     public String getPassword() {
-        return password;
+        return passwordHash;
     }
 
     @Override
     public String getUsername() { //eğer username üzerinden kontrol yaparsak bu şekilde yazılmalı ama bazı projelerde mail kullanılır o zaman bu kısım mail olarak güncellenmeli
-        return username;
+        return email;
     }
 
     @Override
@@ -72,18 +77,14 @@ public class UserDetailsImpl implements UserDetails { //security entity class
     }
 
     public boolean equals(Object o){
-        if(this == o){ // bu methodu cagiran nesne ile Parametrede gelen "o" isimli
-            // nesneyi karsilastirir, ama Java bu nesnelerin bellekteki referanslarını (adreslerini) karşılaştırır.
+        if(this == o){
             return true;
         }
-        //parametre ile gelen nesnenin userDetailsImpl turunden mi kontrolu
         if(o == null || getClass() != o.getClass()){
             return false;
         }
-        //UserDetailsImpl sınıfından olduğu doğrulanan nesnenin id özelliğinin
-        // mevcut nesnenin id özelliği ile eşit olup olmadığını kontrol eder.
         UserDetailsImpl user = (UserDetailsImpl) o;
-        return Objects.equals(id, user.getId()); // id ile kiyaslama
+        return Objects.equals(id, user.getId());
     }
 
 }

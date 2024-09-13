@@ -50,11 +50,11 @@ public interface AdvertRepository extends JpaRepository<Advert, Long> {
     Page<Advert> findMostPopularAdverts(Pageable pageable);
 
     Page<Advert> findByUser(BaseUserResponse currentUser, Pageable pageable);
-
-    @Modifying
-    @Query("DELETE FROM Advert a WHERE a.builtIn=false")
-    void deleteAllAdvertsExceptBuiltIn();
-
+        /*
+        @Modifying
+        @Query("DELETE FROM Advert a WHERE a.builtIn=false")
+         void deleteAllAdvertsExceptBuiltIn();
+         */
 
     @Query("SELECT a FROM Advert a WHERE " +
             "(LOWER(a.title) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(a.description) LIKE LOWER(CONCAT('%', :q, '%'))) " +

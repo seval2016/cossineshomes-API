@@ -7,21 +7,26 @@ import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.UserMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
+import com.project.payload.request.business.ForgotPasswordRequest;
 import com.project.payload.request.business.UpdatePasswordRequest;
+import com.project.payload.request.user.ResetCodeRequest;
 import com.project.payload.request.user.UserRequest;
 import com.project.payload.request.user.UserRequestWithoutPassword;
 import com.project.payload.response.UserResponse;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.user.UserRepository;
+import com.project.service.email.EmailService;
 import com.project.service.helper.MethodHelper;
 import com.project.service.helper.PageableHelper;
 import com.project.service.validator.UniquePropertyValidator;
+import com.project.utils.MailUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +47,7 @@ public class UserService {
     private final UserRoleService userRoleService;
     private final PasswordEncoder passwordEncoder;
     private final PageableHelper pageableHelper;
+    private final EmailService emailService;
 
 
     public ResponseMessage<UserResponse> saveUser(UserRequest userRequest, String userRole) {
@@ -226,5 +233,63 @@ public class UserService {
 
         return userRepository.findByUserRole_Role(roleType);
 
+    }
+
+    public UserResponse findByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        //!!! Pojo --> DTO
+        return userMapper.mapUserToUserResponse(user);
+    }
+
+    public void updatePassword(UpdatePasswordRequest updatePasswordRequest, HttpServletRequest request) {
+
+        String userName = (String) request.getAttribute("username");
+        User user = userRepository.findByUsername(userName);
+
+        //!!! Built_IN kontrolu
+        if(Boolean.TRUE.equals(user.isBuiltIn())){ // TRUE - FALSE - NULL ( NullPointerException )
+            throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+        //!!! Eski sifre bilgisi dogrumu ?
+        if(!passwordEncoder.matches(updatePasswordRequest.getOldPassword(), user.getPasswordHash())){
+            throw new BadRequestException(ErrorMessages.PASSWORD_NOT_MATCHED);
+        }
+        //!!! Yeni sifre encode edilecek
+        String hashedPassword = passwordEncoder.encode(updatePasswordRequest.getNewPassword());
+        //!!! update
+        user.setPasswordHash(hashedPassword);
+        userRepository.save(user);
+    }
+
+
+    public ResponseMessage<String> forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
+        String resetCode;
+        try{
+            User user = methodHelper.findByUserByEmail(forgotPasswordRequest.getEmail());
+            resetCode = UUID.randomUUID().toString();
+            user.setResetPasswordCode(resetCode);
+            userRepository.save(user);
+
+            MimeMessagePreparator resetPasswordEmail = MailUtil.buildResetPasswordEmail(user.getEmail(),resetCode , user.getFirstName() );
+            emailService.sendEmail(resetPasswordEmail);
+        }catch (BadRequestException e){
+            throw new ResourceNotFoundException("User", "email", forgotPasswordRequest.getEmail());
+        }
+        return ResponseMessage.<String>builder()
+                .message("Code has been sent")
+                .httpStatus(HttpStatus.OK)
+                .object("Password reset code has been sent to your email") // Buraya uygun bir mesaj eklenebilir
+                .build();
+    }
+
+    public ResponseEntity<String> resetPassword(ResetCodeRequest resetcoderequest) {
+        User user = userRepository.findByResetPasswordCode(resetcoderequest.getCode()).orElseThrow(() -> new IllegalArgumentException(String.format(ErrorMessages.RESET_CODE_IS_NOT_FOUND, resetcoderequest.getCode())));
+
+        String requestPassword = passwordEncoder.encode(resetcoderequest.getPassword());
+        user.setPasswordHash(requestPassword);
+        user.setResetPasswordCode(null);
+        userRepository.save(user);
+
+        return new ResponseEntity<>(SuccessMessages.PASSWORD_RESET_SUCCESSFULLY, HttpStatus.OK);
     }
 }
