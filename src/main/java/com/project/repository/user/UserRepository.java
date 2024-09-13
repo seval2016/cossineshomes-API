@@ -36,5 +36,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("DELETE FROM User u WHERE u.builtIn=false")
     void deleteAllUsersExceptBuiltIn();
+
+    List<User> findByUserRole_RoleType(RoleType roleType);
 }
 

@@ -22,12 +22,22 @@ import com.project.service.business.*;
 import com.project.service.user.UserRoleService;
 
 import lombok.RequiredArgsConstructor;
+
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.http.HttpHeaders;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -107,6 +117,7 @@ public class MethodHelper {
         }
 
     }
+
 
     public void checkUniqueProperties(User user, AuthenticatedUsersRequest request) {
 
@@ -296,4 +307,121 @@ public class MethodHelper {
         return detailsMap;
     }
 
+
+    /*--------------------------For Report---------------------------------------*/
+
+    private void createRow(Sheet sheet, int rowNum, CellStyle style, Object... values) {
+        Row row = sheet.createRow(rowNum);
+        for (int i = 0; i < values.length; i++) {
+
+            Cell cell= row.createCell(i);
+            cell.setCellValue(values[i].toString());
+            if (style != null) {
+                cell.setCellStyle(style);
+            }
+
+        }
+    }
+
+    private CellStyle createHeaderStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        font.setColor(IndexedColors.WHITE.getIndex());
+        style.setFont(font);
+        style.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        return style;
+    }
+
+    public <T> ResponseEntity<byte[]> excelResponse(List<T> list) {
+
+        try {
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("AdvertReport");
+            int rowNum = 0;
+
+            CellStyle headerStyle = createHeaderStyle(workbook);
+
+
+            if (!list.isEmpty() && list.get(0) instanceof User) {
+                createRow(sheet, rowNum++, headerStyle,"ID", "Name", "Last Name","Email","Phone");
+                for (User fetchedUser : (List<User>) list) {
+
+                    createRow(sheet, rowNum++,null, fetchedUser.getId(), fetchedUser.getFirstName(), fetchedUser.getLastName(),fetchedUser.getEmail(),fetchedUser.getPhone());
+                }
+            } else if (!list.isEmpty() && list.get(0) instanceof TourRequest) {
+                createRow(sheet, rowNum++, headerStyle,"ID", "Name", "Last Name","Title");
+
+                for (TourRequest tourRequest : (List<TourRequest>) list) {
+                    createRow(sheet, rowNum++,null, tourRequest.getId(), tourRequest.getOwnerUser().getFirstName(),tourRequest.getOwnerUser().getLastName(), tourRequest.getAdvert().getTitle());
+                }
+            } else if (!list.isEmpty() && list.get(0) instanceof Advert) {
+                //TODO hem advert hemde advertType title var ikisinide gerek var mi?
+                createRow(sheet, rowNum++, headerStyle,"ID", "AdvertTitle", "Status","AdvertTypeTitle","CategoryTitle");
+
+                for (Advert advert : (List<Advert>) list) {
+                    createRow(sheet, rowNum++,null, advert.getId(), advert.getTitle(), advert.getStatus(), advert.getAdvertType().getTitle(), advert.getCategory().getTitle());
+                }
+
+            }
+            else{
+                throw new BadRequestException(ErrorMessages.EXCEL_COULD_NOT_BE_CREATED);
+            }
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+            workbook.close();
+
+            HttpHeaders headers =returnHeader();
+            return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            throw new BadRequestException("ERROR");
+        }
+    }
+
+
+    public <T> ResponseEntity<byte[]> excelResponse(Page<T> list) {
+
+        try {
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("AdvertReport");
+            int rowNum = 0;
+            List<T> page = list.getContent();
+            CellStyle headerStyle = createHeaderStyle(workbook);
+
+            if (page.isEmpty() || !(page.get(0) instanceof Advert)){
+                throw new BadRequestException(ErrorMessages.EXCEL_COULD_NOT_BE_CREATED_TYPE_IS_NOT_ADVERT);
+            }
+            createRow(sheet, rowNum++, headerStyle,"ID", "AdvertTitle", "Status","AdvertTypeTitle","CategoryTitle");
+
+            for (Advert advert : (Page<Advert>) page) {
+                createRow(sheet,rowNum++,null, advert.getId(),advert.getTitle(),advert.getStatus(),advert.getAdvertType().getTitle(),advert.getCategory().getTitle());
+            }
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+            workbook.close();
+
+            HttpHeaders headers =returnHeader();
+
+            return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
+
+
+        } catch (BadRequestException | IOException err) {
+            throw new BadRequestException("ERR");
+        }
+
+    }
+    private HttpHeaders returnHeader(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentDispositionFormData("attachment", "report.xlsx");
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+        return headers;
+    }
+
+    /*-----------------------------------------------------------*/
 }

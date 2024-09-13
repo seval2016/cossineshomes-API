@@ -220,4 +220,10 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public List<User> getUsersByRoleType(RoleType roleType) {
+
+
+        return userRepository.findByUserRole_RoleType(roleType);
+
+    }
 }

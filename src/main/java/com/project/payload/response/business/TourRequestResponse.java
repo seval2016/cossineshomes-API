@@ -2,11 +2,10 @@ package com.project.payload.response.business;
 
 import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.user.User;
-import com.project.entity.enums.TourRequestStatus;
+import com.project.entity.enums.StatusType;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -18,7 +17,7 @@ public class TourRequestResponse {
     private Long id;
     private LocalDate tourDate;
     private LocalTime tourTime;
-    private TourRequestStatus status;
+    private StatusType status;
     private LocalDate createAt;
     private LocalDate updateAt;
     private User ownerUserId;

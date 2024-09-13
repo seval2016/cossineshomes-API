@@ -1,6 +1,6 @@
 package com.project.entity.enums;
 
-public enum TourRequestStatus {
+public enum StatusType {
 
     PENDING(0, "Initial value"),
     APPROVED(1, "Approved Can be approved by owner of property"),
@@ -10,7 +10,7 @@ public enum TourRequestStatus {
     private final int tourStatusValue;
     private final String tourDesc;
 
-    TourRequestStatus(int tourStatusValue, String tourDesc) {
+    StatusType(int tourStatusValue, String tourDesc) {
         this.tourStatusValue = tourStatusValue;
         this.tourDesc = tourDesc;
     }
@@ -23,8 +23,8 @@ public enum TourRequestStatus {
         return tourDesc;
     }
 
-    public static TourRequestStatus fromValue(int tourStatusValue) {
-        for (TourRequestStatus tourStatus : TourRequestStatus.values()) {
+    public static StatusType fromValue(int tourStatusValue) {
+        for (StatusType tourStatus : StatusType.values()) {
             if (tourStatus.getTourStatusValue() == tourStatusValue) {
                 return tourStatus;
             }

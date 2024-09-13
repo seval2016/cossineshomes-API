@@ -4,10 +4,9 @@ import com.project.entity.concretes.business.Advert;
 import com.project.entity.concretes.business.Images;
 import com.project.entity.concretes.business.TourRequest;
 import com.project.entity.concretes.user.User;
-import com.project.entity.enums.TourRequestStatus;
+import com.project.entity.enums.StatusType;
 import com.project.payload.request.business.TourRequestRequest;
 import com.project.payload.response.business.TourRequestResponse;
-import com.project.service.helper.MethodHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -61,7 +60,7 @@ public class TourRequestMapper {
                 .advert(advert)
                 .ownerUser(ownerUser)
                 .guestUser(guestUser)
-                .status(TourRequestStatus.PENDING)
+                .status(StatusType.PENDING)
                 .createAt(LocalDate.now())
                 .build();
     }

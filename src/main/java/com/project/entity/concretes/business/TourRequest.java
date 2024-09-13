@@ -2,7 +2,7 @@ package com.project.entity.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.entity.concretes.user.User;
-import com.project.entity.enums.TourRequestStatus;
+import com.project.entity.enums.StatusType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,7 +38,7 @@ public class TourRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TourRequestStatus status = TourRequestStatus.PENDING;
+    private StatusType status = StatusType.PENDING;
 
     @ManyToOne
     @JoinColumn(name = "owner_user_id", nullable = false)
