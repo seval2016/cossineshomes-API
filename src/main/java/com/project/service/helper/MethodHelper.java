@@ -26,9 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,7 +35,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.http.HttpHeaders;
+import org.springframework.http.HttpHeaders;
+
+
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,6 +55,7 @@ public class MethodHelper {
     private final CountryService countryService;
     private final AdvertTypesService advertTypesService;
     private final DistrictService districtService;
+
 
     //!!! isUserExist
     public User isUserExist(Long userId){
@@ -418,8 +419,10 @@ public class MethodHelper {
     private HttpHeaders returnHeader(){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-        headers.setContentDispositionFormData("attachment", "report.xlsx");
-        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+        headers.setContentDisposition(ContentDisposition.builder("attachment")
+                .filename("report.xlsx")
+                .build());
+        headers.setCacheControl(CacheControl.noCache().mustRevalidate());
         return headers;
     }
 

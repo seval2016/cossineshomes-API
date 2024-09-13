@@ -43,7 +43,7 @@ public class CategoryPropertyKey {
     private Category category;
 
     // mappedBy değerini doğru alan ile güncelledim
-    @OneToMany(mappedBy = "categoryPropertyKey", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "categoryPropertyKey", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CategoryPropertyValue> categoryPropertyValues = new ArrayList<>();
 }
 

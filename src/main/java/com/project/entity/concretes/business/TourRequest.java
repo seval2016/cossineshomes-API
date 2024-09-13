@@ -1,6 +1,7 @@
 package com.project.entity.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.entity.concretes.user.User;
 import com.project.entity.enums.StatusType;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -32,27 +34,37 @@ public class TourRequest {
     @Column(name = "tour_time", nullable = false)
     private LocalTime tourTime;
 
-    @ManyToOne
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Advert advert;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusType status = StatusType.PENDING;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Column(name = "create_at", nullable = false)
+    private LocalDateTime createAt= LocalDateTime.now();
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Column(name = "update_at", nullable = false)
+    private LocalDateTime updateAt= LocalDateTime.now();
+
+
+    //------------İlişkili sütunlar -------------
+
+    //ManyToOne
+
+    @ManyToOne
+    @JoinColumn(name = "advert_id", nullable = false)
+    @JsonIgnore
+    private Advert advert;
+
     @ManyToOne
     @JoinColumn(name = "owner_user_id", nullable = false)
+    @JsonIgnore
     private User ownerUser;
 
     @ManyToOne
     @JoinColumn(name = "guest_user_id", nullable = false)
+    @JsonIgnore
     private User guestUser;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @Column(name = "create_at", nullable = false)
-    private LocalDate createAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @Column(name = "update_at", nullable = false)
-    private LocalDate updateAt;
 }

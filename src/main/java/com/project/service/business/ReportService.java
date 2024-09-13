@@ -3,10 +3,12 @@ package com.project.service.business;
 import com.project.entity.concretes.business.Advert;
 import com.project.entity.concretes.business.TourRequest;
 import com.project.entity.concretes.user.User;
+import com.project.entity.enums.AdvertStatus;
 import com.project.entity.enums.RoleType;
 import com.project.entity.enums.StatusType;
 import com.project.exception.BadRequestException;
 import com.project.payload.messages.ErrorMessages;
+import com.project.payload.response.business.AdvertResponse;
 import com.project.repository.business.*;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.MethodHelper;
@@ -64,17 +66,14 @@ public class ReportService {
         return ResponseEntity.ok(logMap);
     }
 
-
     public ResponseEntity<byte[]> getPopulerAdvertsReport(int amount, HttpServletRequest request) {
-
         User user = methodHelper.getUserByHttpRequest(request);
         methodHelper.checkRoles(user, RoleType.MANAGER, RoleType.ADMIN);
-        Pageable pageable = PageRequest.of(0,10);
 
-        Page<Advert> adverts = advertService.getMostPopularAdverts(amount,pageable);
+        Pageable pageable = PageRequest.of(0, amount); // Pageable amount parametresini kullanır.
+        List<AdvertResponse> adverts = advertService.getMostPopularAdverts(pageable);
+
         return methodHelper.excelResponse(adverts);
-
-
     }
 
     public ResponseEntity<byte[]> getUsersWithRol(String rol, HttpServletRequest request) {
@@ -133,13 +132,10 @@ public class ReportService {
 
     }
 
-    public ResponseEntity<byte[]> getAdverts(HttpServletRequest request, String date1, String date2, String category, String type, int status) {
+    public ResponseEntity<byte[]> getAdverts(HttpServletRequest request, String date1, String date2, String category, String type, AdvertStatus status) {
 
         User user = methodHelper.getUserByHttpRequest(request);
         methodHelper.checkRoles(user, RoleType.ADMIN, RoleType.MANAGER);
-
-
-
         List<Advert> adverts = advertService.getAdvertsReport(date1, date2, category, type.toLowerCase(), status);
 
         return methodHelper.excelResponse(adverts);

@@ -6,6 +6,7 @@ import com.project.entity.enums.StatusType;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -18,8 +19,8 @@ public class TourRequestResponse {
     private LocalDate tourDate;
     private LocalTime tourTime;
     private StatusType status;
-    private LocalDate createAt;
-    private LocalDate updateAt;
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
     private User ownerUserId;
     private User guestUserId;
     private Advert advertId;

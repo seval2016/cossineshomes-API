@@ -5,6 +5,7 @@ import com.project.entity.concretes.business.Category;
 import com.project.entity.concretes.business.CategoryPropertyKey;
 import com.project.entity.concretes.user.User;
 import com.project.entity.enums.RoleType;
+import com.project.exception.BadRequestException;
 import com.project.exception.ConflictException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.CategoryMapper;
@@ -183,5 +184,13 @@ public class CategoryService {
                 .message(SuccessMessages.CATEGORY_FOUNDED)
                 .httpStatus(HttpStatus.OK)
                 .build();
+    }
+    //-------------------------------
+
+    public List<Category> getCategoryByTitle(String category) {
+
+        return categoryRepository.findByTitle(category).orElseThrow(
+                () -> new BadRequestException(ErrorMessages.CATEGORY_NOT_FOUND)
+        );
     }
 }

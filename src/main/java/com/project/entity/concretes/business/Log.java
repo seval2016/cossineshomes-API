@@ -3,6 +3,7 @@ package com.project.entity.concretes.business;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.entity.concretes.user.User;
 
+import com.project.entity.enums.LogEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,8 +24,8 @@ public class Log {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 255)
-    private String log;
+    @Enumerated(EnumType.STRING)
+    private LogEnum log;
 
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
@@ -36,5 +37,5 @@ public class Log {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt;
+    private LocalDateTime createAt= LocalDateTime.now();
 }

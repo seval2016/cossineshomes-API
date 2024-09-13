@@ -53,15 +53,12 @@ public class TourRequestMapper {
                 .build();
     }
 
-    public TourRequest mapTourRequestRequestToTourRequest(TourRequestRequest request, Advert advert, User ownerUser, User guestUser){
+    public TourRequest mapTourRequestRequestToTourRequest(TourRequestRequest request, Advert advert){
         return TourRequest.builder()
                 .tourDate(request.getTourDate())
                 .tourTime(request.getTourTime())
                 .advert(advert)
-                .ownerUser(ownerUser)
-                .guestUser(guestUser)
-                .status(StatusType.PENDING)
-                .createAt(LocalDate.now())
                 .build();
     }
+
 }

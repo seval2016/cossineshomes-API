@@ -1,71 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+	<!-- Spring Boot Parent: Tüm Spring Boot bağımlılıkları için temel yapılandırma sağlar -->
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.5</version>
+		<version>2.7.5</version> <!-- Spring Boot 2.7.5 versiyonu kullanılıyor -->
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>com.project</groupId>
 	<artifactId>CossinesHomes</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>CossinesHomes</name>
 	<description>CossinesHomes Restfull API</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+
+	<!-- Java versiyonu belirtildi, Java 17 kullanılıyor -->
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+
+	<!-- Bağımlılıklar (dependencies) -->
 	<dependencies>
+
+		<!-- Spring Boot Starter for JPA: JPA ile veri tabanı işlemleri için kullanılır -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+
+		<!-- Spring Boot Starter for Validation: Bean validasyonları için gerekli bağımlılık -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
+
+		<!-- Spring Boot Starter for Web: Spring MVC ve REST API desteği sağlar -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- PostgreSQL JDBC Driver: PostgreSQL veritabanı bağlantısı için gerekli sürücü -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
+			<scope>runtime</scope> <!-- Yalnızca uygulama çalışırken kullanılacak -->
 		</dependency>
+
+		<!-- Lombok: Kodunuzu sadeleştirmek için kullanılır, getter/setter gibi metodları otomatik oluşturur -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
+			<optional>true</optional> <!-- Lombok, derleme sırasında dahil edilir -->
 		</dependency>
+
+		<!-- Spring Boot Starter Test: Uygulamanız için test kütüphanelerini sağlar (JUnit, Mockito vs.) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+			<scope>test</scope> <!-- Sadece testlerde kullanılır -->
 		</dependency>
+
+		<!-- Spring Boot Security: Uygulamanızda güvenlik işlemleri için kullanılır -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+
+		<!-- Spring Boot Mail: Email gönderme işlemleri için gerekli bağımlılık -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+
+		<!-- Apache POI: Excel ve Word dosyaları ile çalışma kütüphanesi -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
@@ -76,25 +87,33 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.2.4</version>
 		</dependency>
-		<!-- Other dependencies -->
+
+		<!-- JAXB API: XML verilerini Java objelerine dönüştürmek için kullanılır -->
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 			<version>2.3.1</version>
 		</dependency>
+
+		<!-- SpringDoc OpenAPI: API dökümantasyonu oluşturmak için Swagger/OpenAPI desteği -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.1.0</version>
 		</dependency>
+
+		<!-- JSON Web Token (JWT): Kullanıcı kimlik doğrulaması için kullanılır -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
-			<version>0.9.1</version>
+			<version>0.9.1</version> <!-- Eski bir versiyon, daha güncel bir sürüm kullanılabilir -->
 		</dependency>
 	</dependencies>
+
+	<!-- Build kısmı: Maven build ayarları -->
 	<build>
 		<plugins>
+			<!-- Spring Boot Maven Plugin: Uygulamanın bir jar dosyası olarak paketlenmesi için kullanılır -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -109,5 +128,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

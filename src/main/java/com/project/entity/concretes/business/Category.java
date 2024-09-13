@@ -47,10 +47,10 @@ public class Category {
     private LocalDateTime updateAt;
 
     // Advert listesi ekleniyor
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "category",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Advert> adverts= new ArrayList<>();
 
-    @OneToMany(mappedBy = "category" , cascade=CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<CategoryPropertyKey> categoryPropertyKeys = new HashSet<>();
 
     @PrePersist

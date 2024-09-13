@@ -35,7 +35,7 @@ public class DateTimeValidator {
 
     public void checkConflictTourRequestFromRepoByUserForGuest(User userGuest, TourRequestRequest tourRequestRequest) {
 
-        for(TourRequest tourRequest : userGuest.getTourRequests()){
+        for(TourRequest tourRequest : userGuest.getGuestTourRequests()){
             if(tourRequest.getTourDate().equals(tourRequestRequest.getTourDate())){
 
                 if(Math.abs(calculateMinutesBetweenTime(tourRequest,tourRequestRequest))<30){
@@ -48,7 +48,7 @@ public class DateTimeValidator {
     }
     public void checkConflictTourRequestFromRepoByUserForOwner(User ownerUser, TourRequestRequest tourRequestRequest) {
 
-        for (TourRequest tourRequest : ownerUser.getTourRequests()){
+        for (TourRequest tourRequest : ownerUser.getOwnerTourRequests()){
             if(tourRequest.getTourDate().equals(tourRequestRequest.getTourDate())){
 
                 if(calculateMinutesBetweenTime(tourRequest,tourRequestRequest) <30){

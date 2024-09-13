@@ -69,9 +69,9 @@ public class TourRequestService {
 
     }
 
-    public Set<TourRequest> getTourRequestsById(Set<Long> tourRequestIdList) {
+    /*public Set<TourRequest> getTourRequestsById(Set<Long> tourRequestIdList) {
 
         return tourRequestRepository.findById(tourRequestIdList);
 
-    }
+    }*/
 }

@@ -66,23 +66,6 @@ public class User {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH-mm", timezone = "Turkey")
     private LocalDateTime updateAt;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private List<UserRole> userRole=new ArrayList<>();
-
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Advert> advert=new ArrayList<>();
-
-    @OneToMany(mappedBy = "ownerUser",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<TourRequest>tourRequests=new ArrayList<>();
-
-    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
-    private List<Favorite>favoritesList=new ArrayList<>();
-
     @PrePersist
     protected void onCreate() {
         createAt = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
@@ -92,6 +75,34 @@ public class User {
     protected void onUpdate() {
         updateAt = LocalDateTime.now();
     }
+
+    //------------İlişkili sütunlar -------------
+
+    //ManyToOne
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<UserRole> userRole=new ArrayList<>();
+
+
+    //------------------
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Advert> advert=new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
+    private List<Favorite>favoritesList=new ArrayList<>();
+
+    @OneToMany(mappedBy = "ownerUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<TourRequest> ownerTourRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "guestUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<TourRequest> guestTourRequests = new ArrayList<>();
 
 
 

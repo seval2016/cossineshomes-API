@@ -1,5 +1,6 @@
 package com.project.controller.business;
 
+import com.project.entity.enums.AdvertStatus;
 import com.project.service.business.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,7 @@ public class ReportController {
     public ResponseEntity<Map<String, Long>> getStaticts(HttpServletRequest request) {
 
         return logService.getStaticts(request);
-
     }
-
 
     @GetMapping("/adverts")
     @PreAuthorize("hasAnyAuthority('MANAGER','ADMIN')")
@@ -34,7 +33,7 @@ public class ReportController {
                                              @RequestParam(value = "date2", required = false) String date2,
                                              @RequestParam(value = "category", required = false) String category,
                                              @RequestParam(value = "type", required = false) String type,
-                                             @RequestParam(value = "status", required = false) int status,
+                                             @RequestParam(value = "status", required = false) AdvertStatus status,
                                              HttpServletRequest request) {
 
         return logService.getAdverts(request, date1, date2, category, type, status);

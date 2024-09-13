@@ -2,8 +2,10 @@ package com.project.service.business;
 
 import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.user.User;
+import com.project.entity.enums.AdvertStatus;
 import com.project.entity.enums.LogEnum;
 import com.project.entity.enums.RoleType;
+import com.project.exception.BadRequestException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.AdvertMapper;
 import com.project.payload.messages.ErrorMessages;
@@ -17,6 +19,7 @@ import com.project.repository.user.UserRepository;
 import com.project.service.helper.MethodHelper;
 import com.project.service.helper.PageableHelper;
 
+import com.project.service.validator.DateTimeValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +59,10 @@ public class AdvertService {
     private final ImagesRepository imagesRepository;
     private final CategoryPropertyValueService categoryPropertyValueService;
     private final LogService logService;
+    private final DateTimeValidator dateTimeValidator;
+    private final CategoryService categoryService;
+    private final AdvertTypesService advertTypesService;
+    private final AdvertStatus advertStatus;
 
 
     //!!! 1. İlanları Getirme
@@ -105,10 +113,9 @@ public class AdvertService {
         return (3 * totalTourRequests) + totalViews;
     }
 
-    public List<AdvertResponse> getMostPopularAdverts(Integer amount) {
-        // default olarak limit on tane ilan gösterilecek
-        int limit = amount != null ? amount : 10;
-        List<Advert> popularAdverts = advertRepository.findMostPopularAdverts(PageRequest.of(0, limit));
+    public List<AdvertResponse> getMostPopularAdverts(Pageable pageable) {
+        // amount yerine Pageable kullanılıyor
+        Page<Advert> popularAdverts = advertRepository.findMostPopularAdverts(pageable);
         return popularAdverts.stream()
                 .map(advertMapper::mapAdvertToAdvertResponse)
                 .collect(Collectors.toList());
@@ -293,6 +300,27 @@ public class AdvertService {
         //logService.createLogEvent(advert.getUser(),advert, LogEnum.DELETED);
 
         return advertMapper.mapAdvertToAdvertResponse(advert);
+    }
+
+    /*********************/
+
+    public List<Advert> getAdvertsReport(String date1, String date2, String category, String type, AdvertStatus status) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        LocalDateTime begin = LocalDateTime.parse(date1,formatter);
+        LocalDateTime end =LocalDateTime.parse(date2,formatter);
+        dateTimeValidator.checkBeginTimeAndEndTime(begin,end);
+
+        categoryService.getCategoryByTitle(category);
+
+        AdvertStatus statusEnum = AdvertStatus.fromValue(status.getValue());
+
+        advertTypesService.findByTitle(type);
+
+        return advertRepository.findByQuery(begin,end,category,type,statusEnum).orElseThrow(
+                ()-> new BadRequestException(ErrorMessages.ADVERT_NOT_FOUND)
+        );
+
     }
 
 }

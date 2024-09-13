@@ -34,5 +34,6 @@ public class Favorite {
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt;
+
 }
 

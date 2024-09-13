@@ -64,29 +64,55 @@ public class Advert {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Turkey")
     private LocalDateTime updateAt;
 
-    @ManyToOne
+    @PrePersist
+    protected void onCreate() {
+        createAt = LocalDateTime.now();
+        updateAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updateAt = LocalDateTime.now();
+    }
+
+    @PostPersist
+    @PostUpdate
+    public void generateSlug() {
+        if (this.slug == null || this.slug.isEmpty()) {
+            this.slug = SlugUtils.toSlug(this.title) + "-" + this.id;
+        }
+    }
+
+
+    //------------İlişkili sütunlar -------------
+
+    //ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advert_type_id", nullable = false)
     private AdvertType advertType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id", nullable = false)
     private City city;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id", nullable = false)
     private District district;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinColumn(name="user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    //----OneToMany
 
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Images> images;
@@ -112,22 +138,5 @@ public class Advert {
     @JsonIgnore
     private List<Log> logList;
 
-    @PrePersist
-    protected void onCreate() {
-        createAt = LocalDateTime.now();
-        updateAt = LocalDateTime.now();
-    }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updateAt = LocalDateTime.now();
-    }
-
-    @PostPersist
-    @PostUpdate
-    public void generateSlug() {
-        if (this.slug == null || this.slug.isEmpty()) {
-            this.slug = SlugUtils.toSlug(this.title) + "-" + this.id;
-        }
-    }
 }

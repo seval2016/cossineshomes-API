@@ -30,7 +30,7 @@ public class UserRole {
     @Column(length = 20)
     private RoleType role;
 
-    @OneToMany(mappedBy = "userRole")
+    @ManyToMany(mappedBy = "userRole")
     @JsonIgnore
     private Set<User> users=new HashSet<>();
 

@@ -12,6 +12,8 @@ import com.project.service.helper.MethodHelper;
 import com.project.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -71,9 +73,10 @@ public class AdvertController {
     @PreAuthorize("permitAll()")
     public ResponseEntity<List<AdvertResponse>> getMostPopularAdverts(
             @PathVariable(value = "amount", required = false) Integer amount) {
-        // amount null ise varsayılan değeri 10 olarak ayarla
-        int limit = (amount != null) ? amount : 10;
-        List<AdvertResponse> response = advertService.getMostPopularAdverts(limit);
+        // Pageable için varsayılan sayfa boyutu: amount ya da 10
+        Pageable pageable = PageRequest.of(0, (amount != null) ? amount : 10);
+
+        List<AdvertResponse> response = advertService.getMostPopularAdverts(pageable);
         return ResponseEntity.ok(response);
     }//A04
 
