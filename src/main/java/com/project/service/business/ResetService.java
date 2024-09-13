@@ -12,7 +12,7 @@ public class ResetService {
     private final AdvertRepository advertRepository;
     private final ImagesRepository imagesRepository;
     private final CategoryRepository categoryRepository;
-    private final AdvertTypeRepository advertTypeRepository;
+    private final AdvertTypesRepository advertTypesRepository;
     private final CategoryPropertyKeyRepository categoryPropertyKeyRepository;
     private final CategoryPropertyValueRepository categoryPropertyValueRepository;
     private final FavoriteRepository favoriteRepository;
@@ -34,7 +34,7 @@ public class ResetService {
         categoryRepository.deleteAllCategoriesExceptBuiltIn();
 
         // AdvertType tablosundaki verileri sil (builtIn=true olanlar hariç)
-        advertTypeRepository.deleteAllAdvertTypesExceptBuiltIn();
+        advertTypesRepository.deleteAllAdvertTypesExceptBuiltIn();
 
         // CategoryPropertyKey tablosundaki verileri sil (builtIn=true olanlar hariç)
         categoryPropertyKeyRepository.deleteAllCategoryPropertyKeysExceptBuiltIn();

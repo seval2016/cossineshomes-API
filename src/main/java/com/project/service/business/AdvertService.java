@@ -45,7 +45,7 @@ public class AdvertService {
     private final AdvertRepository advertRepository;
     private final AdvertMapper advertMapper;
     private final PageableHelper pageableHelper;
-    private final AdvertTypeRepository advertTypeRepository;
+    private final AdvertTypesRepository advertTypesRepository;
     private final CountryRepository countryRepository;
     private final CityRepository cityRepository;
     private final DistrictRepository districtRepository;
@@ -70,7 +70,7 @@ public class AdvertService {
         User user = userRepository.findByUsernameEquals(userName);
 
         //!!! İlgili tüm ilişkisel verileri (AdvertType, Country vs.) bulup setliyoruz
-        AdvertType advertType = advertTypeRepository.findById(advertRequest.getAdvertTypeId()).orElseThrow();
+        AdvertType advertType = advertTypesRepository.findById(advertRequest.getAdvertTypeId()).orElseThrow();
         Country country = countryRepository.findById(advertRequest.getCountryId()).orElseThrow();
         City city = cityRepository.findById(advertRequest.getCityId()).orElseThrow();
         District district = districtRepository.findById(advertRequest.getDistrictId()).orElseThrow();

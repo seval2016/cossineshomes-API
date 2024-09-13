@@ -5,8 +5,6 @@ public class ErrorMessages {
 
     public static final String BEGIN_TIME_CAN_NOT_BE_AFTER_END_TIME = "Start time can not be later than end time";
 
-
-
     private ErrorMessages() {
     }
 
@@ -126,6 +124,8 @@ public class ErrorMessages {
     public static final String ADVERT_TYPE_CREATION_ERROR = "Error : Advert Type is not created. Please try again.";
     public static final String ADVERT_TYPE_UPDATE_ERROR = "Error : Advert Type is not updated. Please check your input.";
     public static final String ADVERT_TYPE_DELETE_ERROR = "Error : Advert Type is not deleted. It may be associated with adverts.";
+    public static final String ADVERT_TYPE_NOT_FOUND_BY_ID = "Error : Advert Type is not fount with id:%s";
+
     public static final String NOT_FOUND_ADVERT_WITH_ID_MESSAGE ="Error: Advert with id: %s not found";
     public static final String ADVERT_IS_NOT_FOUND_FOR_USER ="Error: Advert is not found with user id: %s";
     public static final String THIS_ADVERT_DOES_NOT_UPDATE ="Error: This advert is built in";
