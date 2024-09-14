@@ -46,7 +46,7 @@ public class AuthenticationController {
     }//F03
 
     @PostMapping("/reset-password") //http://localhost:8080/auth/reset-password
-    ResponseEntity<String>resetPassword(@Valid @RequestBody ResetCodeRequest resetcoderequest){
+    public ResponseEntity<String>resetPassword(@Valid @RequestBody ResetCodeRequest resetcoderequest){
         return userService.resetPassword(resetcoderequest);
     } //F04
 

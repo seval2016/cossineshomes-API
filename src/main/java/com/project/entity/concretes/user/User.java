@@ -88,7 +88,6 @@ public class User {
     )
     private List<UserRole> userRole=new ArrayList<>();
 
-
     //------------------
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)

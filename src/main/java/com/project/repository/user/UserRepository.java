@@ -41,6 +41,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByUserRole_Role(RoleType roleType);
 
-    Optional<Object> findByResetPasswordCode(String code);
+    Optional<User> findByResetPasswordCode(String code);
 }
 

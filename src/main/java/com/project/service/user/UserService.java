@@ -282,12 +282,14 @@ public class UserService {
                 .build();
     }
 
-    public ResponseEntity<String> resetPassword(ResetCodeRequest resetcoderequest) {
-        User user = userRepository.findByResetPasswordCode(resetcoderequest.getCode()).orElseThrow(() -> new IllegalArgumentException(String.format(ErrorMessages.RESET_CODE_IS_NOT_FOUND, resetcoderequest.getCode())));
+    public ResponseEntity<String> resetPassword(ResetCodeRequest resetcodeRequest) {
+        User user = userRepository.findByResetPasswordCode(resetcodeRequest.getCode())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format(ErrorMessages.RESET_CODE_IS_NOT_FOUND, resetcodeRequest.getCode())));
 
-        String requestPassword = passwordEncoder.encode(resetcoderequest.getPassword());
+        String requestPassword = passwordEncoder.encode(resetcodeRequest.getPassword());
         user.setPasswordHash(requestPassword);
-        user.setResetPasswordCode(null);
+        user.setResetPasswordCode(null); // Kod kullanıldıktan sonra sıfırlanıyor
         userRepository.save(user);
 
         return new ResponseEntity<>(SuccessMessages.PASSWORD_RESET_SUCCESSFULLY, HttpStatus.OK);

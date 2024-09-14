@@ -2,8 +2,7 @@ package com.project.payload.messages;
 
 public class SuccessMessages {
 
-    public static final String PASSWORD_RESET_SUCCESSFULLY="";
-
+    public static final String PASSWORD_RESET_SUCCESSFULLY = "Password reset code has been sent to your email address successfully.";
 
     private SuccessMessages() {
     }
