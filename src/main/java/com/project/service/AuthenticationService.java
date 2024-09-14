@@ -43,6 +43,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final UserMapper userMapper;
     private final EmailServiceInterface emailServiceInterface;
 
 
@@ -87,8 +88,16 @@ public class AuthenticationService {
         } catch (Exception e) {
             throw new MailServiceException(e.getMessage());
         }
+
         return ResponseEntity.ok(authResponse.build());
 
     }
+
+    public UserResponse findByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        //!!! Pojo --> DTO
+        return userMapper.mapUserToUserResponse(user);
+    }
+
 
 }

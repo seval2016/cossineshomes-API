@@ -2,6 +2,8 @@ package com.project.security.service;
 
 import com.project.entity.concretes.user.User;
 import com.project.entity.enums.RoleType;
+import com.project.exception.ResourceNotFoundException;
+import com.project.payload.messages.ErrorMessages;
 import com.project.repository.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,21 +23,28 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsernameEquals(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ErrorMessages.USER_IS_NOT_FOUND_BY_EMAIL, email)));
+
         if (user != null) {
+            // GrantedAuthority Set'i oluşturma
             Set<GrantedAuthority> authorities = user.getUserRole().stream()
-                    .map(userRole -> new SimpleGrantedAuthority(userRole.getRole().getRoleName())) // RoleType'dan rol ismini alıyoruz
+                    .map(userRole -> new SimpleGrantedAuthority(userRole.getRole().name())) // Enum rol adını alıyoruz
                     .collect(Collectors.toSet());
 
             return new UserDetailsImpl(
                     user.getId(),
-                    user.getUsername(),
                     user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    user.isBuiltIn(),
                     user.getPasswordHash(),
-                    authorities
+                    authorities,
+                    user.getPhone()
             );
         }
-        throw new UsernameNotFoundException("User '" + username + "' not found");
+
+        throw new UsernameNotFoundException("User '" + email + "' not found");
     }
 }
