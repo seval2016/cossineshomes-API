@@ -1,0 +1,52 @@
+"2024-09-14 19:47:26,289 INFO  [main] com.project.CossinesHomesApplication:Starting CossinesHomesApplication using Java 17.0.9 on Seval with PID 8960 (C:\Users\seval\IdeaProjects\CossinesHomes\target\classes started by seval in C:\Users\seval\IdeaProjects\CossinesHomes)
+""2024-09-14 19:47:26,294 INFO  [main] com.project.CossinesHomesApplication:No active profile set, falling back to 1 default profile: "default"
+""2024-09-14 19:47:27,836 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+""2024-09-14 19:47:28,270 INFO  [main] org.springframework.data.repository.config.RepositoryConfigurationDelegate:Finished Spring Data repository scanning in 394 ms. Found 15 JPA repository interfaces.
+""2024-09-14 19:47:30,216 INFO  [main] org.springframework.boot.web.embedded.tomcat.TomcatWebServer:Tomcat initialized with port(s): 8080 (http)
+""2024-09-14 19:47:30,245 INFO  [main] org.apache.catalina.core.StandardService:Starting service [Tomcat]
+""2024-09-14 19:47:30,246 INFO  [main] org.apache.catalina.core.StandardEngine:Starting Servlet engine: [Apache Tomcat/9.0.68]
+""2024-09-14 19:47:30,630 INFO  [main] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]:Initializing Spring embedded WebApplicationContext
+""2024-09-14 19:47:30,630 INFO  [main] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext:Root WebApplicationContext: initialization completed in 4261 ms
+""2024-09-14 19:47:31,096 INFO  [main] org.hibernate.jpa.internal.util.LogHelper:HHH000204: Processing PersistenceUnitInfo [name: default]
+""2024-09-14 19:47:31,198 INFO  [main] org.hibernate.Version:HHH000412: Hibernate ORM core version 5.6.12.Final
+""2024-09-14 19:47:31,460 INFO  [main] org.hibernate.annotations.common.Version:HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+""2024-09-14 19:47:31,617 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Starting...
+""2024-09-14 19:47:31,892 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Start completed.
+""2024-09-14 19:47:31,913 INFO  [main] org.hibernate.dialect.Dialect:HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL81Dialect
+""2024-09-14 19:47:34,122 INFO  [main] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator:HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+""2024-09-14 19:47:34,138 INFO  [main] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean:Initialized JPA EntityManagerFactory for persistence unit 'default'
+""2024-09-14 19:47:36,184 WARN  [main] org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext:Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'cossinesHomesApplication': Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'advertService' defined in file [C:\Users\seval\IdeaProjects\CossinesHomes\target\classes\com\project\service\business\AdvertService.class]: Unsatisfied dependency expressed through constructor parameter 1; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'advertMapper' defined in file [C:\Users\seval\IdeaProjects\CossinesHomes\target\classes\com\project\payload\mappers\AdvertMapper.class]: Unsatisfied dependency expressed through constructor parameter 1; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'methodHelper' defined in file [C:\Users\seval\IdeaProjects\CossinesHomes\target\classes\com\project\service\helper\MethodHelper.class]: Unsatisfied dependency expressed through constructor parameter 4; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'categoryService' defined in file [C:\Users\seval\IdeaProjects\CossinesHomes\target\classes\com\project\service\business\CategoryService.class]: Unsatisfied dependency expressed through constructor parameter 2; nested exception is org.springframework.beans.factory.BeanCurrentlyInCreationException: Error creating bean with name 'methodHelper': Requested bean is currently in creation: Is there an unresolvable circular reference?
+""2024-09-14 19:47:36,186 INFO  [main] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean:Closing JPA EntityManagerFactory for persistence unit 'default'
+""2024-09-14 19:47:36,195 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Shutdown initiated...
+""2024-09-14 19:47:36,207 INFO  [main] com.zaxxer.hikari.HikariDataSource:HikariPool-1 - Shutdown completed.
+""2024-09-14 19:47:36,220 INFO  [main] org.apache.catalina.core.StandardService:Stopping service [Tomcat]
+""2024-09-14 19:47:36,251 INFO  [main] org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener:
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+""2024-09-14 19:47:36,291 ERROR [main] org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter:
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The dependencies of some of the beans in the application context form a cycle:
+
+   cossinesHomesApplication
+      ↓
+   advertService defined in file [C:\Users\seval\IdeaProjects\CossinesHomes\target\classes\com\project\service\business\AdvertService.class]
+      ↓
+   advertMapper defined in file [C:\Users\seval\IdeaProjects\CossinesHomes\target\classes\com\project\payload\mappers\AdvertMapper.class]
+┌─────┐
+|  methodHelper defined in file [C:\Users\seval\IdeaProjects\CossinesHomes\target\classes\com\project\service\helper\MethodHelper.class]
+↑     ↓
+|  categoryService defined in file [C:\Users\seval\IdeaProjects\CossinesHomes\target\classes\com\project\service\business\CategoryService.class]
+└─────┘
+
+
+Action:
+
+Relying upon circular references is discouraged and they are prohibited by default. Update your application to remove the dependency cycle between beans. As a last resort, it may be possible to break the cycle automatically by setting spring.main.allow-circular-references to true.
+
+"

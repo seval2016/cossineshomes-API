@@ -52,10 +52,7 @@ public class MethodHelper {
     private final UserRoleService userRoleService;
     private final AdvertRepository advertRepository;
     private final CategoryService categoryService;
-    private final CityService cityService;
-    private final CountryService countryService;
-    private final AdvertTypesService advertTypesService;
-    private final DistrictService districtService;
+
 
 
     //!!! isUserExist
@@ -100,11 +97,13 @@ public class MethodHelper {
         return userRepository.findByEmail(email).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_USER_EMAIL, email)));
     }
-    public User getUserByHttpRequest(HttpServletRequest request) {
+        public User getUserByHttpRequest(HttpServletRequest request) {
         return findByUserByEmail(getEmailByRequest(request));
 
     }
+
     public String getEmailByRequest(HttpServletRequest request) {
+
         return (String) request.getAttribute("email");
     }
 
@@ -287,39 +286,6 @@ public class MethodHelper {
     public List<CityAdvertResponse> getAdvertsGroupedByCities() {
         return advertRepository.findAdvertsGroupedByCities();
     }
-
-    public Map<String, Object> getAdvertDetails(AdvertRequest advertRequest, HttpServletRequest httpServletRequest, Map<String, Object> detailsMap) {
-        if (detailsMap == null) {
-            detailsMap = new HashMap<>();
-        }
-        Category category = categoryService.getCategoryById(advertRequest.getCategoryId());
-
-        // ResponseEntity'den body'yi alıyoruz
-        ResponseEntity<List<City>> responseEntity = cityService.getCityById(advertRequest.getCityId());
-        List<City> cityList = responseEntity.getBody();
-
-        // Eğer cityList boş değilse ilk şehri alıyoruz
-        if (cityList != null && !cityList.isEmpty()) {
-            City city = cityList.get(0);  // İlk şehri seçiyoruz
-            detailsMap.put("city", city);
-        } else {
-            throw new EntityNotFoundException("No city found for the given city ID: " + advertRequest.getCityId());
-        }
-
-        User user = getUserByHttpRequest(httpServletRequest);
-        Country country = countryService.getCountryById(advertRequest.getCountryId());
-        AdvertType advertType = advertTypesService.getAdvertTypeByIdForAdvert(advertRequest.getAdvertTypeId());
-        District district = districtService.getDistrictByIdForAdvert(advertRequest.getDistrictId());
-
-        detailsMap.put("category", category);
-        detailsMap.put("user", user);
-        detailsMap.put("country", country);
-        detailsMap.put("advertType", advertType);
-        detailsMap.put("district", district);
-
-        return detailsMap;
-    }
-
 
     /*--------------------------For Report---------------------------------------*/
 

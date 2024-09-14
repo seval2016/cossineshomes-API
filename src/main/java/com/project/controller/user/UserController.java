@@ -2,11 +2,13 @@ package com.project.controller.user;
 
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.UpdatePasswordRequest;
+import com.project.payload.request.user.RegisterRequest;
 import com.project.payload.request.user.UserRequest;
 import com.project.payload.request.user.UserRequestWithoutPassword;
 import com.project.payload.response.UserResponse;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.business.ResponseMessage;
+import com.project.payload.response.user.RegisterResponse;
 import com.project.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,11 +30,11 @@ public class UserController {
 
     //!!! Yeni bir kullanıcı kaydetmek için kullanılır.
     @PostMapping("/register/{userRole}") // http://localhost:8080/users/register/Admin + POST + JSON
-    public ResponseEntity<ResponseMessage<UserResponse>> saveUser(@Valid @RequestBody UserRequest userRequest,
-                                                                  @PathVariable String userRole){
+    public ResponseMessage<RegisterResponse> registerUser(@Valid @RequestBody RegisterRequest RegisterRequest){
         // Kullanıcıyı rolüne göre kaydeder.
-        return ResponseEntity.ok(userService.saveUser(userRequest,userRole));
+        return userService.registerUser(RegisterRequest);
     } //F02
+
 
     //!!! Belirli bir rol için sayfalanmış kullanıcıları getirmek için kullanılır.
     @GetMapping("/getAllUserByPage/{userRole}") // http://localhost:8080/users/getAllUserByPage/Admin
@@ -106,14 +108,5 @@ public class UserController {
         userService.updateAuthenticatedUserPassword(passwordUpdateRequest, request);
         return ResponseEntity.ok(SuccessMessages.PASSWORD_CHANGED_RESPONSE_MESSAGE);
     } //F07
-
-   /* //!!! Authenticate olmuş kullanıcının hesabını silmek için kullanılır.
-    @DeleteMapping("/auth") // http://localhost:8080/users/auth + DELETE + JSON
-    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
-    public ResponseEntity<String> deleteAuthenticatedUser(HttpServletRequest request) {
-        // Authenticate olmuş kullanıcının hesabını siler.
-        userService.deleteAuthenticatedUser(request);
-        return ResponseEntity.ok(SuccessMessages.USER_DELETED);
-    } //f08*/
 
 }

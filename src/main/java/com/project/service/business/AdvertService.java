@@ -62,7 +62,9 @@ public class AdvertService {
     private final DateTimeValidator dateTimeValidator;
     private final CategoryService categoryService;
     private final AdvertTypesService advertTypesService;
-    private final AdvertStatus advertStatus;
+    private final CityService cityService;
+    private final CountryService countryService;
+    private final DistrictService districtService;
 
 
     //!!! 1. İlanları Getirme
@@ -173,6 +175,28 @@ public class AdvertService {
                 });
     }
 
+        public Map<String, Object> getAdvertDetails(AdvertRequest advertRequest, HttpServletRequest httpServletRequest, Map<String, Object> detailsMap) {
+            if (detailsMap == null) {
+                detailsMap = new HashMap<>();
+            }
+            Category category = categoryService.getCategoryById(advertRequest.getCategoryId());
+            City city=cityService.getCityById(advertRequest.getCityId());
+            User user = methodHelper.getUserByHttpRequest(httpServletRequest);
+            Country country = countryService.getCountryById(advertRequest.getCountryId());
+            AdvertType advertType = advertTypesService.getAdvertTypeByIdForAdvert(advertRequest.getAdvertTypeId());
+            District district = districtService.getDistrictByIdForAdvert(advertRequest.getDistrictId());
+
+            detailsMap.put("category", category);
+            detailsMap.put("city", city);
+            detailsMap.put("user", user);
+            detailsMap.put("country", country);
+            detailsMap.put("advertType", advertType);
+            detailsMap.put("district", district);
+
+            return detailsMap;
+        }
+
+
     public ResponseMessage<AdvertResponse> updateAuthenticatedAdvert(AdvertRequest advertRequest, MultipartFile[] files, HttpServletRequest httpServletRequest, Long id) {
         User user = methodHelper.getUserAndCheckRoles(httpServletRequest, RoleType.CUSTOMER.name());
         Advert advert = methodHelper.isAdvertExistById(id);
@@ -185,7 +209,7 @@ public class AdvertService {
         }
 
         Map<String, Object> detailsMap = new HashMap<>();
-        methodHelper.getAdvertDetails(advertRequest, httpServletRequest, detailsMap);
+        getAdvertDetails(advertRequest, httpServletRequest, detailsMap);
 
         List<CategoryPropertyValue> advertValueList = new ArrayList<>();
 
@@ -242,7 +266,7 @@ public class AdvertService {
         }
 
         // İlan detayları haritalanıyor
-        Map<String, Object> detailsMap = methodHelper.getAdvertDetails(advertRequest, httpServletRequest, null);
+        Map<String, Object> detailsMap =getAdvertDetails(advertRequest, httpServletRequest, null);
 
         // Kategoriye bağlı property'ler alınır ve ilan ile ilişkilendirilir
         List<CategoryPropertyValue> advertValueList = new ArrayList<>();
@@ -322,5 +346,11 @@ public class AdvertService {
         );
 
     }
+    public List<Advert> getAllAdverts(){
+        return advertRepository.findAll();
+    }
 
+    public void saveRunner(Advert advert) {
+        advertRepository.save(advert);
+    }
 }

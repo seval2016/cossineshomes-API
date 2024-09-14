@@ -193,4 +193,60 @@ public class CategoryService {
                 () -> new BadRequestException(ErrorMessages.CATEGORY_NOT_FOUND)
         );
     }
+
+    public void generateCategory() {
+        if (categoryRepository.findAll().isEmpty()) {
+            List<Category> categories = List.of(
+                    Category.builder()
+                            .id(1L)
+                            .title("Müstakil Ev")
+                            .icon("ev_icon")
+                            .builtIn(true)
+                            .seq(0)
+                            .slug("mustakil-ev")
+                            .isActive(true)
+                            .build(),
+                    Category.builder()
+                            .id(2L)
+                            .title("Apartman Dairesi")
+                            .icon("dairesi_icon")
+                            .builtIn(true)
+                            .seq(0)
+                            .slug("apartman-dairesi")
+                            .isActive(true)
+                            .build(),
+                    Category.builder()
+                            .id(3L)
+                            .title("Ofis")
+                            .icon("ofis_icon")
+                            .builtIn(true)
+                            .seq(0)
+                            .slug("kelepir-ofis")
+                            .isActive(true)
+                            .build(),
+                    Category.builder()
+                            .id(4L)
+                            .title("Villa")
+                            .icon("villa_icon")
+                            .builtIn(true)
+                            .seq(0)
+                            .slug("kelepir-villa")
+                            .isActive(true)
+                            .build(),
+                    Category.builder()
+                            .id(5L)
+                            .title("Arsa")
+                            .icon("arsa_icon")
+                            .builtIn(true)
+                            .seq(0)
+                            .slug("kelepir-arsa")
+                            .isActive(true)
+                            .build()
+            );
+
+            // Kategorileri kaydet
+            categoryRepository.saveAll(categories);
+        }
+    }
+
 }

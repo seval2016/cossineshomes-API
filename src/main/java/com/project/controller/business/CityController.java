@@ -22,7 +22,7 @@ public class CityController {
     }
 
     @GetMapping("/getCityById/{id}") //http://localhost:8080/city/getByCity/1
-    public ResponseEntity<List<City>> getCityById(@PathVariable Long countryId){
+    public City getCityById(@PathVariable Long countryId){
         return cityService.getCityById(countryId);
     }
 }

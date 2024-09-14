@@ -2,6 +2,7 @@ package com.project.service.business;
 
 import com.project.entity.concretes.business.Category;
 import com.project.entity.concretes.business.CategoryPropertyKey;
+import com.project.entity.enums.CategoryPropertyKeyType;
 import com.project.exception.ConflictException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.CategoryMapper;
@@ -142,4 +143,6 @@ public class CategoryPropertyKeyService {
                 .httpStatus(HttpStatus.OK)
                 .build();
     }
+
+
 }

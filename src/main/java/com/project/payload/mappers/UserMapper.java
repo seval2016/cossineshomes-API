@@ -6,10 +6,12 @@ import com.project.entity.enums.RoleType;
 import com.project.payload.request.abstracts.BaseUserRequest;
 import com.project.payload.request.user.UserRequest;
 import com.project.payload.request.user.UserRequestWithoutPassword;
+import com.project.payload.request.user.UserSaveRequest;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.user.CustomerResponse;
 import com.project.payload.response.UserResponse;
 
+import com.project.payload.response.user.RegisterResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -95,6 +97,28 @@ public class UserMapper {
                             return userRole;
                         })
                         .collect(Collectors.toList()))
+                .build();
+    }
+
+
+    public User userRequestToUser(UserSaveRequest request) {
+
+        return User.builder()
+                .email(request.getEmail())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .phone(request.getPhone())
+                .builtIn(request.getBuiltIn())
+                .build();
+
+    }
+    public RegisterResponse userToRegisterResponse(User newRegisterUser){
+        return RegisterResponse.builder()
+                .id(newRegisterUser.getId())
+                .firstName(newRegisterUser.getFirstName())
+                .lastName(newRegisterUser.getLastName())
+                .phone(newRegisterUser.getPhone())
+                .email(newRegisterUser.getEmail())
                 .build();
     }
 }

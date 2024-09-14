@@ -1,6 +1,8 @@
 package com.project.service.business;
 
 import com.project.entity.concretes.business.City;
+import com.project.exception.ResourceNotFoundException;
+import com.project.payload.messages.ErrorMessages;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.CityRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,22 +30,20 @@ public class CityService {
                 .build();
     }
 
-    public ResponseEntity<List<City>> getCityById(Long countryId) {
+    public City getCityById(Long countryId) {
 
-        // Belirtilen countryId'ye ait şehirleri getir
-        List<City> cities = cityRepository.findByCountryId(countryId);
-
-        // Eğer şehirler bulunamazsa 404 döndür
-        if (cities.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(null); // Boş body ile 404 döndür
-        }
-        // Şehirler bulunduysa 200 OK ile birlikte listeyi döndür
-        return ResponseEntity.ok(cities);
+        return cityRepository.findById(countryId).orElseThrow(()->new ResourceNotFoundException(ErrorMessages.CITY_NOT_FOUND));
 
     }
+    public int countAllCities() {
 
+        return cityRepository.countAllCities();
+    }
+    public void setBuiltInForCity() {
 
+        Long cityId = 1L;
 
-
+        City city = cityRepository.findById(cityId).orElseThrow(() -> new RuntimeException(ErrorMessages.CITY_NOT_FOUND));
+        cityRepository.save(city);
+    }
 }
