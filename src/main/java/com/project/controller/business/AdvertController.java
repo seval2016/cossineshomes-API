@@ -2,12 +2,10 @@ package com.project.controller.business;
 
 import com.project.payload.mappers.AdvertMapper;
 import com.project.payload.request.business.AdvertRequest;
-import com.project.payload.response.business.AdvertResponse;
-import com.project.payload.response.business.CategoryAdvertResponse;
-import com.project.payload.response.business.CityAdvertResponse;
-import com.project.payload.response.business.ResponseMessage;
+import com.project.payload.response.business.*;
 import com.project.repository.business.AdvertRepository;
 import com.project.service.business.AdvertService;
+import com.project.service.helper.AdvertHelper;
 import com.project.service.helper.MethodHelper;
 import com.project.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -32,15 +30,12 @@ import java.util.List;
 public class AdvertController {
 
     private final AdvertService advertService;
-    private final UserService userService;
-    private final AdvertRepository advertRepository;
-    private final AdvertMapper advertMapper;
-    private final MethodHelper methodHelper;
+    private final AdvertHelper advertHelper;
 
     // --> A01 - Belirli filtreleme kriterlerine göre ilanları getirir.
     @GetMapping //http://localhost:8080/adverts?q=beyoğlu&category_id=12&advert_type_id=3&price_start=500&price_end=1500 location=34 & status=1;page=1&size=10&sort=date&type=asc
     public ResponseEntity<Page<AdvertResponse>> getAdverts(
-            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String query,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Long advertTypeId,
             @RequestParam(required = false) BigDecimal priceStart,
@@ -51,22 +46,19 @@ public class AdvertController {
             @RequestParam(defaultValue = "categoryId") String sort,
             @RequestParam(defaultValue = "asc") String type) {
 
-        Page<AdvertResponse> adverts = advertService.getAdverts(q, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type);
-        return ResponseEntity.ok(adverts);
+        return ResponseEntity.ok(advertService.getAdverts(query, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type));
     }
 
     @GetMapping("/cities")
     @PreAuthorize("permitAll()") // http://localhost:8080/adverts/cities
     public ResponseEntity<List<CityAdvertResponse>> getAdvertsGroupedByCities() {
-        List<CityAdvertResponse> cityAdverts = methodHelper.getAdvertsGroupedByCities();
-        return ResponseEntity.ok(cityAdverts);
+        return ResponseEntity.ok(advertService.getAdvertsGroupedByCities());
     }//A02
 
     @GetMapping("/categories")
     @PreAuthorize("permitAll()") //http://localhost:8080/adverts/categories
-    public ResponseEntity<List<CategoryAdvertResponse>> getAdvertsGroupedByCategory() {
-        List<CategoryAdvertResponse> response = advertService.getAdvertsGroupedByCategory();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<List<CategoryForAdvertResponse>> getAdvertsGroupedByCategory() {
+        return ResponseEntity.ok( advertService.getAdvertsGroupedByCategory());
     }//A03
 
     @GetMapping("/popular/{amount}")
@@ -74,9 +66,7 @@ public class AdvertController {
     public ResponseEntity<List<AdvertResponse>> getMostPopularAdverts(@PathVariable(value = "amount", required = false) Integer amount) {
         // Pageable için varsayılan sayfa boyutu: amount ya da 10
         Pageable pageable = PageRequest.of(0, (amount != null) ? amount : 10);
-
-        List<AdvertResponse> response = advertService.getMostPopularAdverts(pageable);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(advertHelper.getMostPopularAdverts(pageable));
     }//A04
 
     @GetMapping("/auth")
@@ -93,7 +83,7 @@ public class AdvertController {
         @GetMapping("/adverts/admin")
         @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
         public ResponseEntity<Page<AdvertResponse>> getAdverts(
-                @RequestParam(value = "q", required = false) String q,
+                @RequestParam(value = "q", required = false) String query,
                 @RequestParam(value = "category_id", required = false) Long categoryId,
                 @RequestParam(value = "advert_type_id", required = false) Long advertTypeId,
                 @RequestParam(value = "price_start", required = false) Double priceStart,
@@ -103,38 +93,33 @@ public class AdvertController {
                 @RequestParam(value = "size", defaultValue = "20") int size,
                 @RequestParam(value = "sort", defaultValue = "category_id") String sort,
                 @RequestParam(value = "type", defaultValue = "asc") String type) {
-
-            Page<AdvertResponse> adverts = advertService.getFilteredAdverts(q, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type);
-            return ResponseEntity.ok(adverts);
+            return ResponseEntity.ok(advertService.getFilteredAdverts(query, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type));
         }//A06
 
     @GetMapping("/{slug}")
     @PreAuthorize("permitAll()") //http://localhost:8080/adverts/lux-villa-in-river-park
     public ResponseEntity<AdvertResponse> getAdvertBySlug(@PathVariable String slug) {
-        AdvertResponse advertResponse = advertService.getAdvertBySlug(slug);
-        return ResponseEntity.ok(advertResponse);
+        return ResponseEntity.ok(advertService.getAdvertBySlug(slug));
     }//A07
 
     @GetMapping("/{id}/auth")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<AdvertResponse> getAuthenticatedUserAdvert(@PathVariable Long id, HttpServletRequest request) {
-        AdvertResponse advertResponse = advertService.getAdvertByIdAndAuthenticatedUser(id, request);
-        return ResponseEntity.ok(advertResponse);
+        return ResponseEntity.ok(advertService.getAdvertByIdAndAuthenticatedUser(id, request));
     }//A08
 
-    @GetMapping("/{id}/admin")// http://localhost:8080/2/auth
-    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
+    @GetMapping("/{id}/admin")// http://localhost:8080/2/admin
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseEntity<AdvertResponse> getAdvertById(@PathVariable Long id, HttpServletRequest request) {
-
-        return advertService.getAdvertById(id, request);
-
+        return ResponseEntity.ok(advertService.getAdvertById(id, request));
     }//A09
 
-   @PostMapping("/save") // Yeni bir ilan oluşturur.
+    @PostMapping("/save") // Yeni bir ilan oluşturur.
     @PreAuthorize("hasRole('CUSTOMER')") // http://localhost:8080/adverts/save
-    public ResponseEntity<AdvertResponse> createAdvert(@RequestBody AdvertRequest advertRequest, HttpServletRequest request) {
-        AdvertResponse advertResponse = advertService.createAdvert(advertRequest,request);
-        return new ResponseEntity<>(advertResponse, HttpStatus.CREATED);
+    public ResponseEntity<AdvertResponse> createAdvert(
+                                @RequestBody AdvertRequest advertRequest,
+                                HttpServletRequest request,@RequestPart("files") MultipartFile[] files) {
+        return ResponseEntity.ok(advertService.createAdvert(advertRequest,request,files));
     }//A10
 
      // Yeni endpoint: authenticated user's advert update
@@ -159,7 +144,6 @@ public class AdvertController {
     @DeleteMapping("/admin/{id}")  // http://localhost:8080/adverts/admin/5
     @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     public ResponseEntity<AdvertResponse> deleteAdvertById(@PathVariable Long id,HttpServletRequest request) {
-        AdvertResponse response = advertService.deleteAdvert(id,request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(advertService.deleteAdvert(id,request));
     } //A13
 }

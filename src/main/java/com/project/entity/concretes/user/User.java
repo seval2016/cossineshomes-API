@@ -102,7 +102,4 @@ public class User {
 
     @OneToMany(mappedBy = "guestUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TourRequest> guestTourRequests = new ArrayList<>();
-
-
-
 }

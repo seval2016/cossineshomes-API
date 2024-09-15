@@ -35,25 +35,25 @@ public class CountryService {
     public int countAllCountries() {
         return countryRepository.countAllCountries();  // Repository'de `countAllCountries` metodu olduğundan emin olun
     }
-
-    // Türkiye'nin built-in olarak işaretlenmesi
     public void setBuiltInForCountry() {
-        // Türkiye'nin ID'si 1 olduğundan emin olun
         Long countryId = 1L;
-
-        Country country = countryRepository.findById(countryId)
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.COUNTRY_NOT_FOUND));
-        country.setBuiltIn(true);  // builtIn adında bir boolean alan eklemelisiniz
+        Country country = countryRepository.findById(countryId).orElseThrow(() -> new RuntimeException(ErrorMessages.COUNTRY_NOT_FOUND));
+        country.setBuiltIn(Boolean.TRUE);
         countryRepository.save(country);
     }
 
     // Tüm ülkeleri getirme
     public ResponseMessage<List<Country>> getAllCountries() {
-      List<Country> countryList= countryRepository.findAll();
-      return ResponseMessage.<List<Country>>builder()
-              .httpStatus(HttpStatus.OK)
-              .object(countryList)
-              .message("Countries were brought successfully.")
-              .build();
+        List<Country> countryList = countryRepository.findAll();
+        return ResponseMessage.<List<Country>>builder()
+                .httpStatus(HttpStatus.OK)
+                .object(countryList)
+                .message("Countries were brought successfully.")
+                .build();
+    }
+
+    // Yeni ülke kaydetme
+    public void saveCountry(Country country) {
+        countryRepository.save(country);
     }
 }

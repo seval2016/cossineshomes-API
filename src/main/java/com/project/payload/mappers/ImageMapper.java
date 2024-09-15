@@ -6,11 +6,10 @@ import lombok.Data;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;
-import java.util.List;
 
 @Data
 @Component
-public class ImagesMapper {
+public class ImageMapper {
 
     public ImagesResponse mapToImageResponse(Images images) {
         return ImagesResponse.builder()

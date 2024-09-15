@@ -20,6 +20,6 @@ public class DistrictRequest {
     private String name;
 
     @NotNull(message = "City id can not be null")
-    private int district_id;
+    private int cityId;
 }
 

@@ -11,6 +11,7 @@ import com.project.payload.messages.ErrorMessages;
 import com.project.payload.response.business.AdvertResponse;
 import com.project.repository.business.*;
 import com.project.repository.user.UserRepository;
+import com.project.service.helper.AdvertHelper;
 import com.project.service.helper.MethodHelper;
 import com.project.service.user.UserService;
 import com.project.service.validator.DateTimeValidator;
@@ -34,17 +35,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ReportService {
 
-    private final LogRepository logRepository;
     private final MethodHelper methodHelper;
     private final CategoryRepository categoryRepository;
     private final AdvertRepository advertRepository;
     private final AdvertTypesRepository advertTypesRepository;
     private final TourRequestRepository tourRequestRepository;
     private final UserRepository userRepository;
-    private final AdvertService advertService;
     private final UserService userService;
     private final DateTimeValidator dateTimeValidator;
     private final TourRequestService tourRequestService;
+    private final AdvertHelper advertHelper;
 
     public ResponseEntity<Map<String, Long>> getStaticts(HttpServletRequest request) {
         User user = methodHelper.getUserByHttpRequest(request);
@@ -71,7 +71,7 @@ public class ReportService {
         methodHelper.checkRoles(user, RoleType.MANAGER, RoleType.ADMIN);
 
         Pageable pageable = PageRequest.of(0, amount); // Pageable amount parametresini kullanır.
-        List<AdvertResponse> adverts = advertService.getMostPopularAdverts(pageable);
+        List<AdvertResponse> adverts = advertHelper.getMostPopularAdverts(pageable);
 
         return methodHelper.excelResponse(adverts);
     }
@@ -136,7 +136,7 @@ public class ReportService {
 
         User user = methodHelper.getUserByHttpRequest(request);
         methodHelper.checkRoles(user, RoleType.ADMIN, RoleType.MANAGER);
-        List<Advert> adverts = advertService.getAdvertsReport(date1, date2, category, type.toLowerCase(), status);
+        List<Advert> adverts = advertHelper.getAdvertsReport(date1, date2, category, type.toLowerCase(), status);
 
         return methodHelper.excelResponse(adverts);
 

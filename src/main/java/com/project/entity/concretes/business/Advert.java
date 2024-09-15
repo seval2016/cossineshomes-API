@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.entity.enums.AdvertStatus;
 import com.project.entity.concretes.user.User;
-import com.project.service.helper.SlugUtils;
+import com.project.utils.SlugUtils;
 import lombok.*;
 
 
@@ -46,13 +46,13 @@ public class Advert {
     private int status = AdvertStatus.PENDING.getValue();
 
     @Column(nullable = false)
-    private boolean builtIn = false;
+    private Boolean builtIn = false;
 
     @Column(nullable = false)
-    private boolean isActive = true;
+    private Boolean isActive = true;
 
     @Column(nullable = false)
-    private int viewCount = 0;
+    private Integer viewCount = 0;
 
     @Column(nullable = false)
     private String location;
@@ -83,24 +83,27 @@ public class Advert {
         }
     }
 
-
     //------------İlişkili sütunlar -------------
 
     //ManyToOne
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advert_type_id", nullable = false)
+    @JsonIgnore
     private AdvertType advertType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id", nullable = false)
+    @JsonIgnore
     private Country country;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id", nullable = false)
+    @JsonIgnore
     private City city;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id", nullable = false)
+    @JsonIgnore
     private District district;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -110,11 +113,13 @@ public class Advert {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
+    @JsonIgnore
     private Category category;
 
     //----OneToMany
 
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Images> images;
 
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
@@ -137,6 +142,4 @@ public class Advert {
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Log> logList;
-
-
 }

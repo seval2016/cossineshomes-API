@@ -14,15 +14,11 @@ import javax.validation.constraints.Size;
 @Builder(toBuilder = true)
 public class CityRequest {
 
-
     @NotNull(message = "City name can not be empty")
     @Size(max = 30, message = "City name should be at most 30 chars")
     private String name;
 
-
     @NotNull(message = "Country id can not be empty")
-    private int country_id;
-
-
+    private Long country_id;
 
 }

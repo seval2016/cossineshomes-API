@@ -1,10 +1,7 @@
 package com.project.service.business;
 
-import com.project.entity.concretes.business.Advert;
 import com.project.entity.concretes.business.Category;
 import com.project.entity.concretes.business.CategoryPropertyKey;
-import com.project.entity.concretes.user.User;
-import com.project.entity.enums.RoleType;
 import com.project.exception.BadRequestException;
 import com.project.exception.ConflictException;
 import com.project.exception.ResourceNotFoundException;
@@ -13,29 +10,22 @@ import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.CategoryPropertyKeyRequest;
 import com.project.payload.request.business.CategoryRequest;
-import com.project.payload.response.business.AdvertResponse;
-import com.project.payload.response.business.CategoryPropertyKeyResponse;
 import com.project.payload.response.business.CategoryResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.CategoryPropertyKeyRepository;
 import com.project.repository.business.CategoryRepository;
 import com.project.service.helper.MethodHelper;
-import com.project.service.helper.SlugUtils;
+import com.project.utils.SlugUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,12 +34,12 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final MethodHelper methodHelper;
-    private final SlugUtils slugUtils;
     private final CategoryPropertyKeyRepository categoryPropertyKeyRepository;
-    private final CategoryPropertyKeyRequest categoryPropertyKeyRequest;
 
 
     //--------------------yardımcı metodlar-------------------------
+
+
     public Category findCategoryById(Long id) {
         return categoryRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(ErrorMessages.CATEGORY_NOT_FOUND + id));
@@ -57,14 +47,14 @@ public class CategoryService {
     //---------------------------------------------
 
 
-    public Page<CategoryResponse> getCategories(String query, int page, int size, String sort, String type) {
+    public Page<CategoryResponse> getAllActiveCategories(String query, int page, int size, String sort, String type) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(type), sort));
 
         Page<Category> categoryPage = categoryRepository.findByTitleContainingAndIsActiveTrue(query, pageable);
         return  categoryPage.map(categoryMapper::mapCategoryToCategoryResponse);
     }
 
-    public Page<CategoryResponse> getAllCategories(String query, int page, int size, String sort, String type) {
+    public Page<CategoryResponse> getAllCategoriesWithPageable(String query, int page, int size, String sort, String type) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(type), sort));
         Page<Category> categoryPage;
 
@@ -86,7 +76,7 @@ public class CategoryService {
             throw new ConflictException("Category " + categoryRequest.getTitle() + " is already exist ");
         }
         // Slug oluşturuluyor
-        String slug = slugUtils.toSlug(categoryRequest.getTitle());
+        String slug = SlugUtils.toSlug(categoryRequest.getTitle());
 
         // Slug'ın benzersiz olup olmadığını kontrol ediyoruz
         if (categoryRepository.existsBySlug(slug)) {
@@ -101,17 +91,22 @@ public class CategoryService {
         // CategoryPropertyKey'leri ekliyoruz (varsa)
         if (categoryRequest.getCategoryPropertyKeys() != null && !categoryRequest.getCategoryPropertyKeys().isEmpty()) {
             for (CategoryPropertyKeyRequest propertyKeyRequest : categoryRequest.getCategoryPropertyKeys()) {
+                if (categoryPropertyKeyRepository.existsByName(propertyKeyRequest.getName())) {
+                    throw new IllegalStateException("Property key with this name already exists: " + propertyKeyRequest.getName());
+                }
+
                 CategoryPropertyKey propertyKey = new CategoryPropertyKey();
-                propertyKey.setCategory(savedCategory);  // Kategori ile ilişkilendiriyoruz
-                propertyKey.setName(propertyKeyRequest.getName());  // Name ve Type ayarları
+                propertyKey.setCategory(savedCategory);
+                propertyKey.setName(propertyKeyRequest.getName());
                 propertyKey.setType(propertyKeyRequest.getType());
-                propertyKey.setBuiltIn(false);  // Varsayılan builtIn değeri false
+                propertyKey.setBuiltIn(false);
 
                 // Property key tablosuna kaydediliyor
                 categoryPropertyKeyRepository.save(propertyKey);
             }
         }
-            // Kaydedilen kategoriye ait bilgileri response'a mapliyoruz
+
+        // Kaydedilen kategoriye ait bilgileri response'a mapliyoruz
             CategoryResponse categoryResponse = categoryMapper.mapCategoryToCategoryResponse(savedCategory);
 
             // ResponseMessage olarak geri döndürülüyor
@@ -185,6 +180,8 @@ public class CategoryService {
                 .httpStatus(HttpStatus.OK)
                 .build();
     }
+
+
     //-------------------------------
 
     public List<Category> getCategoryByTitle(String category) {
@@ -249,4 +246,7 @@ public class CategoryService {
         }
     }
 
+    public List<Category> getAllCategory() {
+        return categoryRepository.findAll();
+    }
 }

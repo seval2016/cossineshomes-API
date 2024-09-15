@@ -3,7 +3,7 @@ package com.project.service.business;
 import com.project.entity.concretes.business.Advert;
 import com.project.entity.concretes.business.Images;
 import com.project.exception.ResourceNotFoundException;
-import com.project.payload.mappers.ImagesMapper;
+import com.project.payload.mappers.ImageMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.response.business.ImagesResponse;
 
@@ -28,7 +28,7 @@ public class ImageService {
 
     private final ImagesRepository imagesRepository;
     private final AdvertRepository advertRepository;
-    private final ImagesMapper imagesMapper;
+    private final ImageMapper imageMapper;
 
     private final String imageDirectory="/path/to/image/directory";
     public List<Images> getALlImages(){
@@ -54,7 +54,7 @@ public class ImageService {
     public ImagesResponse getImageById(Long imageId) {
         Images images = imagesRepository.findById(imageId)
                 .orElseThrow(() -> new EntityNotFoundException("Image not found"));
-        return imagesMapper.mapToImageResponse(images);
+        return imageMapper.mapToImageResponse(images);
     }
 
     public List<Long> uploadImages(Long advertId, List<MultipartFile> files) throws IOException {
@@ -114,7 +114,7 @@ public class ImageService {
         images.setFeatured(true);
         imagesRepository.save(images);
 
-        return imagesMapper.mapToImageResponse(images);
+        return imageMapper.mapToImageResponse(images);
     }
 
     public void resetImageTables() {

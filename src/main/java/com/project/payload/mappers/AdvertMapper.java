@@ -5,6 +5,7 @@ import com.project.entity.concretes.user.User;
 import com.project.entity.enums.AdvertStatus;
 import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.business.AdvertResponse;
+import com.project.payload.response.business.CategoryForAdvertResponse;
 import com.project.service.helper.MethodHelper;
 import lombok.*;
 import org.springframework.stereotype.Component;
@@ -18,35 +19,30 @@ public class AdvertMapper {
 
     private final TourRequestMapper tourRequestMapper;
     private final MethodHelper methodHelper;
-    private final ImagesMapper imagesMapper;
+    private final ImageMapper imageMapper;
 
-    // Yeni bir Advert nesnesi oluşturur (DTO -> POJO)
-    public Advert mapAdvertRequestToAdvert(AdvertRequest advertRequest, AdvertType advertType, Country country, City city, District district, Category category, User user, List<Images> images) {
-         return Advert.builder()
+    public Advert mapAdvertRequestToAdvert(AdvertRequest advertRequest,Category category, City city, User user, Country country, AdvertType advertType, District district) {
+        return Advert.builder()
                 .title(advertRequest.getTitle())
                 .description(advertRequest.getDescription())
-                .location(advertRequest.getLocation())
                 .price(advertRequest.getPrice())
+                .location(advertRequest.getLocation())
                 .viewCount(0)
-                .district(district)
-                .category(category)
                 .status(AdvertStatus.PENDING.getValue())
+                .category(category)
+                .country(country)
                 .city(city)
                 .user(user)
-                .country(country)
                 .advertType(advertType)
-                 .imagesList(images)
-                 .build();
-
+                .district(district)
+                .build();
     }
 
     private String generateSlug(String title) {
         return title.toLowerCase().replaceAll(" ", "-");
     }
 
-    // Advert nesnesini AdvertResponse'a dönüştürür (POJO -> DTO)
     public AdvertResponse mapAdvertToAdvertResponse(Advert advert) {
-
         return AdvertResponse.builder()
                 .id(advert.getId())
                 .title(advert.getTitle())
@@ -58,16 +54,14 @@ public class AdvertMapper {
                 .cityId(advert.getCity().getId())
                 .districtId(advert.getDistrict().getId())
                 .categoryId(advert.getCategory().getId())
-                .location(advert.getLocation())
-                .categoryId(advert.getCategory().getId())
                 .categoryPropertyKeys(advert.getCategory().getCategoryPropertyKeys())
-                .featuredImage(imagesMapper.mapToImageResponse(getFeaturedImage(advert.getImagesList())))
+                .featuredImage(imageMapper.mapToImageResponse(getFeaturedImage(advert.getImagesList())))
                 .images(advert.getImagesList().stream()
-                        .map(imagesMapper::mapToImageResponse)
+                        .map(imageMapper::mapToImageResponse)
                         .collect(Collectors.toList()))
                 .favoritesCount(advert.getFavoritesList().size())
                 .tourRequestCount(advert.getTourRequestList().size())
-                .isActive(advert.isActive())
+                .isActive(advert.getIsActive())
                 .build();
     }
 
@@ -75,7 +69,7 @@ public class AdvertMapper {
         return images.stream()
                 .filter(Images::isFeatured)
                 .findFirst()
-                .orElse(images.get(0));
+                .orElse(images.isEmpty() ? null : images.get(0)); // Boş liste kontrolü eklendi
     }
 
     public AdvertResponse mapAdvertToAdvertResponseForAll(Advert advert) {
@@ -84,7 +78,7 @@ public class AdvertMapper {
                 .userId(advert.getUser().getId())
                 .price(advert.getPrice())
                 .slug(advert.getSlug())
-                .builtIn(advert.isBuiltIn())
+                .builtIn(advert.getIsActive())
                 .description(advert.getDescription())
                 .title(advert.getTitle())
                 .status(methodHelper.updateAdvertStatus(advert.getStatus(), advert))
@@ -95,14 +89,13 @@ public class AdvertMapper {
                 .advertTypeId(advert.getAdvertType().getId())
                 .categoryId(advert.getCategory().getId())
                 .categoryPropertyKeys(advert.getCategory().getCategoryPropertyKeys())
-                .featuredImage(imagesMapper.mapToImageResponse(getFeaturedImage(advert.getImagesList())))
+                .featuredImage(imageMapper.mapToImageResponse(getFeaturedImage(advert.getImagesList())))
                 .images(advert.getImagesList().stream()
-                        .map(imagesMapper::mapToImageResponse)
+                        .map(imageMapper::mapToImageResponse)
                         .collect(Collectors.toList()))
                 .favoritesCount(advert.getFavoritesList().size())
                 .tourRequestCount(advert.getTourRequestList().size())
                 .build();
-
     }
 
     public Advert mapAdvertRequestToUpdateAdvert(Long id, AdvertRequest advertRequest, Category category, City city, Country country, AdvertType advertType, District district, User user) {
@@ -121,7 +114,17 @@ public class AdvertMapper {
                 .status(AdvertStatus.PENDING.getValue())
                 .category(category)
                 .location(advertRequest.getLocation())
+                .slug(generateSlug(advertRequest.getTitle()))  // Slug alanı eklenmeli
                 .build();
     }
+
+    //For Category POJO==>DTO
+    public CategoryForAdvertResponse mapCategoryToCategoryForAdvertResponse(Category category) {
+        return CategoryForAdvertResponse.builder()
+                .category(category.getTitle())
+                .amount(category.getAdverts().size())
+                .build();
+    }
+
 
 }

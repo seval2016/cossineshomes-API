@@ -10,10 +10,8 @@ import com.project.exception.ConflictException;
 
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
-import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.request.user.AuthenticatedUsersRequest;
 import com.project.payload.request.user.CustomerRequest;
-import com.project.payload.response.business.CategoryResponse;
 import com.project.payload.response.business.CityAdvertResponse;
 import com.project.repository.business.AdvertRepository;
 import com.project.repository.business.FavoriteRepository;
@@ -25,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,6 +42,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Component
 @RequiredArgsConstructor
 public class MethodHelper {
@@ -51,9 +51,6 @@ public class MethodHelper {
     private final PasswordEncoder passwordEncoder;
     private final UserRoleService userRoleService;
     private final AdvertRepository advertRepository;
-    private final CategoryService categoryService;
-
-
 
     //!!! isUserExist
     public User isUserExist(Long userId){
@@ -223,7 +220,7 @@ public class MethodHelper {
         String email = (String) httpServletRequest.getAttribute("email");
 
 
-        Optional<User> userOptional = userRepository.findByEmail(email); // TODO Optional yerine throw new olabilir
+        Optional<User> userOptional = userRepository.findByEmail(email);
 
 
         return userOptional.map(User::getId).orElse(null);
@@ -247,17 +244,17 @@ public class MethodHelper {
         switch (caseNumber) {
             case 0:
                 status = AdvertStatus.PENDING;
-                advert.setActive(false);
+                advert.setIsActive(false);
                 System.out.println("Advert status set to PENDING. Advert is now inactive.");
                 break;
             case 1:
                 status = AdvertStatus.PENDING;
-                advert.setActive(true);
+                advert.setIsActive(true);
                 System.out.println("Advert status set to ACTIVATED. Advert is now active.");
                 break;
             case 2:
                 status = AdvertStatus.REJECTED;
-                advert.setActive(false);
+                advert.setIsActive(false);
                 System.out.println("Advert status set to REJECTED. Advert is inactive.");
                 break;
             default:
@@ -281,10 +278,6 @@ public class MethodHelper {
             imageList.add(image);
         }
         return imageList;
-    }
-
-    public List<CityAdvertResponse> getAdvertsGroupedByCities() {
-        return advertRepository.findAdvertsGroupedByCities();
     }
 
     /*--------------------------For Report---------------------------------------*/
@@ -338,7 +331,6 @@ public class MethodHelper {
                     createRow(sheet, rowNum++,null, tourRequest.getId(), tourRequest.getOwnerUser().getFirstName(),tourRequest.getOwnerUser().getLastName(), tourRequest.getAdvert().getTitle());
                 }
             } else if (!list.isEmpty() && list.get(0) instanceof Advert) {
-                //TODO hem advert hemde advertType title var ikisinide gerek var mi?
                 createRow(sheet, rowNum++, headerStyle,"ID", "AdvertTitle", "Status","AdvertTypeTitle","CategoryTitle");
 
                 for (Advert advert : (List<Advert>) list) {

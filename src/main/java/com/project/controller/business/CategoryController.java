@@ -28,26 +28,26 @@ public class CategoryController {
 
     //--> C01 - Tüm aktif kategorileri listeleme
     @GetMapping // http://localhost:8080/categories?page=1&size=10&sort=date&type=asc
-    public ResponseEntity<Page<CategoryResponse>> getCategories(
+    public ResponseEntity<Page<CategoryResponse>> getAllActiveCategories(
             @RequestParam(defaultValue = "") String query,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "20") int size,
             @RequestParam(value = "sort", defaultValue = "id") String sort,
             @RequestParam(value = "type", defaultValue = "asc") String type) {
-        Page<CategoryResponse> allCategories = categoryService.getCategories(query, page, size, sort, type);
+        Page<CategoryResponse> allCategories = categoryService.getAllActiveCategories(query, page, size, sort, type);
         return ResponseEntity.ok(allCategories);
     }
 
     //--> C02 - Tüm kategorileri çağırma
     @GetMapping("/admin") // http://localhost:8080/categories/admin?q=blabla&page=1&size=10&sort=date&type=asc
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-    public ResponseEntity<Page<CategoryResponse>> getAllCategories(
+    public ResponseEntity<Page<CategoryResponse>> getAllCategoriesWithPageable(
             @RequestParam(defaultValue = "") String query,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "20") int size,
             @RequestParam(value = "sort", defaultValue = "id") String sort,
             @RequestParam(value = "type", defaultValue = "asc") String type) {
-        Page<CategoryResponse> categories = categoryService.getAllCategories(query, page, size, sort, type);
+        Page<CategoryResponse> categories = categoryService.getAllCategoriesWithPageable(query, page, size, sort, type);
         return ResponseEntity.ok(categories);
     }
 

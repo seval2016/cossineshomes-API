@@ -10,11 +10,13 @@ import com.project.payload.mappers.CategoryPropertyKeyMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.CategoryPropertyKeyRequest;
+import com.project.payload.request.business.JsonCategoryPropertyKeyRequest;
 import com.project.payload.response.business.CategoryPropertyKeyResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.CategoryPropertyKeyRepository;
 import com.project.repository.business.CategoryPropertyValueRepository;
 import com.project.repository.business.CategoryRepository;
+import com.project.service.helper.CategoryPropertyKeyHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,24 +32,14 @@ public class CategoryPropertyKeyService {
     private final CategoryPropertyKeyMapper categoryPropertyKeyMapper;
     private final CategoryPropertyKeyRepository categoryPropertyKeyRepository;
     private final CategoryPropertyValueRepository categoryPropertyValueRepository;
+    private final CategoryPropertyKeyHelper categoryPropertyKeyHelper;
+    private final CategoryService categoryService;
 
-    //--------------------yardımcı metodlar-------------------------
-    private Category findCategoryById(Long id) {
-        return categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.CATEGORY_NOT_FOUND));
-    }
-
-    // Yardımcı metod: ID ile CategoryPropertyKey bulur
-    private CategoryPropertyKey findPropertyKeyById(Long id) {
-        return categoryPropertyKeyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.CATEGORY_PROPERTY_KEY_NOT_FOUND));
-    }
-    //---------------------------------------------
 
     // Kategoriye ait property keys'leri getiren metod
     public Set<CategoryPropertyKeyResponse> getCategoryPropertyKeys(Long categoryId) {
         // Kategori ID'ye göre Category bul
-        Category category = findCategoryById(categoryId);
+        Category category = categoryPropertyKeyHelper.findCategoryById(categoryId);
 
         // Kategorinin property keys'lerini al
         Set<CategoryPropertyKey> categoryPropertyKeys = category.getCategoryPropertyKeys();
@@ -59,7 +51,7 @@ public class CategoryPropertyKeyService {
     // Yeni property key oluşturma metodu
     public ResponseMessage<CategoryPropertyKeyResponse> createCategoryPropertyKeys(Long id, CategoryPropertyKeyRequest propertyKeyRequest) {
         // Kategori ID'sine göre Category'yi bul
-        Category category = findCategoryById(id);
+        Category category = categoryPropertyKeyHelper.findCategoryById(id);
 
         // Kategorinin mevcut property key'lerini al
         Set<CategoryPropertyKey> existingCategoryProperties = category.getCategoryPropertyKeys();
@@ -99,7 +91,7 @@ public class CategoryPropertyKeyService {
     // Property key güncelleme metodu
     public ResponseMessage<CategoryPropertyKeyResponse> updateCategoryPropertyKey(Long id, CategoryPropertyKeyRequest propertyKeyRequest) {
         // Property key ID'sine göre CategoryPropertyKey bul
-        CategoryPropertyKey propertyKey = findPropertyKeyById(id);
+        CategoryPropertyKey propertyKey = categoryPropertyKeyHelper.findPropertyKeyById(id);
 
         // Eğer property key builtIn ise güncelleme yapılamaz
         if (propertyKey.isBuiltIn()) {
@@ -123,7 +115,7 @@ public class CategoryPropertyKeyService {
 
     public ResponseMessage<CategoryPropertyKeyResponse> deleteCategoryPropertyKey(Long id) {
         // Property key ID'sine göre CategoryPropertyKey bul
-        CategoryPropertyKey propertyKey = findPropertyKeyById(id);
+        CategoryPropertyKey propertyKey =categoryPropertyKeyHelper.findPropertyKeyById(id);
 
         // Eğer property key builtIn ise silme yapılamaz
         if (propertyKey.isBuiltIn()) {
@@ -134,7 +126,7 @@ public class CategoryPropertyKeyService {
         categoryPropertyKeyRepository.delete(propertyKey);
 
         // İlgili category_property_values kayıtlarını sil
-        categoryPropertyValueRepository.deleteByPropertyKeyId(id);
+        categoryPropertyValueRepository.deleteByCategoryPropertyKey_Id(id);
 
         // ResponseMessage oluştur ve döndür
         return ResponseMessage.<CategoryPropertyKeyResponse>builder()
@@ -144,5 +136,72 @@ public class CategoryPropertyKeyService {
                 .build();
     }
 
+    public void generateCategoryPropertyKeys() {
+        if (categoryPropertyKeyRepository.findAll().isEmpty()) {
 
+            String[] housePropertyName = {"Number of Rooms and Living Rooms", "Number of Bathrooms", "Building Age", "Gross Square Meters", "Garden", "Garage", "Min. Price", "Max. Price"};
+            String[] apartmentPropertyName = {"Number of Rooms and Living Rooms", "Number of Bathrooms", "Building Age", "Gross Square Meters", "Balcony", "Garage", "Min. Price", "Max. Price"};
+            String[] officePropertyName = {"Number of Rooms and Living Rooms", "Number of Bathrooms", "Building Age", "Gross Square Meters", "Storage", "Garage", "Min. Price", "Max. Price"};
+            String[] villaPropertyName = {"Number of Rooms and Living Rooms", "Number of Bathrooms", "Building Age", "Gross Square Meters", "Storage", "Garage", "Min. Price", "Max. Price"};
+            String[] landPropertyName = {"Square Meters", "Min. Price", "Max. Price"};
+
+            CategoryPropertyKeyType[] propertyTypes1 = {CategoryPropertyKeyType.NUMBER, CategoryPropertyKeyType.NUMBER, CategoryPropertyKeyType.NUMBER, CategoryPropertyKeyType.NUMBER, CategoryPropertyKeyType.BOOLEAN, CategoryPropertyKeyType.BOOLEAN, CategoryPropertyKeyType.DOUBLE, CategoryPropertyKeyType.DOUBLE};
+            CategoryPropertyKeyType[] propertyTypes2 = {CategoryPropertyKeyType.NUMBER, CategoryPropertyKeyType.DOUBLE, CategoryPropertyKeyType.DOUBLE};
+
+            JsonCategoryPropertyKeyRequest[] arr = new JsonCategoryPropertyKeyRequest[5];
+            arr[0] = new JsonCategoryPropertyKeyRequest(1L, housePropertyName, true);
+            arr[1] = new JsonCategoryPropertyKeyRequest(2L, apartmentPropertyName, true);
+            arr[2] = new JsonCategoryPropertyKeyRequest(3L, officePropertyName, true);
+            arr[3] = new JsonCategoryPropertyKeyRequest(4L, villaPropertyName, true);
+            arr[4] = new JsonCategoryPropertyKeyRequest(5L, landPropertyName, true);
+
+            for (JsonCategoryPropertyKeyRequest request : arr) {
+
+                String[] propertyName = {};
+                CategoryPropertyKeyType[] propertyTypes = {};
+
+
+                switch (request.getId().intValue()) {
+                    case 1:
+                        propertyName = housePropertyName;
+                        propertyTypes = propertyTypes1;
+                        break;
+                    case 2:
+                        propertyName = apartmentPropertyName;
+                        propertyTypes = propertyTypes1;
+                        break;
+                    case 3:
+                        propertyName = officePropertyName;
+                        propertyTypes = propertyTypes1;
+                        break;
+                    case 4:
+                        propertyName = villaPropertyName;
+                        propertyTypes = propertyTypes1;
+                        break;
+                    case 5:
+                        propertyName = landPropertyName;
+                        propertyTypes = propertyTypes2;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid category ID");
+                }
+
+
+                Category category = categoryService.getCategoryById(request.getId());
+
+                for (int i = 0; i < propertyName.length; i++) {
+                    CategoryPropertyKey props = CategoryPropertyKey.builder()
+                            .name(propertyName[i])
+                            .type(propertyTypes[i].name())
+                            .builtIn(request.getBuiltIn())
+                            .category(category)
+                            .build();
+                    categoryPropertyKeyRepository.save(props);
+
+                }
+
+            }
+
+        }
+    }
 }

@@ -40,11 +40,11 @@ public class TourRequest {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt= LocalDateTime.now();
+    private LocalDateTime createAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "update_at", nullable = false)
-    private LocalDateTime updateAt= LocalDateTime.now();
+    private LocalDateTime updateAt;
 
 
     //------------İlişkili sütunlar -------------
@@ -66,5 +66,13 @@ public class TourRequest {
     @JsonIgnore
     private User guestUser;
 
+    @PrePersist
+    private void onCreate() {
+        createAt = LocalDateTime.now();
+    }
 
+    @PreUpdate
+    private void onUpdate(){
+        updateAt= LocalDateTime.now();
+    }
 }

@@ -9,6 +9,7 @@ public class ErrorMessages {
     public static final String EXCEL_COULD_NOT_BE_CREATED_TYPE_IS_NOT_ADVERT = "Excel file could not be created, type is not advert.";
     public static final String ADVERT_STATUS_NOT_FOUND = "Advert status not found.";
     public static final String THERE_IS_NO_USER_REGISTERED_WITH_THIS_EMAIL_ADDRESS = "There is no user registered with this email address";
+    public static final String TOUR_REQUEST_CAN_NOT_BE_CHANGED ="" ;
 
     private ErrorMessages() {
     }

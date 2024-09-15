@@ -26,12 +26,7 @@ public class CountryController {
         return countryService.getAllCountries();
     }
 
-    // Türkiye'nin built-in olarak işaretlenmesi
-    @PostMapping("/builtin")
-    public ResponseEntity<Void> setBuiltInForCountry() {
-        countryService.setBuiltInForCountry();
-        return ResponseEntity.ok().build();
-    }
+
     // Toplam ülke sayısını döndürme
     @GetMapping("/count")
     public ResponseEntity<Integer> countAllCountries() {

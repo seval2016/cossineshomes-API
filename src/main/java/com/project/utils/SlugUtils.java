@@ -1,4 +1,6 @@
-package com.project.service.helper;
+package com.project.utils;
+
+import org.springframework.stereotype.Component;
 
 import java.text.Normalizer;
 import java.util.Locale;

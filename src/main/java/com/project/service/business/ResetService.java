@@ -39,7 +39,7 @@ public class ResetService {
 
         List<Advert> alladverts= advertRepository.findAll();
         for(Advert advert : alladverts){
-            if(!advert.isBuiltIn()){
+            if(!advert.getBuiltIn()){
                 advertRepository.delete(advert);
             }
         }
