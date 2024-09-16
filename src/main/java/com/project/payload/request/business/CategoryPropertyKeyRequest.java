@@ -1,24 +1,25 @@
 package com.project.payload.request.business;
 
+import com.project.entity.concretes.business.Category;
+import com.project.entity.concretes.business.CategoryPropertyValue;
 import lombok.Data;
 import lombok.*;
 import javax.validation.constraints.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class CategoryPropertyKeyRequest {
-    @NotBlank(message = "Name cannot be blank")
-    @Size(max = 80, message = "Name length must be up to 80 characters")
+
     private String name;
 
-    @NotBlank(message = "Type cannot be blank")
-    private String type;
+    private Boolean builtIn = false;
 
-    @NotNull(message = "BuiltIn cannot be null")
-    private Boolean builtIn;
+    private Category category;
 
-    @NotNull(message = "Category ID cannot be null")
-    private Long categoryId;
+    private List<CategoryPropertyValue> categoryPropertyValues = new ArrayList<>();
+
 }

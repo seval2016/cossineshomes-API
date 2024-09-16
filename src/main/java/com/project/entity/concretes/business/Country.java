@@ -1,11 +1,16 @@
 package com.project.entity.concretes.business;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "countries")
@@ -22,6 +27,13 @@ public class Country {
     @Column(nullable = false, length =30)
     private String name;
 
-    @Column(name = "built_in", nullable = false)
-    private boolean builtIn = false;
+    private Boolean builtIn = false;
+
+    @OneToMany (mappedBy = "country",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<City> city= new HashSet<>();
+
+    @OneToMany (mappedBy = "country",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Advert> advertList = new ArrayList<>();
 }

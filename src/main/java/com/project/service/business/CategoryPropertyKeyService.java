@@ -37,7 +37,7 @@ public class CategoryPropertyKeyService {
 
 
     // Kategoriye ait property keys'leri getiren metod
-    public Set<CategoryPropertyKeyResponse> getCategoryPropertyKeys(Long categoryId) {
+    /*public Set<CategoryPropertyKeyResponse> getCategoryPropertyKeys(Long categoryId) {
         // Kategori ID'ye göre Category bul
         Category category = categoryPropertyKeyHelper.findCategoryById(categoryId);
 
@@ -45,8 +45,8 @@ public class CategoryPropertyKeyService {
         Set<CategoryPropertyKey> categoryPropertyKeys = category.getCategoryPropertyKeys();
 
         // CategoryPropertyKey nesnelerini CategoryPropertyKeyResponse'a map et
-        return categoryPropertyKeyMapper.mapCategoryPropertyKeysToResponseSet(categoryPropertyKeys);
-    }
+        return categoryPropertyKeyMapper.mapCategoryPropertyKeyToResponse();
+    }*/
 
     // Yeni property key oluşturma metodu
     public ResponseMessage<CategoryPropertyKeyResponse> createCategoryPropertyKeys(Long id, CategoryPropertyKeyRequest propertyKeyRequest) {
@@ -64,25 +64,24 @@ public class CategoryPropertyKeyService {
         }
 
         // Yeni CategoryPropertyKey oluştur
-        CategoryPropertyKey categoryPropertyKey = CategoryPropertyKey.builder()
+        CategoryPropertyKey propertyKey = CategoryPropertyKey.builder()
                 .name(propertyKeyRequest.getName())
-                .type(propertyKeyRequest.getType())
-                .category(category)
+                .category(propertyKeyRequest.getCategory())
+                .categoryPropertyValues(propertyKeyRequest.getCategoryPropertyValues())
+                .builtIn(propertyKeyRequest.getBuiltIn())
                 .build();
 
         // Yeni property key'i veritabanına kaydet
-        categoryPropertyKey = categoryPropertyKeyRepository.save(categoryPropertyKey);
+        propertyKey = categoryPropertyKeyRepository.save(propertyKey);
 
         // Yeni property key'i mevcut property key'lere ekle
-        existingCategoryProperties.add(categoryPropertyKey);
+        existingCategoryProperties.add(propertyKey);
         category.setCategoryPropertyKeys(existingCategoryProperties);
 
-        // Kategoriyi güncelle
-        categoryRepository.save(category);
 
         // ResponseMessage oluştur ve döndür
         return ResponseMessage.<CategoryPropertyKeyResponse>builder()
-                .object(categoryPropertyKeyMapper.mapCategoryPropertyKeyToResponse(categoryPropertyKey))
+                .object(categoryPropertyKeyMapper.mapCategoryPropertyKeyToResponse(propertyKey))
                 .message(SuccessMessages.CATEGORY_PROPERTY_KEY_CREATED_SUCCESS)
                 .httpStatus(HttpStatus.CREATED)
                 .build();
@@ -94,15 +93,12 @@ public class CategoryPropertyKeyService {
         CategoryPropertyKey propertyKey = categoryPropertyKeyHelper.findPropertyKeyById(id);
 
         // Eğer property key builtIn ise güncelleme yapılamaz
-        if (propertyKey.isBuiltIn()) {
+        if (propertyKey.getBuiltIn()) {
             throw new ConflictException(ErrorMessages.CATEGORY_PROPERTY_KEY_CANNOT_UPDATE);
         }
 
-        // Property key'in alanlarını güncelle
-        propertyKey.setName(propertyKeyRequest.getName());
-        propertyKey.setType(propertyKeyRequest.getType());
-
         // Güncellenmiş property key'i veritabanına kaydet
+        propertyKey.setName(propertyKeyRequest.getName());
         CategoryPropertyKey updatedPropertyKey = categoryPropertyKeyRepository.save(propertyKey);
 
         // ResponseMessage ile döndür
@@ -118,7 +114,7 @@ public class CategoryPropertyKeyService {
         CategoryPropertyKey propertyKey =categoryPropertyKeyHelper.findPropertyKeyById(id);
 
         // Eğer property key builtIn ise silme yapılamaz
-        if (propertyKey.isBuiltIn()) {
+        if (propertyKey.getBuiltIn()) {
             throw new ConflictException(ErrorMessages.CATEGORY_PROPERTY_KEY_CANNOT_UPDATE);
         }
 
@@ -192,8 +188,8 @@ public class CategoryPropertyKeyService {
                 for (int i = 0; i < propertyName.length; i++) {
                     CategoryPropertyKey props = CategoryPropertyKey.builder()
                             .name(propertyName[i])
-                            .type(propertyTypes[i].name())
                             .builtIn(request.getBuiltIn())
+                            .type(propertyTypes[i])
                             .category(category)
                             .build();
                     categoryPropertyKeyRepository.save(props);

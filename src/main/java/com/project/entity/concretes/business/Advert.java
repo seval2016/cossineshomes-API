@@ -11,6 +11,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class Advert {
     private String slug;
 
     @Column(nullable = false)
-    private Double price = 0.0;
+    private BigDecimal price ;
 
     @Column(nullable = false)
     private int status = AdvertStatus.PENDING.getValue();
@@ -85,46 +86,25 @@ public class Advert {
 
     //------------İlişkili sütunlar -------------
 
-    //ManyToOne
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "advert_type_id", nullable = false)
+    @ManyToOne()
     @JsonIgnore
-    private AdvertType advertType;
+    @JoinColumn(name="user_id")
+    private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
+    @JoinColumn(name = "city_id", nullable = false)
+    @JsonIgnore
+    private City city;
+
+    @ManyToOne()
     @JoinColumn(name = "country_id", nullable = false)
     @JsonIgnore
     private Country country;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_id", nullable = false)
-    @JsonIgnore
-    private City city;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "district_id", nullable = false)
-    @JsonIgnore
-    private District district;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    @JoinColumn(name="user_id")
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     @JsonIgnore
     private Category category;
-
-    //----OneToMany
-
-    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Images> images;
-
-    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<TourRequest> tourRequestList;
 
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
@@ -132,14 +112,31 @@ public class Advert {
 
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<CategoryPropertyValue> categoryPropertyValuesList;
+    private List<TourRequest> tourRequestList;
 
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
     @JsonIgnore
+    private List<CategoryPropertyValue> categoryPropertyValuesList;
+
+    @ManyToOne()
+    @JoinColumn(name = "advert_type_id", nullable = false)
+    @JsonIgnore
+    private AdvertType advertType;
+
+    @ManyToOne()
+    @JoinColumn(name = "district_id", nullable = false)
+    @JsonIgnore
+    private District district;
+
+    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Images> imagesList = new ArrayList<>();
 
-    // Corrected mapping
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Images> featuredImage = new ArrayList<>();
+
+    @OneToMany(mappedBy = "advertId", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Log> logList;
 }

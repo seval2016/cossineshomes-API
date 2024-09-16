@@ -12,9 +12,11 @@ import com.project.payload.request.business.CategoryPropertyKeyRequest;
 import com.project.payload.request.business.CategoryRequest;
 import com.project.payload.response.business.CategoryResponse;
 import com.project.payload.response.business.ResponseMessage;
+import com.project.repository.business.AdvertRepository;
 import com.project.repository.business.CategoryPropertyKeyRepository;
 import com.project.repository.business.CategoryRepository;
 import com.project.service.helper.MethodHelper;
+import com.project.service.helper.PageableHelper;
 import com.project.utils.SlugUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,7 +27,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -33,8 +37,9 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
-    private final MethodHelper methodHelper;
     private final CategoryPropertyKeyRepository categoryPropertyKeyRepository;
+    private final AdvertRepository advertRepository;
+    private final PageableHelper pageableHelper;
 
 
     //--------------------yardımcı metodlar-------------------------
@@ -75,44 +80,27 @@ public class CategoryService {
         if (categoryRepository.existsByTitle(categoryRequest.getTitle())) {
             throw new ConflictException("Category " + categoryRequest.getTitle() + " is already exist ");
         }
-        // Slug oluşturuluyor
-        String slug = SlugUtils.toSlug(categoryRequest.getTitle());
-
-        // Slug'ın benzersiz olup olmadığını kontrol ediyoruz
-        if (categoryRepository.existsBySlug(slug)) {
-            throw new RuntimeException("Category with this slug already exists");
-        }
-
         Category category = categoryMapper.mapCategoryRequestToCategory(categoryRequest);
-
-        // Category entity'sini kaydediyoruz
-        Category savedCategory = categoryRepository.save(category);
-
-        // CategoryPropertyKey'leri ekliyoruz (varsa)
-        if (categoryRequest.getCategoryPropertyKeys() != null && !categoryRequest.getCategoryPropertyKeys().isEmpty()) {
+        category.generateSlug();
+        Set<CategoryPropertyKey> categoryPropertyKeys = new HashSet<>();
+        if (categoryRequest.getCategoryPropertyKeys() != null) {
             for (CategoryPropertyKeyRequest propertyKeyRequest : categoryRequest.getCategoryPropertyKeys()) {
-                if (categoryPropertyKeyRepository.existsByName(propertyKeyRequest.getName())) {
-                    throw new IllegalStateException("Property key with this name already exists: " + propertyKeyRequest.getName());
-                }
-
-                CategoryPropertyKey propertyKey = new CategoryPropertyKey();
-                propertyKey.setCategory(savedCategory);
-                propertyKey.setName(propertyKeyRequest.getName());
-                propertyKey.setType(propertyKeyRequest.getType());
-                propertyKey.setBuiltIn(false);
-
-                // Property key tablosuna kaydediliyor
-                categoryPropertyKeyRepository.save(propertyKey);
+                CategoryPropertyKey categoryPropertyKey = new CategoryPropertyKey();
+                categoryPropertyKey.setName(propertyKeyRequest.getName());
+                categoryPropertyKey.setCategory(category);  // Kategori ile ilişkilendir
+                categoryPropertyKeys.add(categoryPropertyKey);
             }
         }
 
-        // Kaydedilen kategoriye ait bilgileri response'a mapliyoruz
-            CategoryResponse categoryResponse = categoryMapper.mapCategoryToCategoryResponse(savedCategory);
+        // Kategori'ye CategoryPropertyKey'leri ekle
+        category.setCategoryPropertyKeys(categoryPropertyKeys);
+
+        Category createdCategory = categoryRepository.save(category);
 
             // ResponseMessage olarak geri döndürülüyor
                 return ResponseMessage.<CategoryResponse>builder()
                         .message("Category created successfully")
-                        .object(categoryResponse)
+                        .object(categoryMapper.mapCategoryToCategoryResponse(createdCategory))
                         .build();
             }
 

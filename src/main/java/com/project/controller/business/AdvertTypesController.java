@@ -19,29 +19,34 @@ public class AdvertTypesController {
 
     private final AdvertTypesService advertTypesService;
 
+    // --> T01
     @GetMapping
     public List<AdvertTypeResponse> getAllAdvertTypes(){
         return advertTypesService.getAllAdvertTypes();
     }
 
+    // --> T02
     @GetMapping("/advert-types/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public AdvertTypeResponse getAdvertTypeById(@PathVariable Long id){
         return advertTypesService.getAdvertTypeById(id);
     }
 
+    // --> T03
     @PostMapping("/advert-types")
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseMessage<AdvertTypeResponse> createAdvertType(@Valid @RequestBody AdvertTypeRequest advertTypeRequest){
         return advertTypesService.saveAdvertType(advertTypeRequest);
     }
 
+    // --> T04
     @PutMapping("/advert-types/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseEntity<AdvertTypeResponse> updateAdvertTypeById(@PathVariable Long id, @RequestBody AdvertTypeRequest advertTypeRequest){
         return ResponseEntity.ok(advertTypesService.updateAdvertTypeById(id, advertTypeRequest));
     }
 
+    // --> T05
     @DeleteMapping("/advert-types/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseMessage deleteAdvertType(@PathVariable Long id){

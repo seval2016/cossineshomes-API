@@ -7,7 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -15,16 +17,24 @@ import java.util.List;
 @SuperBuilder
 public abstract class BaseUserResponse {
 
-    private Long userId;
-    private String username;
-    private String firstname;
-    private String lastname;
+    private Long id;
+
+    private String firstName;
+
+    private String lastName;
+
     private String email;
+
     private String phone;
-    private List<String> userRole;
 
-    private List<AdvertResponse> advert;
+    private LocalDateTime createAt;
 
-    private List<TourRequestResponse> tourRequestsResponse;
-    private List<Long> favoritesList;
+    private LocalDateTime updateAt;
+
+    private Set<String> userRole;
+
+    private Set<AdvertResponse> advert;
+
+    private Set<TourRequestResponse> tourRequestsResponse;
+    private Set<Long> favoritesList;
 }

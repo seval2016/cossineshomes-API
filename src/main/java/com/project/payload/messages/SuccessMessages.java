@@ -61,7 +61,7 @@ public class SuccessMessages {
     public static final String TOUR_REQUEST_UPDATED = "Tour Request is Updated Successfully";
     public static final String TOUR_REQUEST_APPROVED = "Tour Request is Accepted Successfully";
     public static final String TOUR_REQUEST_FOUND = "Tour Request is Found Successfully";
-    public static final String TOUR_REQUEST_DECLINE = "Tour Request is Declined Successfully";
+    public static final String TOUR_REQUEST_DECLINED = "Tour Request is Declined Successfully";
     public static final String TOUR_REQUEST_CANCELLED = "Tour Request is Canceled Successfully";
     public static final String TOUR_REQUEST_DELETED="Tour Request is Deleted Successfully";
 

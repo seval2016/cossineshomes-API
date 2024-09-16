@@ -60,7 +60,7 @@ public class MethodHelper {
 
     //!!! builtIn kontrolu
     public void checkBuiltIn(User user){
-        if(Boolean.TRUE.equals(user.isBuiltIn())) {
+        if(Boolean.TRUE.equals(user.getBuiltIn())) {
             throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
         }
     }

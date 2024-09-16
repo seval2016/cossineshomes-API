@@ -1,6 +1,7 @@
 package com.project.entity.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.project.utils.SlugUtils;
 import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -62,6 +63,13 @@ public class Category {
     @PreUpdate
     protected void onUpdate() {
         updateAt = LocalDateTime.now();
+    }
+
+    @PostPersist
+    public void generateSlug() {
+        if (this.slug == null) {
+            this.slug = SlugUtils.toSlug(this.title) + "-" + this.id;
+        }
     }
 }
 

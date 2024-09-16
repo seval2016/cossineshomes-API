@@ -11,6 +11,7 @@ import com.project.payload.mappers.AdvertMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.AdvertRequest;
+import com.project.payload.request.business.CreateAdvertPropertyRequest;
 import com.project.payload.request.business.PropertyRequest;
 import com.project.payload.response.business.*;
 
@@ -64,7 +65,7 @@ public class AdvertService {
     // --> A01 - Belirli filtreleme kriterlerine göre ilanları getirme işlemleri.
     public Page<AdvertResponse> getAdverts(String query, Long categoryId, Long advertTypeId, BigDecimal priceStart, BigDecimal priceEnd, Integer status, int page, int size, String sort, String type) {
         Pageable pageable = pageableHelper.getPageableWithProperties(query, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type);
-        return advertRepository.findAdverts(query, categoryId, advertTypeId, priceStart, priceEnd, status, pageable)
+        return advertRepository.findAdverts(query, categoryId, advertTypeId, status, priceStart, priceEnd, pageable)
                 .map(advertMapper::mapAdvertToAdvertResponse);
     }
 
@@ -161,7 +162,7 @@ public class AdvertService {
         List<CategoryPropertyValue> advertValueList = new ArrayList<>();
 
         // Gelen özellik isteklerini döngü ile işliyoruz
-        for (PropertyRequest request1 : advertRequest.getProperties()) {
+        for (CreateAdvertPropertyRequest request1 : advertRequest.getProperties()) {
 
             // Veritabanından bu keyId'ye karşılık gelen CategoryPropertyKey'i buluyoruz
             CategoryPropertyKey categoryPropertyKeyFromDb = categoryPropertyKeyHelper.findPropertyKeyById(request1.getKeyId());
@@ -254,7 +255,7 @@ public class AdvertService {
 
         List<CategoryPropertyValue> advertValueList = new ArrayList<>();
 
-        for (PropertyRequest request1 : advertRequest.getProperties()) {
+        for (CreateAdvertPropertyRequest request1 : advertRequest.getProperties()) {
             List<CategoryPropertyValue> values = categoryPropertyValueService.categoryFindAllByValue(request1.getValue());
             advertValueList.addAll(values);
         }
@@ -312,7 +313,7 @@ public class AdvertService {
 
         // Kategoriye bağlı property'ler alınır ve ilan ile ilişkilendirilir
         List<CategoryPropertyValue> advertValueList = new ArrayList<>();
-        for (PropertyRequest request1 : advertRequest.getProperties()) {
+        for (CreateAdvertPropertyRequest request1 : advertRequest.getProperties()) {
             List<CategoryPropertyValue> values = categoryPropertyValueService.categoryFindAllByValue(request1.getValue());
             advertValueList.addAll(values);
         }

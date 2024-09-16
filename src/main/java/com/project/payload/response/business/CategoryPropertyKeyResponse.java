@@ -15,17 +15,6 @@ public class CategoryPropertyKeyResponse {
 
     private String name;
 
-    private String type;
-
     private Boolean builtIn;
 
-    private Long categoryId;
-    // Constructor to convert from CategoryPropertyKey entity
-    public CategoryPropertyKeyResponse(CategoryPropertyKey key) {
-        this.id = key.getId();
-        this.name = key.getName();
-        this.type = key.getType();
-        this.builtIn = key.isBuiltIn();
-        this.categoryId = key.getCategory() != null ? key.getCategory().getId() : null;
-    }
 }

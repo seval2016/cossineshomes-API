@@ -1,5 +1,6 @@
 package com.project.payload.mappers;
 
+import com.project.entity.concretes.business.Favorite;
 import com.project.entity.concretes.user.User;
 import com.project.entity.concretes.user.UserRole;
 import com.project.entity.enums.RoleType;
@@ -12,40 +13,46 @@ import com.project.payload.response.user.CustomerResponse;
 import com.project.payload.response.UserResponse;
 
 import com.project.payload.response.user.RegisterResponse;
+import com.project.service.helper.MethodHelper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class UserMapper {
+
+    private final MethodHelper methodHelper;
+    private final TourRequestMapper tourRequestMapper;
+    private final AdvertMapper advertMapper;
+
+
     public UserResponse mapUserToUserResponse(User user) {
-        // Kullanıcı nesnesinden UserResponse nesnesi oluşturuluyor
         return UserResponse.builder()
-                .userId(user.getId())
-                .username(user.getUsername())
-                .firstname(user.getFirstName())
-                .lastname(user.getLastName())
+                .id(user.getId())
                 .email(user.getEmail())
                 .phone(user.getPhone())
-                .userRole(user.getUserRole().stream()
-                        .map(role -> role.getRole().name())
-                        .collect(Collectors.toList()))  // Eğer roller null ise, boş bir liste dönüyor
-                .build();  // UserResponse nesnesi oluşturuluyor ve döndürülüyor
+                .advert(user.getAdvert() != null ? user.getAdvert().stream().map(advertMapper::mapAdvertToAdvertResponse).collect(Collectors.toSet()) : new HashSet<>())
+                .favoritesList(user.getFavoritesList() != null ? user.getFavoritesList().stream().map(Favorite::getId).collect(Collectors.toSet()) : new HashSet<>())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .userRole(user.getUserRole() != null ? user.getUserRole().stream().map(UserRole::getRoleName).collect(Collectors.toSet()) : new HashSet<>())
+                .tourRequestsResponse(user.getTourRequests() != null ? user.getTourRequests().stream().map(tourRequestMapper::mapTourRequestToTourRequestResponse).collect(Collectors.toSet()) : new HashSet<>())
+                .builtIn(user.getBuiltIn())
+                .build();
     }
-
     public User mapUserRequestToUser(BaseUserRequest userRequest) {
 
         return User.builder()
-                .username(userRequest.getUsername())
+                .email(userRequest.getEmail())
                 .firstName(userRequest.getFirstName())
                 .lastName(userRequest.getLastName())
-                .passwordHash(userRequest.getPasswordHash())
                 .phone(userRequest.getPhone())
-                .email(userRequest.getEmail())
                 .builtIn(userRequest.getBuiltIn())
                 .build();
     }
-
     public CustomerResponse mapUserToCustomerResponse(User customer) {
         return  CustomerResponse.builder()
                 .userId(customer.getId())
@@ -56,7 +63,6 @@ public class UserMapper {
                 .phone(customer.getPhone())
                 .build();
     }
-
     public User mapUserRequestToUpdatedUser(UserRequest userRequest, Long userId) {
 
         return User.builder()
@@ -70,16 +76,12 @@ public class UserMapper {
                 .build();
 
     }
-
-    // Other mapping methods
-
     public void mapUserRequestWithoutPasswordToUser(UserRequestWithoutPassword userRequestWithoutPassword, User user) {
         user.setFirstName(userRequestWithoutPassword.getFirstName());
         user.setLastName(userRequestWithoutPassword.getLastName());
         user.setPhone(userRequestWithoutPassword.getPhone());
         user.setEmail(userRequestWithoutPassword.getEmail());
     }
-
     public User mapUserResponseToUser(BaseUserResponse authenticatedUser) {
         return User.builder()
                 .id(authenticatedUser.getUserId())
@@ -99,8 +101,6 @@ public class UserMapper {
                         .collect(Collectors.toList()))
                 .build();
     }
-
-
     public User userRequestToUser(UserSaveRequest request) {
 
         return User.builder()
@@ -121,4 +121,20 @@ public class UserMapper {
                 .email(newRegisterUser.getEmail())
                 .build();
     }
+
+    public CustomerResponse customerToCustomerResponse(User user) {
+        return CustomerResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .advert(user.getAdvert().stream().map(advertMapper::mapAdvertToAdvertResponse).collect(Collectors.toSet()))
+                .favoritesList(user.getFavoritesList().stream().map(Favorite::getId).collect(Collectors.toSet()))
+                .tourRequestsResponse(user.getTourRequests().stream().map(tourRequestMapper::mapTourRequestToTourRequestResponse).collect(Collectors.toSet()))
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .userRole(user.getUserRole().stream().map(UserRole::getRoleName).collect(Collectors.toSet()))
+                .tourRequestsResponse(user.getTourRequests().stream().map(tourRequestMapper::mapTourRequestToTourRequestResponse).collect(Collectors.toSet()))
+                .build();
+    }
+
 }

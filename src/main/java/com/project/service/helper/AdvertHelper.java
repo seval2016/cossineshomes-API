@@ -38,6 +38,7 @@ public class AdvertHelper {
     private final AdvertTypesService advertTypesService;
     private final DateTimeValidator dateTimeValidator;
     private final DistrictService districtService;
+
     private int calculatePopularityPoint(Advert advert) {
         int totalTourRequests = advert.getTourRequestList().size();
         int totalViews = advert.getViewCount();
@@ -45,7 +46,6 @@ public class AdvertHelper {
     }
 
     public List<AdvertResponse> getMostPopularAdverts(Pageable pageable) {
-        // amount yerine Pageable kullanılıyor
         Page<Advert> popularAdverts = advertRepository.findMostPopularAdverts(pageable);
         return popularAdverts.stream()
                 .map(advertMapper::mapAdvertToAdvertResponse)
@@ -57,7 +57,7 @@ public class AdvertHelper {
             detailsMap = new HashMap<>();
         }
         Category category = categoryService.getCategoryById(advertRequest.getCategoryId());
-        City city=cityService.getCityById(advertRequest.getCityId());
+        City city = cityService.getCityById(advertRequest.getCityId());
         User user = methodHelper.getUserByHttpRequest(httpServletRequest);
         Country country = countryService.getCountryById(advertRequest.getCountryId());
         AdvertType advertType = advertTypesService.getAdvertTypeByIdForAdvert(advertRequest.getAdvertTypeId());
@@ -75,29 +75,26 @@ public class AdvertHelper {
 
     public Advert isAdvertExistById(Long id){
         return advertRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_ADVERT_WITH_ID_MESSAGE,id)));
+                () -> new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_ADVERT_WITH_ID_MESSAGE, id))
+        );
     }
 
     public List<Advert> getAdvertsReport(String date1, String date2, String category, String type, AdvertStatus status) {
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-        LocalDateTime begin = LocalDateTime.parse(date1,formatter);
-        LocalDateTime end =LocalDateTime.parse(date2,formatter);
-        dateTimeValidator.checkBeginTimeAndEndTime(begin,end);
+        LocalDateTime begin = LocalDateTime.parse(date1, formatter);
+        LocalDateTime end = LocalDateTime.parse(date2, formatter);
+        dateTimeValidator.checkBeginTimeAndEndTime(begin, end);
 
         categoryService.getCategoryByTitle(category);
-
         AdvertStatus statusEnum = AdvertStatus.fromValue(status.getValue());
-
         advertTypesService.findByTitle(type);
 
-        return advertRepository.findByQuery(begin,end,category,type,statusEnum).orElseThrow(
-                ()-> new BadRequestException(ErrorMessages.ADVERT_NOT_FOUND)
+        return advertRepository.findByQuery(begin, end, category, type, statusEnum).orElseThrow(
+                () -> new BadRequestException(ErrorMessages.ADVERT_NOT_FOUND)
         );
-
     }
 
-    public List<Advert> getAllAdverts(){
+    public List<Advert> getAllAdverts() {
         return advertRepository.findAll();
     }
 
@@ -105,8 +102,8 @@ public class AdvertHelper {
         advertRepository.save(advert);
     }
 
-    public Advert getAdvertForFavorites(Long id){
-        return advertRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException(ErrorMessages.ADVERT_NOT_FOUND));
+    public Advert getAdvertForFavorites(Long id) {
+        return advertRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ADVERT_NOT_FOUND));
     }
 
 }

@@ -22,11 +22,10 @@ public class Favorite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore
     private User user;
 
     @ManyToOne
@@ -35,7 +34,14 @@ public class Favorite {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
     @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt;
+    private LocalDateTime createAt= LocalDateTime.now();
+
+    @PreRemove
+    private void preRemove() {
+        if (user != null) {
+            user.getFavoritesList().remove(this);
+        }
+    }
 
 }
 

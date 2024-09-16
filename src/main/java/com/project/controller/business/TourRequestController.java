@@ -31,8 +31,8 @@ public class TourRequestController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "20") int size,
             @RequestParam(value = "sort", defaultValue = "tourDate") String sort,
-            @RequestParam(value = "type", defaultValue = "asc") String type){
-        return ResponseEntity.ok(tourRequestService.getUsersTourRequestWithPageForCustomer(httpServletRequest,query,page,size,sort,type));
+            @RequestParam(value = "type", defaultValue = "asc") String type) {
+        return ResponseEntity.ok(tourRequestService.getUsersTourRequestWithPageForCustomer(httpServletRequest, query, page, size, sort, type));
     }
 
     // ----> S02 - It should return tour requests
@@ -44,51 +44,51 @@ public class TourRequestController {
             @RequestParam(value = "size", defaultValue = "20") int size,
             @RequestParam(value = "sort", defaultValue = "tourDate") String sort,
             @RequestParam(value = "type", defaultValue = "asc") String type
-           ){
-        return ResponseEntity.ok(tourRequestService.getAllTourRequestWithPageForAdminAndManager(query,page,size,sort,type));
+    ) {
+        return ResponseEntity.ok(tourRequestService.getAllTourRequestWithPageForAdminAndManager(query, page, size, sort, type));
     }
 
     // ----> S03 - It should return the authenticated user’s tour request detail
     @GetMapping("/{id}/auth") // http://localhost:8080/tour-requests/3/auth + GET
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','CUSTOMER')")
     public ResponseEntity<TourRequestResponse> getTourRequestByIdAuth(@PathVariable Long id,
-                                                                      HttpServletRequest httpServletRequest){
-        return tourRequestService.getUsersTourRequestDetails(id,httpServletRequest);
+                                                                      HttpServletRequest httpServletRequest) {
+        return tourRequestService.getUsersTourRequestDetails(id, httpServletRequest);
     }
 
     // ----> S04 - It should return a tour request detail
     @GetMapping("/{id}/admin")
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')") // http://localhost:8080/tour-requests/23/admin + GET
-    public ResponseEntity<TourRequestResponse> getUsersTourRequestByIdForAdminAndManager(@PathVariable Long id, HttpServletRequest servletRequest){
+    public ResponseEntity<TourRequestResponse> getUsersTourRequestByIdForAdminAndManager(@PathVariable Long id, HttpServletRequest servletRequest) {
         return tourRequestService.getUsersTourRequestDetailsForAdmin(id, servletRequest);
     }
 
     // ----> S05 - It will create a tour request
     @PostMapping() //http://localhost:8080/tour-requests + POST + JSON
     @PreAuthorize("hasAnyAuthority('CUSTOMER')")
-    public ResponseMessage<TourRequestResponse> createTourRequest(@RequestBody @Valid TourRequestRequest tourRequestRequest, HttpServletRequest request){
-        return  tourRequestService.createTourRequest(tourRequestRequest,request);
+    public ResponseMessage<TourRequestResponse> createTourRequest(@RequestBody @Valid TourRequestRequest tourRequestRequest, HttpServletRequest request) {
+        return tourRequestService.createTourRequest(tourRequestRequest, request);
     }
 
     // ----> S06 - It will update a tour request
     @PutMapping("/{id}/auth")//http://localhost:8080/tour-requests/45 + PUT + JSON
     @PreAuthorize("hasAnyAuthority('CUSTOMER')")
-    public ResponseMessage<TourRequestResponse> updateTourRequest(@RequestBody @Valid TourRequestRequest tourRequestRequest, HttpServletRequest request,@PathVariable Long id){
+    public ResponseMessage<TourRequestResponse> updateTourRequest(@RequestBody @Valid TourRequestRequest tourRequestRequest, HttpServletRequest request, @PathVariable Long id) {
         return tourRequestService.updateTourRequest(tourRequestRequest, request, id);
     }
 
     // ----> S07 - It will cancel the authenticated user’s tour request
     @PatchMapping("/{id}/cancel")//http://localhost:8080/tour-requests/45/cancel + PATCH + JSON
     @PreAuthorize("hasAnyAuthority('CUSTOMER')")
-    public ResponseMessage<TourRequestResponse> cancelTourRequest(@PathVariable Long id,HttpServletRequest servletRequest){
-        return tourRequestService.updateTourRequestCancel(id, servletRequest);
+    public ResponseMessage<TourRequestResponse> cancelTourRequest(@PathVariable Long id, HttpServletRequest request) {
+        return tourRequestService.updateTourRequestCancel(id, request);
     }
 
     // ----> S08 - It should approve the tour request
     @PatchMapping("/{id}/approve")
     @PreAuthorize("hasAnyAuthority('CUSTOMER')") //http://localhost:8080/tour-requests/4/approve + PATCH + JSON
-    public ResponseMessage<TourRequestResponse> updateTourRequestApprove(@PathVariable("id") Long id,HttpServletRequest httpServletRequest){
-        return tourRequestService.updateTourRequestApprove(id,httpServletRequest);
+    public ResponseMessage<TourRequestResponse> updateTourRequestApprove(@PathVariable("id") Long id, HttpServletRequest httpServletRequest) {
+        return tourRequestService.updateTourRequestApprove(id, httpServletRequest);
     }
 
     // ----> S09 - It should decline the tour request
@@ -96,16 +96,16 @@ public class TourRequestController {
     @PreAuthorize("hasAnyAuthority('CUSTOMER')") // http://localhost:8080/tour-requests/4/decline + PATCH + JSON
     public ResponseMessage<TourRequestResponse> updateTourRequestDecline(
             @PathVariable("id") Long id,
-            HttpServletRequest httpServletRequest){
-        return tourRequestService.updateTourRequestDecline(id,httpServletRequest);
+            HttpServletRequest httpServletRequest) {
+        return tourRequestService.updateTourRequestDecline(id, httpServletRequest);
     }
 
     // ----> S10 - It will delete a tour request
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')") // http://localhost:8080/tour-requests/5 + DELETE
-    public ResponseMessage<TourRequestResponse> deleteTourRequest(@PathVariable("id") Long id,
-                                                                  HttpServletRequest httpServletRequest){
-        return tourRequestService.deleteTourRequest(id,httpServletRequest);
+    public ResponseMessage<TourRequestResponse> deleteTourRequestById(@PathVariable("id") Long id,
+                                                                      HttpServletRequest httpServletRequest) {
+        return tourRequestService.deleteTourRequestById(id, httpServletRequest);
     }
 
 }

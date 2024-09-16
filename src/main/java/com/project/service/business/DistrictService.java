@@ -82,5 +82,4 @@ public class DistrictService {
         // Save the district entity to the database
         return districtRepository.save(district);
     }
-
 }

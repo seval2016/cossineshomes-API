@@ -27,11 +27,11 @@ public class TourRequest {
     private Long id;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @Column(name = "tour_date", nullable = false)
+    @Column(nullable = false)
     private LocalDate tourDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-    @Column(name = "tour_time", nullable = false)
+    @Column(nullable = false)
     private LocalTime tourTime;
 
     @Enumerated(EnumType.STRING)
@@ -39,11 +39,11 @@ public class TourRequest {
     private StatusType status = StatusType.PENDING;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @Column(name = "create_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime createAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @Column(name = "update_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime updateAt;
 
 

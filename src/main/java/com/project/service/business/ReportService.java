@@ -13,6 +13,7 @@ import com.project.repository.business.*;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.AdvertHelper;
 import com.project.service.helper.MethodHelper;
+import com.project.service.helper.TourRequestHelper;
 import com.project.service.user.UserService;
 import com.project.service.validator.DateTimeValidator;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,7 @@ public class ReportService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final DateTimeValidator dateTimeValidator;
-    private final TourRequestService tourRequestService;
+    private final TourRequestHelper tourRequestHelper;
     private final AdvertHelper advertHelper;
 
     public ResponseEntity<Map<String, Long>> getStaticts(HttpServletRequest request) {
@@ -112,24 +113,18 @@ public class ReportService {
             LocalDate endDate = LocalDate.parse(date2, dateFormatter);
             end = endDate.atTime(LocalTime.MAX);
         }
-
         if (begin != null && end != null) {
             dateTimeValidator.checkBeginTimeAndEndTime(begin, end);
         }
-
         StatusType statusType;
         try {
             statusType = StatusType.valueOf(status);
-
-
         } catch (BadRequestException e) {
             throw new BadRequestException(ErrorMessages.ADVERT_STATUS_NOT_FOUND);
         }
-        List<TourRequest> tourRequests = tourRequestService.getTourRequest(begin, end, statusType);
 
+        List<TourRequest> tourRequests = tourRequestHelper.getTourRequest(begin,end,statusType);
         return methodHelper.excelResponse(tourRequests);
-
-
     }
 
     public ResponseEntity<byte[]> getAdverts(HttpServletRequest request, String date1, String date2, String category, String type, AdvertStatus status) {

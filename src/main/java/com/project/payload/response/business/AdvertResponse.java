@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class AdvertResponse {
 
     private String slug;
 
-    private Double price;
+    private BigDecimal price;
 
     private int status;
 

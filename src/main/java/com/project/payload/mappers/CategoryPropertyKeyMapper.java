@@ -12,19 +12,12 @@ import java.util.stream.Collectors;
 @Component
 public class CategoryPropertyKeyMapper {
 
-    // CategoryPropertyKey nesnesinden CategoryPropertyKeyResponse oluşturur
-    public Set<CategoryPropertyKeyResponse> mapCategoryPropertyKeysToResponseSet(Set<CategoryPropertyKey> categoryPropertyKeys) {
-        return categoryPropertyKeys.stream()
-                .map(this::mapCategoryPropertyKeyToResponse)
-                .collect(Collectors.toSet());
-    }
-
     // Tek bir CategoryPropertyKey'i CategoryPropertyKeyResponse'a çevirir
     public CategoryPropertyKeyResponse mapCategoryPropertyKeyToResponse(CategoryPropertyKey categoryPropertyKey) {
         return CategoryPropertyKeyResponse.builder()
                 .id(categoryPropertyKey.getId())
                 .name(categoryPropertyKey.getName())
-                .type(categoryPropertyKey.getType())
+                .builtIn(false)
                 .build();
     }
 }

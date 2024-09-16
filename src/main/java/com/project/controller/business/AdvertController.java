@@ -33,7 +33,7 @@ public class AdvertController {
     private final AdvertHelper advertHelper;
 
     // --> A01 - Belirli filtreleme kriterlerine göre ilanları getirir.
-    @GetMapping //http://localhost:8080/adverts?q=beyoğlu&category_id=12&advert_type_id=3&price_start=500&price_end=1500 location=34 & status=1;page=1&size=10&sort=date&type=asc
+    @GetMapping
     public ResponseEntity<Page<AdvertResponse>> getAdverts(
             @RequestParam(required = false) String query,
             @RequestParam(required = false) Long categoryId,
@@ -45,22 +45,24 @@ public class AdvertController {
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "categoryId") String sort,
             @RequestParam(defaultValue = "asc") String type) {
-
         return ResponseEntity.ok(advertService.getAdverts(query, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type));
     }
 
+    // --> A02
     @GetMapping("/cities")
     @PreAuthorize("permitAll()") // http://localhost:8080/adverts/cities
     public ResponseEntity<List<CityAdvertResponse>> getAdvertsGroupedByCities() {
         return ResponseEntity.ok(advertService.getAdvertsGroupedByCities());
-    }//A02
+    }
 
+    // --> A03
     @GetMapping("/categories")
     @PreAuthorize("permitAll()") //http://localhost:8080/adverts/categories
     public ResponseEntity<List<CategoryForAdvertResponse>> getAdvertsGroupedByCategory() {
-        return ResponseEntity.ok( advertService.getAdvertsGroupedByCategory());
-    }//A03
+        return ResponseEntity.ok(advertService.getAdvertsGroupedByCategory());
+    }
 
+    // --> A04
     @GetMapping("/popular/{amount}")
     @PreAuthorize("permitAll()")
     public ResponseEntity<List<AdvertResponse>> getMostPopularAdverts(@PathVariable(value = "amount", required = false) Integer amount) {
@@ -69,81 +71,89 @@ public class AdvertController {
         return ResponseEntity.ok(advertHelper.getMostPopularAdverts(pageable));
     }//A04
 
+    // --> A05
     @GetMapping("/auth")
     @PreAuthorize("hasAnyAuthority('CUSTOMER')")
     public Page<AdvertResponse> getAllAdvertForAuthUserByPage(HttpServletRequest request,
-            @RequestParam(value = "page",required = false,defaultValue = "0") int page,
-            @RequestParam(value = "size",required = false, defaultValue = "20") int size,
-            @RequestParam(value = "sort",required = false,defaultValue = "category.id") String sort,
-            @RequestParam(value = "type",required = false,defaultValue = "asc") String type){
+                                                              @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+                                                              @RequestParam(value = "size", required = false, defaultValue = "20") int size,
+                                                              @RequestParam(value = "sort", required = false, defaultValue = "category.id") String sort,
+                                                              @RequestParam(value = "type", required = false, defaultValue = "asc") String type) {
 
-        return advertService.getAllAdvertForAuthUser(request,page,size,sort,type);
-    }//A05
+        return advertService.getAllAdvertForAuthUser(request, page, size, sort, type);
+    }
 
-        @GetMapping("/adverts/admin")
-        @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
-        public ResponseEntity<Page<AdvertResponse>> getAdverts(
-                @RequestParam(value = "q", required = false) String query,
-                @RequestParam(value = "category_id", required = false) Long categoryId,
-                @RequestParam(value = "advert_type_id", required = false) Long advertTypeId,
-                @RequestParam(value = "price_start", required = false) Double priceStart,
-                @RequestParam(value = "price_end", required = false) Double priceEnd,
-                @RequestParam(value = "status", required = false) Integer status,
-                @RequestParam(value = "page", defaultValue = "0") int page,
-                @RequestParam(value = "size", defaultValue = "20") int size,
-                @RequestParam(value = "sort", defaultValue = "category_id") String sort,
-                @RequestParam(value = "type", defaultValue = "asc") String type) {
-            return ResponseEntity.ok(advertService.getFilteredAdverts(query, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type));
-        }//A06
+    // --> A06
+    @GetMapping("/adverts/admin")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
+    public ResponseEntity<Page<AdvertResponse>> getAdverts(
+            @RequestParam(value = "q", required = false) String query,
+            @RequestParam(value = "category_id", required = false) Long categoryId,
+            @RequestParam(value = "advert_type_id", required = false) Long advertTypeId,
+            @RequestParam(value = "price_start", required = false) Double priceStart,
+            @RequestParam(value = "price_end", required = false) Double priceEnd,
+            @RequestParam(value = "status", required = false) Integer status,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size,
+            @RequestParam(value = "sort", defaultValue = "category_id") String sort,
+            @RequestParam(value = "type", defaultValue = "asc") String type) {
+        return ResponseEntity.ok(advertService.getFilteredAdverts(query, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type));
+    }
 
+    // --> A07
     @GetMapping("/{slug}")
     @PreAuthorize("permitAll()") //http://localhost:8080/adverts/lux-villa-in-river-park
     public ResponseEntity<AdvertResponse> getAdvertBySlug(@PathVariable String slug) {
         return ResponseEntity.ok(advertService.getAdvertBySlug(slug));
-    }//A07
+    }
 
+    // --> A08
     @GetMapping("/{id}/auth")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<AdvertResponse> getAuthenticatedUserAdvert(@PathVariable Long id, HttpServletRequest request) {
         return ResponseEntity.ok(advertService.getAdvertByIdAndAuthenticatedUser(id, request));
-    }//A08
+    }
 
+    // --> A09
     @GetMapping("/{id}/admin")// http://localhost:8080/2/admin
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseEntity<AdvertResponse> getAdvertById(@PathVariable Long id, HttpServletRequest request) {
         return ResponseEntity.ok(advertService.getAdvertById(id, request));
     }//A09
 
+    // --> A10
     @PostMapping("/save") // Yeni bir ilan oluşturur.
     @PreAuthorize("hasRole('CUSTOMER')") // http://localhost:8080/adverts/save
     public ResponseEntity<AdvertResponse> createAdvert(
-                                @RequestBody AdvertRequest advertRequest,
-                                HttpServletRequest request,@RequestPart("files") MultipartFile[] files) {
-        return ResponseEntity.ok(advertService.createAdvert(advertRequest,request,files));
-    }//A10
+            @RequestBody AdvertRequest advertRequest,
+            HttpServletRequest request, @RequestPart("files") MultipartFile[] files) {
+        return ResponseEntity.ok(advertService.createAdvert(advertRequest, request, files));
+    }
 
-     // Yeni endpoint: authenticated user's advert update
+    // --> A11
     @PostMapping("/auth/{id}") // http://localhost:8080/adverts/auth/23
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseMessage<AdvertResponse> updateUsersAdvertById(
             @RequestParam @Valid AdvertRequest advertRequest,
             @RequestParam MultipartFile[] files,
-            HttpServletRequest httpServletRequest,@PathVariable Long id){
+            HttpServletRequest httpServletRequest, @PathVariable Long id) {
         return advertService.updateAuthenticatedAdvert(advertRequest, files, httpServletRequest, id);
-    }//A11
+    }
 
+    // --> A12
     @PutMapping("/admin/{id}") // İlan güncelleme işlemi
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')") // http://localhost:8080/adverts/admin/23
     public ResponseMessage<AdvertResponse> updateAdvertById(
             @RequestBody @Valid AdvertRequest advertRequest,
             @RequestPart("files") MultipartFile[] files,
-            HttpServletRequest httpServletRequest,@PathVariable Long id) {
-        return advertService.updateAdvert(advertRequest,files,httpServletRequest,id);
-    } //A12
+            HttpServletRequest httpServletRequest, @PathVariable Long id) {
+        return advertService.updateAdvert(advertRequest, files, httpServletRequest, id);
+    }
 
+    // --> A13
     @DeleteMapping("/admin/{id}")  // http://localhost:8080/adverts/admin/5
     @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
-    public ResponseEntity<AdvertResponse> deleteAdvertById(@PathVariable Long id,HttpServletRequest request) {
-        return ResponseEntity.ok(advertService.deleteAdvert(id,request));
-    } //A13
+    public ResponseEntity<AdvertResponse> deleteAdvertById(@PathVariable Long id, HttpServletRequest request) {
+        return ResponseEntity.ok(advertService.deleteAdvert(id, request));
+    }
 }

@@ -3,6 +3,8 @@ package com.project.entity.concretes.business;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "districts")
@@ -24,4 +26,7 @@ public class District {
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false)
     private City city;
+
+    @OneToMany(mappedBy = "district",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Advert> advertList = new ArrayList<>();
 }

@@ -37,7 +37,6 @@ public class Log {
     private User user;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @Column(name = "create_at", nullable = false)
-    @CreationTimestamp  // Otomatik olarak kayıt sırasında tarih atanır
-    private LocalDateTime createAt;
+    @Column(nullable = false)
+    private LocalDateTime createAt= LocalDateTime.now();
 }

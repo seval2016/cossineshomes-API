@@ -1,6 +1,7 @@
 package com.project.entity.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.entity.enums.CategoryPropertyKeyType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,12 +33,12 @@ public class CategoryPropertyKey {
     private String name;
 
     @Column(nullable = false)
-    private String type;
+    private CategoryPropertyKeyType type;
 
     @Column(nullable = false)
-    private boolean builtIn = false;
+    private Boolean builtIn = false;
 
-    @JsonIgnore // sonsuz döngüye girilmesin diye @JsonIgnore eklendi
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;

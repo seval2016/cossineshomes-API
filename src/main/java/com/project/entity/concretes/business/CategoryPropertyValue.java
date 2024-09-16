@@ -23,14 +23,16 @@ public class CategoryPropertyValue {
     @Column(nullable = false)
     private String value;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Advert advert;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "category_property_key_id", nullable = false)
     @JsonIgnore
     private CategoryPropertyKey categoryPropertyKey;
+
+    @ManyToOne()
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Advert advert;
+
+
 
 
 }

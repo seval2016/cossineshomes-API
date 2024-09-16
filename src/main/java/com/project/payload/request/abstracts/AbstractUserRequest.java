@@ -1,45 +1,50 @@
 package com.project.payload.request.abstracts;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-@SuperBuilder
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+@SuperBuilder
 public abstract class AbstractUserRequest {
 
-    @NotNull(message = "Please enter your username")
-    @Size(min = 3, max = 16, message = "Your username should be at least 4 chars" )
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+", message = "Your username must consist of the characters .")
-    private String username;
-
-    @NotNull(message = "Please enter your name")
-    @Size(min = 3, max = 16, message = "Your name should be at least 4 chars" )
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+", message = "Your name must consist of the characters .")
+    @NotBlank
+    @Size(min = 2, max = 30, message = "First name '${validatedValue}' must be between {min} and {max}")
+    @Pattern(regexp = "^[a-zA-ZçÇğĞıİöÖşŞüÜ]+$", message = "Your first name must be consist of the characters a-z")
     private String firstName;
 
-    @NotNull(message = "Please enter your surname")
-    @Size(min = 3, max = 16, message = "Your surname should be at least 4 chars" )
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+", message = "Your surname must consist of the characters .")
+    @NotBlank
+    @Size(min = 2, max = 30, message = "Last name '${validatedValue}' must be between {min} and {max} long")
+    @Pattern(regexp = "^[a-zA-ZçÇğĞıİöÖşŞüÜ]+$", message = "Your last name must be consist of the characters a-z")
     private String lastName;
 
-    @NotNull(message = "Please enter your phone number")
-    @Size(min = 12, max = 12,message = "Your phone number should be 12 characters long")
+
+    @NotBlank(message = "Please enter your email")
+    @Email(message = "Please enter valid email")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")
+    @Size(min = 10, max = 80, message = "Your email '${validatedValue}' should be between {min} and {max} chars")
+    private String email;
+
+
+    @Size(min = 12, max = 12, message = "Your phone number should be at least 12 chars")
     @Pattern(regexp = "^((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$",
             message = "Please enter valid phone number")
+    @NotBlank(message = "Please enter your phone number")
     private String phone;
 
-    @NotNull(message = "Please enter your email")
-    @Email(message = "Please enter valid email")
-    @Size(min=5, max=50 , message = "Your email should be between 5 and 50 chars")
-    private String email;
+
+
+
+
+
+
 
 }
