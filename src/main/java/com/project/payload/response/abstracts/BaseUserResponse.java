@@ -1,6 +1,6 @@
 package com.project.payload.response.abstracts;
 
-import com.project.payload.response.business.AdvertResponse;
+import com.project.payload.response.business.advert.AdvertResponse;
 import com.project.payload.response.business.TourRequestResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Data

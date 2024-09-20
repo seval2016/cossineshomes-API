@@ -27,7 +27,7 @@ public class Category {
     private String icon;
 
     @Column(nullable = false)
-    private boolean builtIn=false;
+    private Boolean builtIn=false;
 
     @Column(nullable = false)
     private int seq=0;
@@ -37,7 +37,7 @@ public class Category {
     private String slug;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
-    private boolean isActive;
+    private Boolean isActive;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
     @Column(name = "create_at", nullable = false)

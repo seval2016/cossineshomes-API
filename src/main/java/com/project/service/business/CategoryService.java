@@ -10,14 +10,12 @@ import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.CategoryPropertyKeyRequest;
 import com.project.payload.request.business.CategoryRequest;
-import com.project.payload.response.business.CategoryResponse;
+import com.project.payload.response.business.category.CategoryResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.AdvertRepository;
 import com.project.repository.business.CategoryPropertyKeyRepository;
 import com.project.repository.business.CategoryRepository;
-import com.project.service.helper.MethodHelper;
 import com.project.service.helper.PageableHelper;
-import com.project.utils.SlugUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -109,7 +107,7 @@ public class CategoryService {
         Category category = findCategoryById(id);
 
         // Eğer builtIn true ise hata fırlat
-        if (category.isBuiltIn()) {
+        if (category.getBuiltIn()) {
             throw new ResourceNotFoundException(ErrorMessages.CATEGORY_CANNOT_UPDATE);
         }
 
@@ -118,7 +116,7 @@ public class CategoryService {
         category.setIcon(categoryRequest.getIcon());
         category.setSeq(categoryRequest.getSeq());
         category.setSlug(categoryRequest.getSlug());
-        category.setActive(categoryRequest.getIsActive());
+        category.setIsActive(categoryRequest.getIsActive());
         category.setUpdateAt(LocalDateTime.now()); // updateAt alanını günceller
 
         Category updatedCategory = categoryRepository.save(category);
@@ -136,7 +134,7 @@ public class CategoryService {
         Category category = findCategoryById(id);
 
         // builtIn özelliği true ise silmeye izin verilmez
-        if (category.isBuiltIn()) {
+        if (category.getBuiltIn()) {
             throw new IllegalStateException(ErrorMessages.CATEGORY_DELETE_ERROR);
         }
 

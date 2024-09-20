@@ -8,7 +8,7 @@ import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.AdvertMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.request.business.AdvertRequest;
-import com.project.payload.response.business.AdvertResponse;
+import com.project.payload.response.business.advert.AdvertResponse;
 import com.project.repository.business.AdvertRepository;
 import com.project.service.business.*;
 import com.project.service.validator.DateTimeValidator;

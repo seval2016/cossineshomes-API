@@ -1,18 +1,18 @@
 package com.project.controller.business;
 
-import com.project.payload.mappers.AdvertMapper;
 import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.response.business.*;
-import com.project.repository.business.AdvertRepository;
+import com.project.payload.response.business.advert.AdvertDetailsForSlugResonse;
+import com.project.payload.response.business.advert.AdvertListResponse;
+import com.project.payload.response.business.advert.AdvertResponse;
+import com.project.payload.response.business.advert.CityAdvertResponse;
+import com.project.payload.response.business.category.CategoryAdvertResponse;
 import com.project.service.business.AdvertService;
 import com.project.service.helper.AdvertHelper;
-import com.project.service.helper.MethodHelper;
-import com.project.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,44 +34,45 @@ public class AdvertController {
 
     // --> A01 - Belirli filtreleme kriterlerine göre ilanları getirir.
     @GetMapping
-    public ResponseEntity<Page<AdvertResponse>> getAdverts(
-            @RequestParam(required = false) String query,
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) Long advertTypeId,
-            @RequestParam(required = false) BigDecimal priceStart,
-            @RequestParam(required = false) BigDecimal priceEnd,
-            @RequestParam(required = false) Integer status,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(defaultValue = "categoryId") String sort,
-            @RequestParam(defaultValue = "asc") String type) {
-        return ResponseEntity.ok(advertService.getAdverts(query, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type));
+    public ResponseEntity<Page<AdvertListResponse>> getAdverts(
+            @RequestParam(value = "q", required = false) String query,
+            @RequestParam(value = "category_id", required = false) Long categoryId,
+            @RequestParam(value = "advert_type_id", required = false) Long advertTypeId,
+            @RequestParam(value = "price_start", required = false) BigDecimal priceStart,
+            @RequestParam(value = "price_end", required = false) BigDecimal priceEnd,
+            @RequestParam(value = "status", required = false) Integer status,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size,
+            @RequestParam(value = "sort", defaultValue = "categoryId") String sortBy,
+            @RequestParam(value = "type", defaultValue = "asc") String sortDirection) {
+
+        Page<AdvertListResponse> adverts = advertService.getAdverts(query, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sortBy, sortDirection);
+        return ResponseEntity.ok(adverts);
     }
 
-    // --> A02
+    // --> A02 - İlanlar şehre göre gruplanarak sadece aktif ilanların sayısı döndürülür.
     @GetMapping("/cities")
     @PreAuthorize("permitAll()") // http://localhost:8080/adverts/cities
     public ResponseEntity<List<CityAdvertResponse>> getAdvertsGroupedByCities() {
         return ResponseEntity.ok(advertService.getAdvertsGroupedByCities());
     }
 
-    // --> A03
+    // --> A03 - Her kategoriye ait reklam sayısını (amount) ve category ismini döndürme
     @GetMapping("/categories")
     @PreAuthorize("permitAll()") //http://localhost:8080/adverts/categories
-    public ResponseEntity<List<CategoryForAdvertResponse>> getAdvertsGroupedByCategory() {
+    public ResponseEntity<List<CategoryAdvertResponse>> getAdvertsGroupedByCategory() {
         return ResponseEntity.ok(advertService.getAdvertsGroupedByCategory());
     }
 
-    // --> A04
+    // --> A04 - Populer ilanları almak için
     @GetMapping("/popular/{amount}")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<List<AdvertResponse>> getMostPopularAdverts(@PathVariable(value = "amount", required = false) Integer amount) {
-        // Pageable için varsayılan sayfa boyutu: amount ya da 10
+    @PreAuthorize("permitAll()") //http://localhost:8080/adverts/popular/20
+    public ResponseEntity<Page<AdvertResponse>> getMostPopularAdverts(@PathVariable(value = "amount", required = false) Integer amount) {
         Pageable pageable = PageRequest.of(0, (amount != null) ? amount : 10);
-        return ResponseEntity.ok(advertHelper.getMostPopularAdverts(pageable));
-    }//A04
+        return ResponseEntity.ok(advertService.getMostPopularAdverts(pageable));
+    }
 
-    // --> A05
+    // --> A05 - Kullanıcıya ait ilanları sayfalandırılmış şekilde döndürür
     @GetMapping("/auth")
     @PreAuthorize("hasAnyAuthority('CUSTOMER')")
     public Page<AdvertResponse> getAllAdvertForAuthUserByPage(HttpServletRequest request,
@@ -83,11 +84,11 @@ public class AdvertController {
         return advertService.getAllAdvertForAuthUser(request, page, size, sort, type);
     }
 
-    // --> A06
+    // --> A06 - Yönetici ve yöneticiler için ilanları belirli kriterlere göre filtreleyip sayfalı ve sıralı bir şekilde döndürür.
     @GetMapping("/adverts/admin")
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseEntity<Page<AdvertResponse>> getAdverts(
-            @RequestParam(value = "q", required = false) String query,
+            @RequestParam(value = "query", required = false) String query,
             @RequestParam(value = "category_id", required = false) Long categoryId,
             @RequestParam(value = "advert_type_id", required = false) Long advertTypeId,
             @RequestParam(value = "price_start", required = false) Double priceStart,
@@ -100,10 +101,10 @@ public class AdvertController {
         return ResponseEntity.ok(advertService.getFilteredAdverts(query, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type));
     }
 
-    // --> A07
+    // --> A07 - Belirtilen slug değerine sahip bir ilanı getirir.
     @GetMapping("/{slug}")
-    @PreAuthorize("permitAll()") //http://localhost:8080/adverts/lux-villa-in-river-park
-    public ResponseEntity<AdvertResponse> getAdvertBySlug(@PathVariable String slug) {
+    @PreAuthorize("permitAll()") // http://localhost:8080/adverts/lux-villa-in-river-park
+    public ResponseEntity<AdvertDetailsForSlugResonse> getAdvertBySlug(@PathVariable String slug) {
         return ResponseEntity.ok(advertService.getAdvertBySlug(slug));
     }
 

@@ -1,19 +1,17 @@
 package com.project.controller.business;
 
 import com.project.entity.concretes.business.Advert;
-import com.project.entity.concretes.business.Favorite;
-import com.project.payload.response.business.AdvertResponse;
+import com.project.payload.response.business.advert.AdvertResponse;
+import com.project.payload.response.business.advert.AdvertTypeResponse;
 import com.project.service.business.FavoriteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,10 +30,10 @@ public class FavoriteController {
 
     @GetMapping("/admin/{id}") //kullanıcı favorilerini getiren kod
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')") //http://localhost:8080/favorites/admin/3
-    public ResponseEntity<List<AdvertResponse>> getUserFavorites(@PathVariable Long id) {
+    public ResponseEntity<List<AdvertTypeResponse>> getUserFavorites(@PathVariable Long id) {
         List<Advert> favorites = favoriteService.getUserFavorites(id);
-        List<AdvertResponse> response = favorites.stream()
-                .map(advert -> new AdvertResponse(advert.getId(), advert.getTitle())) // Gereken alanları belirleyin
+        List<AdvertTypeResponse> response = favorites.stream()
+                .map(advert -> new AdvertTypeResponse(advert.getId(), advert.getTitle())) // Gereken alanları belirleyin
                 .collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }//K02

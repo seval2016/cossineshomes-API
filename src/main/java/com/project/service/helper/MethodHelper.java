@@ -12,25 +12,21 @@ import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.request.user.AuthenticatedUsersRequest;
 import com.project.payload.request.user.CustomerRequest;
-import com.project.payload.response.business.CityAdvertResponse;
 import com.project.repository.business.AdvertRepository;
 import com.project.repository.business.FavoriteRepository;
 import com.project.repository.user.UserRepository;
-import com.project.service.business.*;
 import com.project.service.user.UserRoleService;
 
 import lombok.RequiredArgsConstructor;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.ByteArrayOutputStream;

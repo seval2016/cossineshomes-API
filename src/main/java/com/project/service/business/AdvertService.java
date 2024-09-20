@@ -2,27 +2,27 @@ package com.project.service.business;
 
 import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.user.User;
-import com.project.entity.enums.AdvertStatus;
 import com.project.entity.enums.LogEnum;
 import com.project.entity.enums.RoleType;
-import com.project.exception.BadRequestException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.AdvertMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.request.business.CreateAdvertPropertyRequest;
-import com.project.payload.request.business.PropertyRequest;
 import com.project.payload.response.business.*;
 
+import com.project.payload.response.business.advert.AdvertDetailsForSlugResonse;
+import com.project.payload.response.business.advert.AdvertListResponse;
+import com.project.payload.response.business.advert.AdvertResponse;
+import com.project.payload.response.business.advert.CityAdvertResponse;
+import com.project.payload.response.business.category.CategoryAdvertResponse;
 import com.project.repository.business.*;
-import com.project.repository.user.UserRepository;
 import com.project.service.helper.AdvertHelper;
 import com.project.service.helper.CategoryPropertyKeyHelper;
 import com.project.service.helper.MethodHelper;
 import com.project.service.helper.PageableHelper;
 
-import com.project.service.validator.DateTimeValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -30,7 +30,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,12 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @Lazy
@@ -63,61 +57,80 @@ public class AdvertService {
 
 
     // --> A01 - Belirli filtreleme kriterlerine göre ilanları getirme işlemleri.
-    public Page<AdvertResponse> getAdverts(String query, Long categoryId, Long advertTypeId, BigDecimal priceStart, BigDecimal priceEnd, Integer status, int page, int size, String sort, String type) {
-        Pageable pageable = pageableHelper.getPageableWithProperties(query, categoryId, advertTypeId, priceStart, priceEnd, status, page, size, sort, type);
-        return advertRepository.findAdverts(query, categoryId, advertTypeId, status, priceStart, priceEnd, pageable)
-                .map(advertMapper::mapAdvertToAdvertResponse);
-    }
+    public Page<AdvertListResponse> getAdverts(String query, Long categoryId, Long advertTypeId, BigDecimal priceStart, BigDecimal priceEnd, Integer status, int page, int size, String sortBy, String sortDirection) {
 
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
+
+        // Custom query to handle filtering based on the provided parameters
+        Page<Advert> adverts = advertRepository.findAdverts(query, categoryId, advertTypeId, priceStart, priceEnd, status, pageable);
+
+        // Mapping Advert to AdvertListResponse
+        return adverts.map(advert -> AdvertListResponse.builder()
+                .id(advert.getId())
+                .title(advert.getTitle())
+                .featuredImage(new ImagesResponse(advert.getFeaturedImageUrl())) // Adjust based on your image handling
+                .build());
+    }
+    //A02 - İlanlar şehre göre gruplanarak sadece aktif ilanların sayısı döndürülür.
     public List<CityAdvertResponse> getAdvertsGroupedByCities() {
         return advertRepository.findAdvertsGroupedByCities();
-    } //A02
+    }
 
-    //A03
-    public List<CategoryForAdvertResponse> getAdvertsGroupedByCategory() {
-        List<Category> categoryList = categoryService.getAllCategory();
-
-        List<CategoryForAdvertResponse> categoryForAdvertList= categoryList.stream().map(advertMapper::mapCategoryToCategoryForAdvertResponse).toList();
-
-        return categoryForAdvertList;
+    //A03 - Kategori ismini ve o kategoriye ait reklam sayısını döndürme
+    public List<CategoryAdvertResponse> getAdvertsGroupedByCategory() {
+        return advertRepository.findAdvertsGroupedByCategory();
     }
 
     //A04
-    public Page<AdvertResponse> getAuthenticatedUserAdverts(int page, int size, String sortField, String sortType) {
-        return null;
+    public Page<AdvertResponse> getMostPopularAdverts(Pageable pageable) {
+        return advertRepository.findMostPopularAdverts(pageable)
+                .map(advertMapper::mapAdvertToAdvertResponse);
     }
 
     //A05
     public Page<AdvertResponse> getAllAdvertForAuthUser(HttpServletRequest httpServletRequest, int page, int size, String sort, String type) {
-
+        // Sayfalama ve sıralama bilgilerini içeren Pageable nesnesi oluşturuluyor
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
+        // HTTP isteğinden kullanıcı bilgileri alınır
         User user = methodHelper.getUserByHttpRequest(httpServletRequest);
 
+        // Kullanıcının ilanlarını sayfalandırılmış şekilde alınır ve AdvertResponse'e dönüştürülür
         return advertRepository.findAdvertsForUser(user.getId(), pageable).map(
                 (advert) -> {
+                    // Advert nesnesini AdvertResponse nesnesine dönüştürür
                     AdvertResponse response = advertMapper.mapAdvertToAdvertResponse(advert);
+                    // İlanın favori sayısını ayarlar
                     response.setFavoritesCount(advert.getFavoritesList().size());
                     return response;
                 });
     }
 
-    //A06
-    public Page<AdvertResponse> getFilteredAdverts(String q, Long categoryId, Long advertTypeId, Double priceStart, Double priceEnd, Integer status, int page, int size, String sort, String type) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(type), sort));
-        Page<Advert> advertPage = advertRepository.findAdvertsByCriteria(q, categoryId, advertTypeId, priceStart, priceEnd, status, pageable);
+    //A06 - Yönetici ve yöneticiler için ilanları belirli kriterlere göre filtreleyip sayfalı ve sıralı bir şekilde döndürür.
+    public Page<AdvertResponse> getFilteredAdverts(String query, Long categoryId, Long advertTypeId, Double priceStart, Double priceEnd, Integer status, int page, int size, String sort, String type) {
 
-        // Map Advert entities to AdvertResponse DTOs
+        // Sort nesnesi oluşturulur
+        Sort.Direction direction = Sort.Direction.fromString(type);
+        Sort sortBy = Sort.by(direction, sort);
+
+        // Pageable nesnesi oluşturulur
+        Pageable pageable = PageRequest.of(page, size, sortBy);
+
+        // Verilen kriterlere göre filtrelenmiş sayfa ilanları alınır
+        Page<Advert> advertPage = advertRepository.findAdvertsByCriteria(query, categoryId, advertTypeId, priceStart, priceEnd, status, pageable);
+
+        // Advert entity'lerini AdvertResponse DTO'larına dönüştürür
         return advertPage.map(advertMapper::mapAdvertToAdvertResponse);
     }
 
     //A07
-    public AdvertResponse getAdvertBySlug(String slug) {
+    public AdvertDetailsForSlugResonse getAdvertBySlug(String slug) {
+        // Slug ile ilanı advertRepository üzerinden bulur.
         Advert advert = advertRepository.findBySlug(slug)
                 .orElseThrow(() -> new EntityNotFoundException("Advert not found with slug: " + slug));
 
-        // Convert the Advert entity to AdvertResponse DTO
-        return advertMapper.mapAdvertToAdvertResponse(advert);
+        // Advert entity'sini AdvertDetailsForSlugResponse DTO'suna dönüştürür.
+        return advertMapper.mapAdvertToAdvertDetailsForSlugResponse(advert);
     }
 
     //A08

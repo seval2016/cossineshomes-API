@@ -274,8 +274,7 @@ It should return adverts depending on cities
 @GetMapping
 @PreAuthorize-> ANONYMOUS
 
-Payload
-()
+Payload ()
 
 Response
 ( Array<citydto> )
@@ -289,24 +288,20 @@ Response
 “amount": 352,
 }
 ]
-
 Requirements
 – The adverts should be grouped by cities
 
 -------------------------------
 
 /adverts/categories
-
 A03 -> http://localhost:8080/adverts/categories
 
 @GetMapping
 @PreAuthorize-> ANONYMOUS
 
 It should return adverts depending on categories
-
 Payload
 ()
-
 Response
 [
 {

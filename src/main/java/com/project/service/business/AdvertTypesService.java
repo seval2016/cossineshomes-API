@@ -8,7 +8,7 @@ import com.project.payload.mappers.AdvertTypesMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.AdvertTypeRequest;
-import com.project.payload.response.business.AdvertTypeResponse;
+import com.project.payload.response.business.advert.AdvertTypeResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.AdvertTypesRepository;
 import lombok.RequiredArgsConstructor;

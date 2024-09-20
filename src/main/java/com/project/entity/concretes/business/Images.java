@@ -29,9 +29,19 @@ public class Images {
     private String type;
 
     @Column(nullable = false)
-    private boolean featured;
+    private Boolean featured;
 
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
+
+    public String getUrl() {
+        // Assuming you store images somewhere and have a way to retrieve them via a URL
+        return "/images/" + this.name; // Adjust this to fit your logic
+    }
+    // Getters and Setters
+    public Boolean getFeatured() {
+        return featured;
+    }
+
 }

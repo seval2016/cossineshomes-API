@@ -16,24 +16,21 @@ import javax.persistence.*;
 @Builder(toBuilder = true)
 public class CategoryPropertyValue {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String value;
 
-    @ManyToOne()
-    @JoinColumn(name = "category_property_key_id", nullable = false)
-    @JsonIgnore
-    private CategoryPropertyKey categoryPropertyKey;
-
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_property_key_id", nullable = false)
+    private CategoryPropertyKey categoryPropertyKey;
 
-
-
-}
+    }
 

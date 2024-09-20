@@ -4,14 +4,12 @@ import com.project.entity.concretes.business.Category;
 import com.project.entity.concretes.business.CategoryPropertyKey;
 import com.project.entity.enums.CategoryPropertyKeyType;
 import com.project.exception.ConflictException;
-import com.project.exception.ResourceNotFoundException;
-import com.project.payload.mappers.CategoryMapper;
 import com.project.payload.mappers.CategoryPropertyKeyMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.CategoryPropertyKeyRequest;
 import com.project.payload.request.business.JsonCategoryPropertyKeyRequest;
-import com.project.payload.response.business.CategoryPropertyKeyResponse;
+import com.project.payload.response.business.category.CategoryPropertyKeyResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.CategoryPropertyKeyRepository;
 import com.project.repository.business.CategoryPropertyValueRepository;
@@ -22,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

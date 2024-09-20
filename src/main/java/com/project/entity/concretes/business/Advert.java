@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.entity.enums.AdvertStatus;
 import com.project.entity.concretes.user.User;
+import com.project.payload.response.business.advert.AdvertListResponse;
 import com.project.utils.SlugUtils;
 import lombok.*;
 
@@ -130,13 +131,14 @@ public class Advert {
 
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Images> imagesList = new ArrayList<>();
+    private List<Images> imagesList;
 
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Images> featuredImage = new ArrayList<>();
+    private List<Images> featuredImage;
 
     @OneToMany(mappedBy = "advertId", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Log> logList;
+
 }

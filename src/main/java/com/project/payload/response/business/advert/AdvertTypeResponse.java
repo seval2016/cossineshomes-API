@@ -1,4 +1,4 @@
-package com.project.payload.response.business;
+package com.project.payload.response.business.advert;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -11,6 +11,5 @@ import lombok.*;
 public class AdvertTypeResponse {
 
     private Long id;
-
     private String title;
 }

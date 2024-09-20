@@ -25,7 +25,8 @@ public class City {
     @Column(nullable = false, length = 30)
     private String name;
 
-    private Boolean built_in;
+    @Column(nullable = false)
+    private Boolean builtIn=false;
 
     @ManyToOne
     @JsonIgnore
@@ -34,5 +35,5 @@ public class City {
 
     @OneToMany (mappedBy = "city",cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Advert> advertList = new ArrayList<>();
+    private List<Advert> advertList;
 }

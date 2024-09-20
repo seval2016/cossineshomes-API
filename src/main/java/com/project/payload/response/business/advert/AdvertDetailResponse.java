@@ -1,30 +1,15 @@
-package com.project.payload.response.business;
+package com.project.payload.response.business.advert;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
-
-import com.project.entity.concretes.business.CategoryPropertyKey;
 import com.project.entity.concretes.business.Favorite;
 import com.project.entity.concretes.business.TourRequest;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.project.payload.response.business.ImagesResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder(toBuilder = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class AdvertResponse {
-
+public class AdvertDetailResponse { //A07 - /adverts/:slug
 
     private Long id;
 
@@ -71,17 +56,5 @@ public class AdvertResponse {
     private List<Favorite> favoritesList;
 
     private List<TourRequest> tourRequestList;
-
-    private Set<CategoryPropertyKey> categoryPropertyKeys;
-
-    private int tourRequestCount;
-    private int favoritesCount;
-
-
-    // Ek Constructor (Sadece id ve title için)
-    public AdvertResponse(Long id, String title) {
-        this.id = id;
-        this.title = title;
-    }
-
 }
+

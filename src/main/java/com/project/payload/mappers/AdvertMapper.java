@@ -1,14 +1,16 @@
 package com.project.payload.mappers;
 
+
 import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.user.User;
 import com.project.entity.enums.AdvertStatus;
 import com.project.payload.request.business.AdvertRequest;
-import com.project.payload.response.business.AdvertResponse;
-import com.project.payload.response.business.CategoryForAdvertResponse;
+import com.project.payload.response.business.advert.AdvertResponse;
+import com.project.payload.response.business.category.CategoryAdvertResponse;
 import com.project.service.helper.MethodHelper;
 import lombok.*;
 import org.springframework.stereotype.Component;
+import com.project.payload.response.business.advert.AdvertDetailsForSlugResonse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,8 +22,9 @@ public class AdvertMapper {
     private final TourRequestMapper tourRequestMapper;
     private final MethodHelper methodHelper;
     private final ImageMapper imageMapper;
+    private final CategoryPropertyValueMapper categoryPropertyValueMapper;
 
-    public Advert mapAdvertRequestToAdvert(AdvertRequest advertRequest,Category category, City city, User user, Country country, AdvertType advertType, District district) {
+    public Advert mapAdvertRequestToAdvert(AdvertRequest advertRequest, Category category, City city, User user, Country country, AdvertType advertType, District district) {
         return Advert.builder()
                 .title(advertRequest.getTitle())
                 .description(advertRequest.getDescription())
@@ -119,12 +122,35 @@ public class AdvertMapper {
     }
 
     //For Category POJO==>DTO
-    public CategoryForAdvertResponse mapCategoryToCategoryForAdvertResponse(Category category) {
-        return CategoryForAdvertResponse.builder()
+    public CategoryAdvertResponse mapCategoryToCategoryForAdvertResponse(Category category) {
+        return CategoryAdvertResponse.builder()
                 .category(category.getTitle())
                 .amount(category.getAdverts().size())
                 .build();
     }
 
 
+    public AdvertDetailsForSlugResonse mapAdvertToAdvertDetailsForSlugResponse(Advert advert) {
+        if (advert == null) {
+            return null;
+        }
+
+        return AdvertDetailsForSlugResonse.builder()
+                .id(advert.getId())  // Advert entity'sinin ID'sini Response'a ekler
+                .title(advert.getTitle())  // Advert başlığını Response'a ekler
+                .description(advert.getDescription())  // Advert açıklamasını Response'a ekler
+                .price(advert.getPrice())  // Fiyat bilgisini Response'a ekler
+                .categoryPropertyValues(advert.getCategoryPropertyValuesList() != null
+                        ? advert.getCategoryPropertyValuesList().stream()
+                        .map(categoryPropertyValueMapper.mapCategoryPropertyValueToCategoryPropertyValueResponse())  // CategoryPropertyValues'ı mapleyerek Response'a ekler
+                        .collect(Collectors.toList())
+                        : null)
+                .slug(advert.getSlug())  // Slug bilgisini Response'a ekler
+                .createdAt(advert.getCreateAt())  // İlanın oluşturulma tarihini ekler
+                .updatedAt(advert.getUpdateAt())  // İlanın güncellenme tarihini ekler
+                .build();
+    }
+
+
 }
+

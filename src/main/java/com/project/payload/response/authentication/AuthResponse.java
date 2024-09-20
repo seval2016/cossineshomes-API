@@ -1,7 +1,7 @@
 package com.project.payload.response.authentication;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.project.payload.response.business.AdvertResponse;
+import com.project.payload.response.business.advert.AdvertResponse;
 import com.project.payload.response.business.TourRequestResponse;
 import lombok.*;
 

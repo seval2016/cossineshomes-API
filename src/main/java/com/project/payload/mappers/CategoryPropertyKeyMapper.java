@@ -1,12 +1,9 @@
 package com.project.payload.mappers;
 
 import com.project.entity.concretes.business.CategoryPropertyKey;
-import com.project.payload.response.business.CategoryPropertyKeyResponse;
+import com.project.payload.response.business.category.CategoryPropertyKeyResponse;
 import lombok.Data;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 @Component

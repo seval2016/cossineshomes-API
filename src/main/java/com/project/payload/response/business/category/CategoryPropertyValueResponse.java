@@ -1,7 +1,7 @@
-package com.project.payload.response.business;
+package com.project.payload.response.business.category;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.project.entity.concretes.business.CategoryPropertyKey;
+import com.project.entity.concretes.business.CategoryPropertyValue;
 import lombok.*;
 
 @Data
@@ -9,12 +9,10 @@ import lombok.*;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CategoryPropertyKeyResponse {
+public class CategoryPropertyValueResponse {
 
     private Long id;
+    private Long categoryPropertyKey;
 
-    private String name;
-
-    private Boolean builtIn;
 
 }

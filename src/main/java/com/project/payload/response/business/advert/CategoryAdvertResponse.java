@@ -1,4 +1,4 @@
-package com.project.payload.response.business;
+package com.project.payload.response.business.advert;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CategoryForAdvertResponse {
+public class CategoryAdvertResponse { //A03 - /adverts/categories
     private String category;
-    private int amount;
+    private Long advertCount;
 }

@@ -1,4 +1,4 @@
-package com.project.payload.response.business;
+package com.project.payload.response.business.category;
 
 import com.project.entity.concretes.business.Category;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class CategoryAdvertResponse {
 
-    //Bu DTO sınıfı, kategori adı ve bu kategorideki reklamların sayısını temsil eder.
-    private String category;
-    private long amount;
+    private String category; //İlanın bağlı olduğu kategori adını tutuyor.
+    private int amount; //Bu kategoriye ait ilanların sayısını tutuyor.
 }
