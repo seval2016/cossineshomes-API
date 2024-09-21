@@ -1,13 +1,12 @@
 package com.project.contactmessage.service;
 
-import com.project.contactmessage.dto.ContactMessageRequest;
-import com.project.contactmessage.dto.ContactMessageResponse;
+import com.project.contactmessage.dto.ContactRequest;
+import com.project.contactmessage.dto.ContactResponse;
 import com.project.contactmessage.entity.ContactMessage;
 import com.project.contactmessage.entity.ContactStatus;
-import com.project.contactmessage.mapper.ContactMessageMapper;
+import com.project.contactmessage.mapper.ContactMapper;
 import com.project.contactmessage.messages.Messages;
-import com.project.contactmessage.repository.ContactMessageRepository;
-import com.project.exception.ConflictException;
+import com.project.contactmessage.repository.ContactRepository;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.response.business.ResponseMessage;
 import lombok.RequiredArgsConstructor;
@@ -21,27 +20,27 @@ import org.springframework.data.domain.Sort;
 
 @Service
 @RequiredArgsConstructor
-public class ContactMessageService {
+public class ContactService {
 
-    private final ContactMessageRepository contactMessageRepository;
-    private final ContactMessageMapper contactMessageMapper;
+    private final ContactRepository contactRepository;
+    private final ContactMapper contactMapper;
 
-    public ResponseMessage<ContactMessageResponse> createMessage(ContactMessageRequest contactMessageRequest) {
+    public ResponseMessage<ContactResponse> createMessage(ContactRequest contactRequest) {
         // DTO'yu POJO'ya dönüştür
-        ContactMessage contactMessage = contactMessageMapper.requestToContactMessage(contactMessageRequest);
+        ContactMessage contactMessage = contactMapper.requestToContactMessage(contactRequest);
 
         // Veritabanına kaydet
-        ContactMessage savedData = contactMessageRepository.save(contactMessage);
+        ContactMessage savedData = contactRepository.save(contactMessage);
 
         // Başarı mesajını oluştur ve döndür
-        return ResponseMessage.<ContactMessageResponse>builder()
+        return ResponseMessage.<ContactResponse>builder()
                 .message("Contact Message Created Successfully")
                 .httpStatus(HttpStatus.CREATED) // 201
-                .object(contactMessageMapper.contactMessageToResponse(savedData)) // POJO'dan DTO'ya dönüşüm
+                .object(contactMapper.contactMessageToResponse(savedData)) // POJO'dan DTO'ya dönüşüm
                 .build();
     }
 
-    public Page<ContactMessageResponse> getAllContactMessages(String query, int status, int page, int size, String sortField, String sortType) {
+    public Page<ContactResponse> getAllContactMessages(String query, int status, int page, int size, String sortField, String sortType) {
         // Sıralama yönünü belirlemek için sortType parametresini kullanıyoruz
         Sort.Direction direction = Sort.Direction.fromString(sortType);
 
@@ -51,32 +50,32 @@ public class ContactMessageService {
         // Hem query hem de status ile filtreleme yapıyoruz
         if (query == null || query.isEmpty()) {
             // Eğer query boşsa sadece status'a göre filtreleme yap
-            return contactMessageRepository.findByStatus(status, pageable).map(contactMessageMapper::contactMessageToResponse);
+            return contactRepository.findByStatus(status, pageable).map(contactMapper::contactMessageToResponse);
         }
 
         // Query ve status'a göre filtreleme yap
-        return contactMessageRepository.findByStatusAndMessageContaining(status, query, pageable).map(contactMessageMapper::contactMessageToResponse);
+        return contactRepository.findByStatusAndMessageContaining(status, query, pageable).map(contactMapper::contactMessageToResponse);
     }
 
     public String deleteContactMessageById(Long id) {
         getContactMessageById(id);
-        contactMessageRepository.deleteById(id);
+        contactRepository.deleteById(id);
         return Messages.CONTACT_MESSAGE_DELETED_SUCCESSFULLY;
     }
 
     public ContactMessage getContactMessageById(Long id) {
         // İd ile mesajı bul, bulunamazsa hata fırlat
-        return contactMessageRepository.findById(id).orElseThrow(() ->
+        return contactRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(Messages.NOT_FOUND_MESSAGE));
     }
 
     public ContactMessage findContactByIdAndUpdateStatus(Long id) {
         //verilen id'nin var olup olmadığını kontrol eder
-        ContactMessage contact = contactMessageRepository.findById(id)
+        ContactMessage contact = contactRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contact not found with id: " + id));
 
         //Eğer id var ise status durumunu 1 olarak günceller
         contact.setStatus(ContactStatus.OPENED.getStatusValue());
-        return contactMessageRepository.save(contact);
+        return contactRepository.save(contact);
     }
 }

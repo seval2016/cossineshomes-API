@@ -1,7 +1,7 @@
 package com.project.contactmessage.mapper;
 
-import com.project.contactmessage.dto.ContactMessageRequest;
-import com.project.contactmessage.dto.ContactMessageResponse;
+import com.project.contactmessage.dto.ContactRequest;
+import com.project.contactmessage.dto.ContactResponse;
 import com.project.contactmessage.entity.ContactMessage;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,24 +11,24 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 @Component
-public class ContactMessageMapper {
+public class ContactMapper {
 
     //!!! Request DTO --> POJO
 
-    public ContactMessage requestToContactMessage(ContactMessageRequest contactMessageRequest){
+    public ContactMessage requestToContactMessage(ContactRequest contactRequest){
         return ContactMessage.builder()
-                .firstName(contactMessageRequest.getFirstName())
-                .lastName(contactMessageRequest.getLastName())
-                .message(contactMessageRequest.getMessage())
-                .email(contactMessageRequest.getEmail())
+                .firstName(contactRequest.getFirstName())
+                .lastName(contactRequest.getLastName())
+                .message(contactRequest.getMessage())
+                .email(contactRequest.getEmail())
                 .createAt(LocalDateTime.now())
                 .build();
     }
 
     // !!! POJO --> Response DTO
-    public ContactMessageResponse contactMessageToResponse(ContactMessage contactMessage){
+    public ContactResponse contactMessageToResponse(ContactMessage contactMessage){
 
-        return ContactMessageResponse.builder()
+        return ContactResponse.builder()
                 .firstName(contactMessage.getFirstName())
                 .message(contactMessage.getMessage())
                 .email(contactMessage.getEmail())

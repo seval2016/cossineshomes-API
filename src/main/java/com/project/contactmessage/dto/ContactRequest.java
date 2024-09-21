@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class ContactMessageRequest {
+public class ContactRequest {
 
     //Client'dan gelmesi gereken bilgiler. Bu kısıamda validation yapılmalı
 

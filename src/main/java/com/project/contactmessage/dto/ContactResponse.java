@@ -1,6 +1,5 @@
 package com.project.contactmessage.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class ContactMessageResponse {
+public class ContactResponse {
 
     private String firstName;
     private String lastName;
