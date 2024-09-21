@@ -1,6 +1,7 @@
 package com.project.service.helper;
 
 import com.project.entity.concretes.business.*;
+import com.project.entity.concretes.business.Image;
 import com.project.entity.concretes.user.User;
 import com.project.entity.concretes.user.UserRole;
 import com.project.entity.enums.AdvertStatus;
@@ -265,11 +266,11 @@ public class MethodHelper {
                 ()-> new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_ADVERT_WITH_ID_MESSAGE,id)));
     }
 
-    public List<Images> getImagesForAdvert(MultipartFile[] files, List<Images> currentImages) {
+    public List<Image> getImagesForAdvert(MultipartFile[] files, List<Image> currentImages) {
         // images işlem lojiklerini buraya yazın
-        List<Images> imageList = new ArrayList<>();
+        List<Image> imageList = new ArrayList<>();
         for (MultipartFile file : files) {
-            Images image = new Images();
+            Image image = new Image();
             // image.setData(file.getBytes()); // Dosya verisini ayarla
             imageList.add(image);
         }

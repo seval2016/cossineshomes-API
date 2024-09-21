@@ -1,6 +1,6 @@
 package com.project.controller.business;
 
-import com.project.payload.response.business.ImagesResponse;
+import com.project.payload.response.business.image.ImageResponse;
 import com.project.service.business.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,15 +19,6 @@ import java.util.List;
 public class ImageController {
     private final ImageService imageService;
 
-    @GetMapping("/{imageId}")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<byte[]> getImageById(@PathVariable Long imageId) {
-        ImagesResponse imagesResponse = imageService.getImageById(imageId);
-        byte[] imageData = imageService.getImageById(imageId).getData();
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(imageData);
-    }
 
     @PostMapping("/{advertId}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'MANAGER')")
@@ -46,8 +37,8 @@ public class ImageController {
 
     @PutMapping("/{imageId}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'MANAGER')")
-    public ResponseEntity<ImagesResponse> setFeaturedImage(@PathVariable Long imageId) {
-        ImagesResponse featuredImage = imageService.setFeaturedImage(imageId);
+    public ResponseEntity<ImageResponse> setFeaturedImage(@PathVariable Long imageId) {
+        ImageResponse featuredImage = imageService.setFeaturedImage(imageId);
         return ResponseEntity.ok(featuredImage);
     }
 }

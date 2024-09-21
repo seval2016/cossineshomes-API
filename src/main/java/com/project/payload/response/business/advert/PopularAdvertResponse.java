@@ -1,7 +1,7 @@
 package com.project.payload.response.business.advert;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.project.payload.response.business.ImagesResponse;
+import com.project.payload.response.business.image.ImageResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,5 +30,5 @@ public class PopularAdvertResponse { //A04 - /adverts/popular/:amount
 
     private int popularityPoint;
 
-    private ImagesResponse featuredImage;
+    private ImageResponse featuredImage;
 }

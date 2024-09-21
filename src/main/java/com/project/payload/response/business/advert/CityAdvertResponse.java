@@ -1,5 +1,6 @@
 package com.project.payload.response.business.advert;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,5 +13,7 @@ import lombok.NoArgsConstructor;
 public class CityAdvertResponse {  //A02 - /adverts/cities
 
     private String city;
-    private long advertCount;
+
+    @JsonProperty("amount")
+    private long advertCount; //advertCount alanını JSON yanıtında "amount" olarak serileştirir.
 }

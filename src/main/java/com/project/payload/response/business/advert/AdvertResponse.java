@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.entity.concretes.business.CategoryPropertyKey;
 import com.project.entity.concretes.business.Favorite;
 import com.project.entity.concretes.business.TourRequest;
-import com.project.payload.response.business.ImagesResponse;
+import com.project.payload.response.business.image.ImageResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -65,9 +65,9 @@ public class AdvertResponse {
 
     private Map<String, String> properties;
 
-    private List<ImagesResponse> images;
+    private List<ImageResponse> images;
 
-    private ImagesResponse featuredImage;
+    private ImageResponse featuredImage;
 
     private List<Favorite> favoritesList;
 
@@ -77,5 +77,13 @@ public class AdvertResponse {
 
     private int tourRequestCount;
     private int favoritesCount;
+
+    public AdvertResponse(Long id, String title, String description, String image, BigDecimal price, int status) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.status = status;
+    }
 
 }

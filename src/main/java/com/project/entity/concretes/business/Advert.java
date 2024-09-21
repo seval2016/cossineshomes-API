@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.entity.enums.AdvertStatus;
 import com.project.entity.concretes.user.User;
-import com.project.payload.response.business.advert.AdvertListResponse;
 import com.project.utils.SlugUtils;
 import lombok.*;
 
@@ -15,7 +14,6 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,7 +28,7 @@ public class Advert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 150)
     @Size(min = 5, max = 150)
     private String title;
 
@@ -41,8 +39,8 @@ public class Advert {
     @Size(min = 5, max = 200)
     private String slug;
 
-    @Column(nullable = false)
-    private BigDecimal price ;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
 
     @Column(nullable = false)
     private int status = AdvertStatus.PENDING.getValue();
@@ -56,8 +54,8 @@ public class Advert {
     @Column(nullable = false)
     private Integer viewCount = 0;
 
-    @Column(nullable = false)
-    private String location;
+    @Column(nullable = false, length = 255)
+    private String location; // Google embed kodu
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Turkey")
     @Column(nullable = false)
@@ -85,60 +83,45 @@ public class Advert {
         }
     }
 
-    //------------İlişkili sütunlar -------------
-
-    @ManyToOne()
-    @JsonIgnore
-    @JoinColumn(name="user_id")
-    private User user;
-
-    @ManyToOne()
-    @JoinColumn(name = "city_id", nullable = false)
-    @JsonIgnore
-    private City city;
-
-    @ManyToOne()
-    @JoinColumn(name = "country_id", nullable = false)
-    @JsonIgnore
-    private Country country;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    @JsonIgnore
-    private Category category;
-
-    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnore
-    private List<Favorite> favoritesList;
-
-    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<TourRequest> tourRequestList;
-
-    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<CategoryPropertyValue> categoryPropertyValuesList;
-
-    @ManyToOne()
+    // İlişkiler
+    @ManyToOne
     @JoinColumn(name = "advert_type_id", nullable = false)
-    @JsonIgnore
     private AdvertType advertType;
 
-    @ManyToOne()
+    @ManyToOne
+    @JoinColumn(name = "country_id", nullable = false)
+    private Country country;
+
+    @ManyToOne
+    @JoinColumn(name = "city_id", nullable = false)
+    private City city;
+
+    @ManyToOne
     @JoinColumn(name = "district_id", nullable = false)
-    @JsonIgnore
     private District district;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Images> imagesList;
+    private List<Image> images; // Image list associated with the advert
 
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Images> featuredImage;
+    private List<TourRequest> tourRequestList;
+
+    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
+    private List<CategoryPropertyValue> categoryPropertyValuesList;
+
+    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
+    private List<Favorite> favoritesList;
 
     @OneToMany(mappedBy = "advertId", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Log> logList;
-
 }

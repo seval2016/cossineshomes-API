@@ -1,11 +1,13 @@
 package com.project.entity.concretes.business;
 
+import com.project.entity.concretes.business.Advert;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Base64;
 
 @Entity
 @Table(name = "images")
@@ -13,35 +15,29 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class Images {
+public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Lob
-    @Column(nullable = false)
     private byte[] data;
 
-    @Column(nullable = false)
     private String name;
 
     private String type;
 
-    @Column(nullable = false)
-    private Boolean featured;
+    private Boolean featured=false;
 
     @ManyToOne
-    @JoinColumn(name = "advert_id", nullable = false)
+    @JoinColumn(name = "advert_id")
     private Advert advert;
 
-    public String getUrl() {
-        // Assuming you store images somewhere and have a way to retrieve them via a URL
-        return "/images/" + this.name; // Adjust this to fit your logic
-    }
-    // Getters and Setters
-    public Boolean getFeatured() {
-        return featured;
-    }
 
+    public String getUrl() {
+        // Burada URL oluşturma mantığını ekleyin
+        // Örneğin, bir Base64 string ile dönebilir veya bir dosya yolunu verebilirsiniz
+        return "data:" + type + ";base64," + Base64.getEncoder().encodeToString(data);
+    }
 }

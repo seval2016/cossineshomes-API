@@ -88,14 +88,14 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<UserRole> userRole=new HashSet<>();
+    private List<UserRole> userRole;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<Advert> advert=new HashSet<>();
+    private List<Advert> advert;
 
     @OneToMany(mappedBy = "ownerUser",cascade = CascadeType.ALL,orphanRemoval = true) //iliski ismine bak yaz
-    private Set<TourRequest>tourRequests=new HashSet<>();
+    private List<TourRequest>tourRequests;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
-    private List<Favorite>favoritesList=new ArrayList<>();
+    private List<Favorite>favoritesList;
 }

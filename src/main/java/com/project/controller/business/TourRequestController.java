@@ -1,9 +1,8 @@
 package com.project.controller.business;
 
-import com.project.entity.concretes.business.TourRequest;
 import com.project.payload.request.business.TourRequestRequest;
 import com.project.payload.response.business.ResponseMessage;
-import com.project.payload.response.business.TourRequestResponse;
+import com.project.payload.response.business.tourRequest.TourRequestResponse;
 import com.project.service.business.TourRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/tour-requests")

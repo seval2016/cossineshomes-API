@@ -1,7 +1,7 @@
 package com.project.payload.mappers;
 
-import com.project.entity.concretes.business.Images;
-import com.project.payload.response.business.ImagesResponse;
+import com.project.entity.concretes.business.Image;
+import com.project.payload.response.business.image.ImageResponse;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -11,14 +11,14 @@ import java.util.Base64;
 @Component
 public class ImageMapper {
 
-    public ImagesResponse mapToImageResponse(Images images) {
-        return ImagesResponse.builder()
-                .id(images.getId())
-                .name(images.getName())
-                .type(images.getType())
-                .featured(images.isFeatured())
-                .data(encodeImage(images.getData()).getBytes())
-                .advertId(images.getAdvert().getId())
+    public ImageResponse mapToImageResponse(Image image) {
+        if (image == null) return null;
+        return ImageResponse.builder()
+                .id(image.getId())
+                .name(image.getName())
+                .type(image.getType())
+                .featured(image.getFeatured())
+                .advertId(image.getAdvert().getId())
                 .build();
     }
     private String encodeImage(byte[] imageData) {

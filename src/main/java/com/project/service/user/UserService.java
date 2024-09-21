@@ -131,7 +131,7 @@ public class UserService {
         String userName = (String) request.getAttribute("username");
         User user2 = userRepository.findByUsernameEquals(userName);
 
-        if (Boolean.TRUE.equals(user.isBuiltIn())) {
+        if (Boolean.TRUE.equals(user.getBuiltIn())) {
             throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
         } else if (user2.getUserRole().stream().anyMatch(role -> role.getRole() == RoleType.MANAGER)) {
             if (!user.getUserRole().stream().anyMatch(role -> role.getRole() == RoleType.CUSTOMER)) {
@@ -167,7 +167,7 @@ public class UserService {
         methodHelper.checkBuiltIn(user);
         uniquePropertyValidator.checkUniqueProperties(user, userRequestWithoutPassword);
 
-        user.setUsername(userRequestWithoutPassword.getUsername());
+        //user.setUsername(userRequestWithoutPassword);
         user.setFirstName(userRequestWithoutPassword.getFirstName());
         user.setLastName(userRequestWithoutPassword.getLastName());
         user.setEmail(userRequestWithoutPassword.getEmail());
@@ -222,7 +222,7 @@ public class UserService {
         String userName = (String) request.getAttribute("username");
         User user = userRepository.findByUsername(userName);
 
-        if (Boolean.TRUE.equals(user.isBuiltIn())) {
+        if (Boolean.TRUE.equals(user.getBuiltIn())) {
             throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
         }
 

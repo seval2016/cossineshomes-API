@@ -1,13 +1,14 @@
 package com.project.payload.response.abstracts;
 
 import com.project.payload.response.business.advert.AdvertResponse;
-import com.project.payload.response.business.TourRequestResponse;
+import com.project.payload.response.business.tourRequest.TourRequestResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -30,10 +31,10 @@ public abstract class BaseUserResponse {
 
     private LocalDateTime updateAt;
 
-    private Set<String> userRole;
+    private List<String> userRole;
 
-    private Set<AdvertResponse> advert;
+    private List<AdvertResponse> advert;
 
-    private Set<TourRequestResponse> tourRequestsResponse;
-    private Set<Long> favoritesList;
+    private List<TourRequestResponse> tourRequestsResponse;
+    private List<Long> favoritesList;
 }

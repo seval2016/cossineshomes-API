@@ -1,8 +1,9 @@
-package com.project.payload.response.business;
+package com.project.payload.response.business.tourRequest;
 
 import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.user.User;
 import com.project.entity.enums.StatusType;
+import com.project.payload.response.business.image.ImageResponse;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -25,7 +26,7 @@ public class TourRequestResponse {
     private User guestUserId;
     private Advert advertId;
     private String advertTitle;
-    private ImagesResponse featuredImage;
+    private ImageResponse featuredImage;
     private District advertDistrict;
     private City advertCity;
     private Country advertCountry;

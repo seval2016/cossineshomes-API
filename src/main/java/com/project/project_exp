@@ -256,7 +256,7 @@ Response
 [
 { "id": 2,
 “title": "…",
-“images”: “…” …
+“image”: “…” …
 }
 ]
 
@@ -337,7 +337,7 @@ Response
 [
 { "id": 2,
 “title": "…",
-“images”: “…” …
+“image”: “…” …
 }
 ]
 
@@ -372,7 +372,7 @@ Response
 [
 { "id": 2,
 “title": "…",
-“images”: “…” …
+“image”: “…” …
 }
 ]
 
@@ -408,7 +408,7 @@ Response
 [
 { "id": 2,
 “title": "…",
-“images”: “…” …
+“image”: “…” …
 }
 ]
 
@@ -439,7 +439,7 @@ Response
 “bedroom” : 5,
 ….
 ],
-“images” : […]
+“image” : […]
 “tour_requests”: […]
 },
 
@@ -467,7 +467,7 @@ Response
 “bedroom” : 5,
 ….
 ],
-“images” : […]
+“image” : […]
 “tour_requests”: […]
 },
 
@@ -496,7 +496,7 @@ Response
 “bedroom” : 5,
 ….
 ],
-“images” : […]
+“image” : […]
 “tour_requests”: […]
 },
 
@@ -523,7 +523,7 @@ country_id
 city_id
 district_id
 category_id
-images
+image
 Properties=[ {
 keyId: 12, value:
 "4" }, { keyId: 44,
@@ -627,39 +627,39 @@ Response
 
 Requirements
 - The advert whose builtIn property is true can not be deleted.
-- If any advert is deleted, related records in tour_requests, favorites,logs, images, category,property_values also should be deleted.
+- If any advert is deleted, related records in tour_requests, favorites,logs, image, category,property_values also should be deleted.
 
 
 ------------------------------------  IMAGES  ------------------------------------
 
-/images/:imageId
+/image/:imageId
 
-I01 -> http://localhost:8080/images/5
+I01 -> http://localhost:8080/image/5
 
 @GetMapping
 @PreAuthorize-> ANONYMOUS
 
-It will get an images of an advert
+It will get an image of an advert
 
 Payload
 (path)
 image_id: not null
 
 Response
-( images)
+( image)
 
 Requirements
 
 -------------------------------
 
-/images/:advertId
+/image/:advertId
 
-I02 -> http://localhost:8080/images/5
+I02 -> http://localhost:8080/image/5
 
 @PostMapping
 @PreAuthorize-> CUSTOMER, ADMIN, MANAGER
 
-It will upload images(s) of a product
+It will upload image(s) of a product
 
 Payload
 (path & body)
@@ -673,14 +673,14 @@ Requirements
 
 -------------------------------
 
-/images/:image_ids
+/image/:image_ids
 
-I03 -> http://localhost:8080/images/5,56,22,56,7
+I03 -> http://localhost:8080/image/5,56,22,56,7
 
 @DeleteMapping
 @PreAuthorize-> CUSTOMER, ADMIN, MANAGER
 
-It will delete images
+It will delete image
 
 Payload
 (path)
@@ -693,24 +693,24 @@ Requirements
 
 -------------------------------
 
-/images/:imageId
+/image/:imageId
 
-I04 -> http://localhost:8080/images/5
+I04 -> http://localhost:8080/image/5
 
 @PutMapping
 @PreAuthorize-> CUSTOMER, ADMIN, MANAGER
 
-It will set the featured field of an images
+It will set the featured field of an image
 
 Payload
 (path)
 Image_ids: not null
 
 Response
-( images)
+( image)
 
 Requirements
-An advert can have only one featured images.
+An advert can have only one featured image.
 
 
 ------------------------------------  CATEGORIES  ------------------------------------
@@ -2080,3 +2080,24 @@ Response
 
 Requirements
 It should delete all records in all tables except those whose built-in fields are true
+
+-------------------------------
+com.example.adverts
+├── config
+│   └── SecurityConfig.java
+├── controller
+│   └── AdvertController.java
+├── dto
+│   └── CityAdvertResponse.java
+├── entity
+│   ├── Advert.java
+│   ├── City.java
+│   └── ... (diğer entity sınıfları)
+├── repository
+│   └── AdvertRepository.java
+├── service
+│   └── AdvertService.java
+└── ... (diğer paketler ve sınıflar)
+
+yukarıdaki entity ve endpoint'e göre repository,controller,
+service ve endpoint response classını yaz. Yorum satırlarını türkçe yaz lombok kullan

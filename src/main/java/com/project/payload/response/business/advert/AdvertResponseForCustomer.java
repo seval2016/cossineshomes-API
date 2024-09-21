@@ -1,7 +1,6 @@
 package com.project.payload.response.business.advert;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CategoryAdvertResponse { //A03 - /adverts/categories
-    private String category;
+public class AdvertResponseForCustomer { //A05
 
-    @JsonProperty("amount")
-    private Long advertCount; //advertCount alanını JSON yanıtında "amount" olarak serileştirir.
+    private Long id;
+    private String title;
+    private String image;
 }

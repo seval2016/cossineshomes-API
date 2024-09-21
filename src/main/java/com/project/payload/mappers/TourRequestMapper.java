@@ -1,10 +1,10 @@
 package com.project.payload.mappers;
 
 import com.project.entity.concretes.business.Advert;
-import com.project.entity.concretes.business.Images;
+import com.project.entity.concretes.business.Image;
 import com.project.entity.concretes.business.TourRequest;
 import com.project.payload.request.business.TourRequestRequest;
-import com.project.payload.response.business.TourRequestResponse;
+import com.project.payload.response.business.tourRequest.TourRequestResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +16,9 @@ public class TourRequestMapper {
 
     private final ImageMapper imageMapper;
 
-    private Images getFeaturedImage(List<Images> images) {
+    private Image getFeaturedImage(List<Image> images) {
         return images.stream()
-                .filter(Images::isFeatured)
+                .filter(Image::getFeatured)
                 .findFirst()
                 .orElse(images.get(0));
     }
@@ -31,7 +31,7 @@ public class TourRequestMapper {
                 .advertCountry(tourRequest.getAdvert().getCountry())
                 .advertCity(tourRequest.getAdvert().getCity())
                 .advertDistrict(tourRequest.getAdvert().getDistrict())
-                .featuredImage(imageMapper.mapToImageResponse(getFeaturedImage(tourRequest.getAdvert().getImagesList())))
+                .featuredImage(imageMapper.mapToImageResponse(getFeaturedImage(tourRequest.getAdvert().getImages())))
                 .tourDate(tourRequest.getTourDate())
                 .tourTime(tourRequest.getTourTime())
                 .guestUserId(tourRequest.getGuestUser())

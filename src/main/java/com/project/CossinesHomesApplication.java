@@ -2,7 +2,7 @@ package com.project;
 
 import com.project.entity.concretes.business.Advert;
 import com.project.entity.concretes.business.AdvertType;
-import com.project.entity.concretes.business.Images;
+import com.project.entity.concretes.business.Image;
 import com.project.entity.concretes.user.UserRole;
 import com.project.entity.enums.RoleType;
 import com.project.payload.request.business.CityRequest;
@@ -207,7 +207,7 @@ public class CossinesHomesApplication implements CommandLineRunner {
 				Path path = Paths.get("src/main/resources/static/images/" + imageName);
 				byte[] imageData = Files.readAllBytes(path);
 
-				Images image = new Images();
+				Image image = new Image();
 				image.setName(imageName);
 				image.setData(imageData);
 				image.setAdvert(advert);

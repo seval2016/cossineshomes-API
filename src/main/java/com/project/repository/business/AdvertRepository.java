@@ -1,7 +1,9 @@
 package com.project.repository.business;
 
 import com.project.entity.concretes.business.Advert;
+import com.project.entity.concretes.user.User;
 import com.project.entity.enums.AdvertStatus;
+import com.project.payload.response.business.advert.PopularAdvertResponse;
 import com.project.payload.response.business.category.CategoryAdvertResponse;
 import com.project.payload.response.business.advert.CityAdvertResponse;
 import org.springframework.data.domain.Page;
@@ -21,19 +23,22 @@ public interface AdvertRepository extends JpaRepository<Advert, Long> {
 
     // --> A01 - Belirli filtreleme kriterlerine göre ilanları getirir.
     @Query("SELECT a FROM Advert a " +
-            "WHERE (:query IS NULL OR (a.title LIKE %:query% OR a.description LIKE %:query%)) " +
-            "AND (:categoryId IS NULL OR a.category.id = :categoryId) " +
-            "AND (:advertTypeId IS NULL OR a.advertType.id = :advertTypeId) " +
-            "AND (:priceStart IS NULL OR a.price >= :priceStart) " +
-            "AND (:priceEnd IS NULL OR a.price <= :priceEnd) " +
-            "AND (:status IS NULL OR a.status = :status)")
-    Page<Advert> findAdverts(@Param("query") String query,
-                             @Param("categoryId") Long categoryId,
-                             @Param("advertTypeId") Long advertTypeId,
-                             @Param("priceStart") BigDecimal priceStart,
-                             @Param("priceEnd") BigDecimal priceEnd,
-                             @Param("status") Integer status,
-                             Pageable pageable);
+            "WHERE (:q IS NULL OR (a.title LIKE %:q% OR a.desc LIKE %:q%)) " + // q parametresi title veya desc içinde aranır
+            "AND (:categoryId IS NULL OR a.category.id = :categoryId) " + // categoryId filtrelemesi
+            "AND (:advertTypeId IS NULL OR a.advertType.id = :advertTypeId) " + // advertTypeId filtrelemesi
+            "AND (:priceStart IS NULL OR a.price >= :priceStart) " + // priceStart (minimum fiyat) filtrelemesi
+            "AND (:priceEnd IS NULL OR a.price <= :priceEnd) " + // priceEnd (maximum fiyat) filtrelemesi
+            "AND (:status IS NULL OR a.status = :status) " + // status parametresi ile ilan durumu
+            "AND a.isActive = true") // sadece aktif ilanları getir
+    Page<Advert> findByAdvertByPage(
+            String q, // arama metni
+            Long categoryId, // kategori ID'si
+            Long advertTypeId, // ilan tipi ID'si
+            BigDecimal priceStart, // minimum fiyat
+            BigDecimal priceEnd, // maksimum fiyat
+            Integer status, // ilan durumu
+            Pageable pageable // sayfalama ve sıralama parametreleri
+    );
 
     //A02
     @Query("SELECT c.name AS cityName, COUNT(a) AS amount " +
@@ -42,40 +47,59 @@ public interface AdvertRepository extends JpaRepository<Advert, Long> {
             "GROUP BY c.id, c.name")
     List<CityAdvertResponse> findAdvertsGroupedByCities();
 
-    //A03
-    @Query("SELECT c.title AS categoryName, COUNT(a) AS amount " +
+
+    /**
+     * A03 - Kategorilere göre ilan sayısını döner.
+     *
+     * @return List of CategoryAdvertResponse
+     */
+    @Query("SELECT c.name AS categoryName, COUNT(a) AS amount" +
             "FROM Category c " +
             "LEFT JOIN Advert a ON a.category.id = c.id " +
-            "GROUP BY c.id, c.title")
-    List<CategoryAdvertResponse> findAdvertsGroupedByCategory();
+            "GROUP BY c.id, c.name")
+    List<CategoryAdvertResponse> findAdvertsGroupedByCategories();
 
-    //A04
-    @Query("SELECT a FROM Advert a ORDER BY (3 * SIZE(a.tourRequestList) + a.viewCount) DESC")
-    Page<Advert> findMostPopularAdverts(Pageable pageable);
-
-    //Page<Advert> findByUser(BaseUserResponse currentUser, Pageable pageable);
+    /**
+     * A04 - Popüler ilanları döner.
+     * Popülerlik puanı: PP = 3 * TROA + TVOA
+     *
+     * @param pageable Pageable nesnesi ile limit belirlenir.
+     * @return List of PopularAdvertResponse
+     */
+    @Query("SELECT a.id AS id, " +
+            "a.title AS title, " +
+            "a.slug AS slug, " +
+            "a.price AS price, " +
+            "a.viewCount AS viewCount, " +
+            "COUNT(tr) AS tourRequestCount, " +
+            "(3 * COUNT(tr) + a.viewCount) AS popularity " +
+            "FROM Advert a " +
+            "LEFT JOIN a.tourRequestList tr " +
+            "GROUP BY a.id, a.title, a.slug, a.price, a.viewCount " +
+            "ORDER BY (3 * COUNT(tr) + a.viewCount) DESC")
+    List<PopularAdvertResponse> findPopularAdverts(Pageable pageable);
 
     //A06
-    @Query("SELECT a FROM Advert a " +
-            "WHERE (:query IS NULL OR a.title LIKE %:query% OR a.desc LIKE %:query%) " +
+    @Query("SELECT a FROM Advert a WHERE " +
+            "(:query IS NULL OR a.description LIKE %:query% OR a.title LIKE %:query% ) " +
             "AND (:categoryId IS NULL OR a.category.id = :categoryId) " +
             "AND (:advertTypeId IS NULL OR a.advertType.id = :advertTypeId) " +
             "AND (:priceStart IS NULL OR a.price >= :priceStart) " +
-            "AND (:priceEnd IS NULL OR a.price <= :priceEnd) " +
+            "AND (:priceEnd IS NULL OR a.price <= :priceEnd)" +
             "AND (:status IS NULL OR a.status = :status)")
-    Page<Advert> findAdvertsByCriteria(
+    Page<Advert> findByAdvertByQuery(
             @Param("query") String query,
             @Param("categoryId") Long categoryId,
             @Param("advertTypeId") Long advertTypeId,
             @Param("priceStart") Double priceStart,
             @Param("priceEnd") Double priceEnd,
-            @Param("status") Integer status,
-            Pageable pageable);
+            @Param("status")Integer status,
+            Pageable pageable
+    );
+
 
     //A07
     Optional<Advert> findBySlug(String slug);
-
-    Optional<Advert> findByIdAndUserId(Long id, Long id1);
 
     @Query("SELECT a FROM Advert a WHERE a.user.id = :userId")
     Page<Advert> findAdvertsForUser(@Param("userId") Long userId, Pageable pageable);
@@ -90,4 +114,5 @@ public interface AdvertRepository extends JpaRepository<Advert, Long> {
                                        @Param(value = "enumStatus") AdvertStatus enumStatus);
 
 
+    Page<Advert> findByUser(User user, Pageable pageable);
 }

@@ -2,17 +2,26 @@ package com.project.payload.mappers;
 
 
 import com.project.entity.concretes.business.*;
+import com.project.entity.concretes.business.Image;
 import com.project.entity.concretes.user.User;
 import com.project.entity.enums.AdvertStatus;
 import com.project.payload.request.business.AdvertRequest;
+
+import com.project.payload.response.business.advert.AdvertDetailsForSlugResponse;
+import com.project.payload.response.business.advert.AdvertListResponse;
 import com.project.payload.response.business.advert.AdvertResponse;
+import com.project.payload.response.business.advert.AdvertResponseForUser;
 import com.project.payload.response.business.category.CategoryAdvertResponse;
+import com.project.payload.response.business.category.PropertyValueResponse;
+import com.project.payload.response.business.image.ImageResponse;
+import com.project.payload.response.business.tourRequest.TourRequestResponseForSlug;
 import com.project.service.helper.MethodHelper;
 import lombok.*;
 import org.springframework.stereotype.Component;
-import com.project.payload.response.business.advert.AdvertDetailsForSlugResonse;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
@@ -58,8 +67,8 @@ public class AdvertMapper {
                 .districtId(advert.getDistrict().getId())
                 .categoryId(advert.getCategory().getId())
                 .categoryPropertyKeys(advert.getCategory().getCategoryPropertyKeys())
-                .featuredImage(imageMapper.mapToImageResponse(getFeaturedImage(advert.getImagesList())))
-                .images(advert.getImagesList().stream()
+                .featuredImage(imageMapper.mapToImageResponse(getFeaturedImage(advert.getImages())))
+                .images(advert.getImages().stream()
                         .map(imageMapper::mapToImageResponse)
                         .collect(Collectors.toList()))
                 .favoritesCount(advert.getFavoritesList().size())
@@ -67,10 +76,38 @@ public class AdvertMapper {
                 .isActive(advert.getIsActive())
                 .build();
     }
+    public AdvertDetailsForSlugResponse mapAdvertToAdvertResponseForSlug(Advert advert) {
+        return AdvertDetailsForSlugResponse.builder()
+                .id(advert.getId())
+                .title(advert.getTitle())
+                .properties(advert.getCategoryPropertyValuesList().stream()
+                        .map(propertyValue -> new PropertyValueResponse(
+                                propertyValue.getCategoryPropertyKey(),
+                                propertyValue.getValue()
+                        ))
+                        .collect(Collectors.toList()))
+                .images(advert.getImages().stream()
+                        .map(image -> new ImageResponse(
+                                image.getId(),
+                                image.getName(),
+                                image.getType(),
+                                image.getFeatured()
+                        ))
+                        .collect(Collectors.toList()))
+                .tourRequests(advert.getTourRequestList().stream()
+                        .map(tourRequestForSlug -> new TourRequestResponseForSlug(
+                                tourRequestForSlug.getId(),
+                                tourRequestForSlug.getTourDate(),
+                                tourRequestForSlug.getTourTime()
+                        ))
+                        .collect(Collectors.toList())
+                )
+                .build();
+    }
 
-    private Images getFeaturedImage(List<Images> images) {
+    private Image getFeaturedImage(List<Image> images) {
         return images.stream()
-                .filter(Images::isFeatured)
+                .filter(Image::getFeatured)
                 .findFirst()
                 .orElse(images.isEmpty() ? null : images.get(0)); // Boş liste kontrolü eklendi
     }
@@ -92,8 +129,8 @@ public class AdvertMapper {
                 .advertTypeId(advert.getAdvertType().getId())
                 .categoryId(advert.getCategory().getId())
                 .categoryPropertyKeys(advert.getCategory().getCategoryPropertyKeys())
-                .featuredImage(imageMapper.mapToImageResponse(getFeaturedImage(advert.getImagesList())))
-                .images(advert.getImagesList().stream()
+                .featuredImage(imageMapper.mapToImageResponse(getFeaturedImage(advert.getImages())))
+                .images(advert.getImages().stream()
                         .map(imageMapper::mapToImageResponse)
                         .collect(Collectors.toList()))
                 .favoritesCount(advert.getFavoritesList().size())
@@ -130,27 +167,71 @@ public class AdvertMapper {
     }
 
 
-    public AdvertDetailsForSlugResonse mapAdvertToAdvertDetailsForSlugResponse(Advert advert) {
-        if (advert == null) {
-            return null;
-        }
+    //****************************
 
-        return AdvertDetailsForSlugResonse.builder()
-                .id(advert.getId())  // Advert entity'sinin ID'sini Response'a ekler
-                .title(advert.getTitle())  // Advert başlığını Response'a ekler
-                .description(advert.getDescription())  // Advert açıklamasını Response'a ekler
-                .price(advert.getPrice())  // Fiyat bilgisini Response'a ekler
-                .categoryPropertyValues(advert.getCategoryPropertyValuesList() != null
-                        ? advert.getCategoryPropertyValuesList().stream()
-                        .map(categoryPropertyValueMapper.mapCategoryPropertyValueToCategoryPropertyValueResponse())  // CategoryPropertyValues'ı mapleyerek Response'a ekler
-                        .collect(Collectors.toList())
-                        : null)
-                .slug(advert.getSlug())  // Slug bilgisini Response'a ekler
-                .createdAt(advert.getCreateAt())  // İlanın oluşturulma tarihini ekler
-                .updatedAt(advert.getUpdateAt())  // İlanın güncellenme tarihini ekler
+    public AdvertListResponse toAdvertListResponse(Advert advert) {
+        return AdvertListResponse.builder()
+                .id(advert.getId())
+                .title(advert.getTitle())
+                //.featuredImage(getFeaturedImage(advert))
                 .build();
     }
 
+
+    public AdvertResponse toAdvertResponse(Advert advert) { //A06
+        return AdvertResponse.builder()
+                .id(advert.getId())
+                .title(advert.getTitle())
+                .images(advert.getImages().stream()
+                        .map(image -> new ImageResponse(
+                                image.getId(),
+                                image.getUrl()))
+                        .collect(Collectors.toList()))
+                .description(advert.getDescription())
+                .price(advert.getPrice())
+                .status(advert.getStatus())
+                .build();
+    }
+
+    public AdvertResponseForUser mapAdvertToAdvertResponseForUser(Advert advert){ //A08
+
+        // Dinamik özellikleri saklamak için bir harita oluştur
+        Map<String, Object> properties = new HashMap<>();
+
+        // Advert'ın özelliklerini dinamik olarak haritaya ekle
+        for (CategoryPropertyValue cpv : advert.getCategoryPropertyValuesList()) {
+            properties.put(cpv.getCategoryPropertyKey().getName(), cpv.getValue());
+        }
+
+        // Resim ve tur taleplerini hazırlama
+        List<String> imageUrls = advert.getImages().stream()
+                .map(Image::getUrl) // Resim URL'lerini al
+                .collect(Collectors.toList());
+
+        List<String> tourRequests = advert.getTourRequestList().stream()
+                .map(tourRequest -> String.format("Date: %s, Time: %s, Status: %s",
+                        tourRequest.getTourDate(), tourRequest.getTourTime(), tourRequest.getStatus()))
+                .collect(Collectors.toList());
+
+        return AdvertResponseForUser.builder()
+                .id(advert.getId())
+                .userId(advert.getUser().getId())
+                .title(advert.getTitle())
+                .description(advert.getDescription())
+                .slug(advert.getSlug())
+                .price(advert.getPrice())
+                .status(advert.getStatus())
+                .builtIn(advert.getBuiltIn())
+                .isActive(advert.getIsActive())
+                .viewCount(advert.getViewCount())
+                .location(advert.getLocation())
+                .createAt(advert.getCreateAt())
+                .updateAt(advert.getUpdateAt())
+                .properties(properties) // Dinamik özellikleri ekle
+                .images(imageUrls) // Resim URL'lerini ekle
+                .tourRequests(tourRequests) // Tur taleplerini ekle
+                .build();
+    }
 
 }
 

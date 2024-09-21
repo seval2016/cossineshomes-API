@@ -1,11 +1,11 @@
 package com.project.service.business;
 
 import com.project.entity.concretes.business.Advert;
-import com.project.entity.concretes.business.Images;
+import com.project.entity.concretes.business.Image;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.ImageMapper;
 import com.project.payload.messages.ErrorMessages;
-import com.project.payload.response.business.ImagesResponse;
+import com.project.payload.response.business.image.ImageResponse;
 
 import com.project.repository.business.AdvertRepository;
 import com.project.repository.business.ImagesRepository;
@@ -31,16 +31,16 @@ public class ImageService {
     private final ImageMapper imageMapper;
 
     private final String imageDirectory="/path/to/image/directory";
-    public List<Images> getALlImages(){
+    public List<Image> getALlImages(){
         return imagesRepository.findAll();
     }
 
     public byte[] updateFeaturedOfImage(Long imageId) {
 
-        Images image = imagesRepository.findById(imageId).orElseThrow(()->
+        Image image = imagesRepository.findById(imageId).orElseThrow(()->
                 new ResourceNotFoundException(ErrorMessages.IMAGE_NOT_FOUND));
 
-        List<Images> images = imagesRepository.findByAdvertId(image.getAdvert().getId());
+        List<Image> images = imagesRepository.findByAdvertId(image.getAdvert().getId());
 
         images.forEach(item -> item.setFeatured(false));
 
@@ -51,10 +51,10 @@ public class ImageService {
         return image.getData();
     }
 
-    public ImagesResponse getImageById(Long imageId) {
-        Images images = imagesRepository.findById(imageId)
+    public ImageResponse getImageById(Long imageId) {
+        Image image = imagesRepository.findById(imageId)
                 .orElseThrow(() -> new EntityNotFoundException("Image not found"));
-        return imageMapper.mapToImageResponse(images);
+        return imageMapper.mapToImageResponse(image);
     }
 
     public List<Long> uploadImages(Long advertId, List<MultipartFile> files) throws IOException {
@@ -63,14 +63,14 @@ public class ImageService {
 
         List<Long> imageIds = new ArrayList<>();
         for (MultipartFile file : files) {
-            Images images = Images.builder()
+            Image image = Image.builder()
                     .name(file.getOriginalFilename())
                     .type(file.getContentType())
                     .data(file.getBytes())
                     .advert(advert)
                     .build();
-            Images savedImages = imagesRepository.save(images);
-            imageIds.add(savedImages.getId());
+            Image savedImage = imagesRepository.save(image);
+            imageIds.add(savedImage.getId());
         }
         return imageIds;
     }
@@ -78,9 +78,9 @@ public class ImageService {
     public void deleteImages(List<Long> imageIds) {
 
 
-        List<Images> images = imagesRepository.findAllById(imageIds);
+        List<Image> images = imagesRepository.findAllById(imageIds);
 
-        for (Images image:images) {
+        for (Image image:images) {
             if(image==null){
                 throw new ResourceNotFoundException(ErrorMessages.IMAGE_NOT_FOUND);
             }
@@ -96,25 +96,25 @@ public class ImageService {
         imagesRepository.deleteAllById(imageIds);
     }
 
-    public ImagesResponse setFeaturedImage(Long imageId) {
-        Images images = imagesRepository.findById(imageId)
+    public ImageResponse setFeaturedImage(Long imageId) {
+        Image image = imagesRepository.findById(imageId)
                 .orElseThrow(() -> new EntityNotFoundException("Image not found"));
 
-        List<Images> advertImages = imagesRepository.findByAdvertId(images.getAdvert().getId());
+        List<Image> advertImages = imagesRepository.findByAdvertId(image.getAdvert().getId());
 
         // Unset all other images as featured
         advertImages.forEach(img -> {
-            if (img.isFeatured()) {
+            if (img.getFeatured()) {
                 img.setFeatured(false);
                 imagesRepository.save(img);
             }
         });
 
         // Set this image as featured
-        images.setFeatured(true);
-        imagesRepository.save(images);
+        image.setFeatured(true);
+        imagesRepository.save(image);
 
-        return imageMapper.mapToImageResponse(images);
+        return imageMapper.mapToImageResponse(image);
     }
 
     public void resetImageTables() {

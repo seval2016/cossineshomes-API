@@ -3,7 +3,7 @@ package com.project.payload.response.business.advert;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.entity.concretes.business.Favorite;
 import com.project.entity.concretes.business.TourRequest;
-import com.project.payload.response.business.ImagesResponse;
+import com.project.payload.response.business.image.ImageResponse;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -31,7 +31,7 @@ public class AuthAdvertUpdateResponse { // A11 - /adverts/auth/:id
 
     private LocalDateTime updateAt;
 
-    private List<ImagesResponse> images;
+    private List<ImageResponse> images;
 
     private List<Favorite> favoritesList;
 
