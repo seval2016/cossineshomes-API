@@ -57,9 +57,9 @@ public class AdvertHelper {
     /**
      * İlan detaylarını alır ve gerekli bilgileri harita olarak döner.
      *
-     * @param advertRequest İlan istek nesnesi
+     * @param advertRequest      İlan istek nesnesi
      * @param httpServletRequest HTTP isteği
-     * @param detailsMap Detaylar için harita
+     * @param detailsMap         Detaylar için harita
      * @return Detaylar haritası
      */
     public Map<String, Object> getAdvertDetails(AdvertRequest advertRequest, HttpServletRequest httpServletRequest, Map<String, Object> detailsMap) {
@@ -89,7 +89,7 @@ public class AdvertHelper {
      * @param id İlanın ID'si
      * @return Advert entity
      */
-    public Advert isAdvertExistById(Long id){
+    public Advert isAdvertExistById(Long id) {
         return advertRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_ADVERT_WITH_ID_MESSAGE, id))
         );
@@ -98,11 +98,11 @@ public class AdvertHelper {
     /**
      * Belirtilen tarih aralığı, kategori, tür ve durum bilgileri ile ilan raporu döner.
      *
-     * @param date1 Başlangıç tarihi
-     * @param date2 Bitiş tarihi
+     * @param date1    Başlangıç tarihi
+     * @param date2    Bitiş tarihi
      * @param category Kategori adı
-     * @param type İlan türü
-     * @param status İlan durumu
+     * @param type     İlan türü
+     * @param status   İlan durumu
      * @return İlan listesi
      */
     public List<Advert> getAdvertsReport(String date1, String date2, String category, String type, AdvertStatus status) {
@@ -164,12 +164,12 @@ public class AdvertHelper {
      * @param advert Advert entity
      * @return ImageResponse veya null
      */
-    public ImageResponse getFeaturedImage(Advert advert) {
-        if (advert == null || advert.getImages() == null || advert.getImages().isEmpty()) {
+    public ImageResponse getFeaturedImage(List<Image> images) {
+        if (images == null || images.isEmpty()) {
             return null;
         }
         // Featured image seçme mantığı: 'featured' flag'ine göre veya ilk resmi seç
-        return advert.getImages().stream()
+        return images.stream()
                 .filter(Image::getFeatured)
                 .findFirst()
                 .map(img -> ImageResponse.builder()
@@ -179,7 +179,7 @@ public class AdvertHelper {
                         .featured(img.getFeatured())
                         .build())
                 .orElseGet(() -> {
-                    Image firstImage = advert.getImages().get(0);
+                    Image firstImage = images.get(0);
                     return ImageResponse.builder()
                             .id(firstImage.getId())
                             .name(firstImage.getName())
@@ -188,5 +188,4 @@ public class AdvertHelper {
                             .build();
                 });
     }
-
 }

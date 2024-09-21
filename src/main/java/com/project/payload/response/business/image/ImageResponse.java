@@ -11,8 +11,9 @@ public class ImageResponse {
     private Long id;
     private String name;
     private String type;
-    private Boolean featured;
-    private String url;
+    private boolean featured;
+    private Long advertId;
+    private String data;
 
     public ImageResponse(Long id,String name,String type,Boolean featured){
         this.id=id;
@@ -21,9 +22,9 @@ public class ImageResponse {
         this.featured=featured;
 
     }
-    public ImageResponse(Long id,String url){
+    public ImageResponse(Long id,String data){
         this.id=id;
-        this.url=url;
+        this.data=data;
 
     }
 }

@@ -5,7 +5,6 @@ import com.project.payload.response.business.*;
 import com.project.payload.response.business.advert.*;
 import com.project.payload.response.business.category.CategoryAdvertResponse;
 import com.project.service.business.AdvertService;
-import com.project.service.helper.AdvertHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,20 +20,18 @@ import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/adverts")
 @RequiredArgsConstructor
 public class AdvertController {
 
     private final AdvertService advertService;
-    private final AdvertHelper advertHelper;
 
     /**
      * A01 - /adverts
      * Belirli filtreleme kriterlerine göre ilanları getirir.
-     * http://localhost:8080/adverts?q=beyoğlu&category_id=12&advert_type_id=3&price_start=500&price_end=1500 location=34 &
-     * status=1;page=1&size=10&sort=date&type=asc
+     * http://localhost:8080/adverts?q=beyoglu&category_id=12&advert_type_id=3&price_start=500&price_end=1500 location=34&status=1;page=1&size=10&sort=date&type=asc
+     *
      * @return List of AdvertListResponse
      */
     @GetMapping
@@ -219,7 +216,7 @@ public class AdvertController {
     }
     /**
      * A13 - /adverts/admin/:id
-     * Id'si verilen advert'ın silinmesi
+     * id'si verilen advert'ın silinmesi
      * http://localhost:8080/adverts/admin/5
      * @return AdvertResponse
      */

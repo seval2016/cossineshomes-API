@@ -22,7 +22,6 @@ import com.project.service.helper.CategoryPropertyKeyHelper;
 import com.project.service.helper.MethodHelper;
 import com.project.service.helper.PageableHelper;
 
-import com.project.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -84,7 +83,7 @@ public class AdvertService {
         return popularAdverts.stream()
                 .map(response -> {
                     Advert advert = advertHelper.getAdvertById(response.getId());
-                    ImageResponse imageResponse = advertHelper.getFeaturedImage(advert);
+                    ImageResponse imageResponse = advertHelper.getFeaturedImage(advert.getImages());
                     return response.toBuilder()
                             .featuredImage(imageResponse)
                             .build();
@@ -145,7 +144,7 @@ public class AdvertService {
         User user = methodHelper.getUserAndCheckRoles(request,RoleType.CUSTOMER.name());
 
         Advert advert=advertHelper.isAdvertExistById(id);
-        if(advert.getUser().getId()!=user.getId()){
+        if(advert.getUser().getId()!= user.getId()){
             throw new ResourceNotFoundException(String.format(ErrorMessages.ADVERT_IS_NOT_FOUND_FOR_USER,user.getId()));
         }
         return advertMapper.mapAdvertToAdvertResponseForUser(advert);

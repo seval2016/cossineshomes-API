@@ -15,6 +15,7 @@ import com.project.payload.response.business.category.CategoryAdvertResponse;
 import com.project.payload.response.business.category.PropertyValueResponse;
 import com.project.payload.response.business.image.ImageResponse;
 import com.project.payload.response.business.tourRequest.TourRequestResponseForSlug;
+import com.project.service.helper.AdvertHelper;
 import com.project.service.helper.MethodHelper;
 import lombok.*;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,7 @@ public class AdvertMapper {
     private final MethodHelper methodHelper;
     private final ImageMapper imageMapper;
     private final CategoryPropertyValueMapper categoryPropertyValueMapper;
+    private final AdvertHelper advertHelper;
 
     public Advert mapAdvertRequestToAdvert(AdvertRequest advertRequest, Category category, City city, User user, Country country, AdvertType advertType, District district) {
         return Advert.builder()
@@ -54,28 +56,7 @@ public class AdvertMapper {
         return title.toLowerCase().replaceAll(" ", "-");
     }
 
-    public AdvertResponse mapAdvertToAdvertResponse(Advert advert) {
-        return AdvertResponse.builder()
-                .id(advert.getId())
-                .title(advert.getTitle())
-                .userId(advert.getUser().getId())
-                .description(advert.getDescription())
-                .price(advert.getPrice())
-                .advertTypeId(advert.getAdvertType().getId())
-                .countryId(advert.getCountry().getId())
-                .cityId(advert.getCity().getId())
-                .districtId(advert.getDistrict().getId())
-                .categoryId(advert.getCategory().getId())
-                .categoryPropertyKeys(advert.getCategory().getCategoryPropertyKeys())
-                .featuredImage(imageMapper.mapToImageResponse(getFeaturedImage(advert.getImages())))
-                .images(advert.getImages().stream()
-                        .map(imageMapper::mapToImageResponse)
-                        .collect(Collectors.toList()))
-                .favoritesCount(advert.getFavoritesList().size())
-                .tourRequestCount(advert.getTourRequestList().size())
-                .isActive(advert.getIsActive())
-                .build();
-    }
+
     public AdvertDetailsForSlugResponse mapAdvertToAdvertResponseForSlug(Advert advert) {
         return AdvertDetailsForSlugResponse.builder()
                 .id(advert.getId())
@@ -105,13 +86,6 @@ public class AdvertMapper {
                 .build();
     }
 
-    private Image getFeaturedImage(List<Image> images) {
-        return images.stream()
-                .filter(Image::getFeatured)
-                .findFirst()
-                .orElse(images.isEmpty() ? null : images.get(0)); // Boş liste kontrolü eklendi
-    }
-
     public AdvertResponse mapAdvertToAdvertResponseForAll(Advert advert) {
         return AdvertResponse.builder()
                 .id(advert.getId())
@@ -129,7 +103,7 @@ public class AdvertMapper {
                 .advertTypeId(advert.getAdvertType().getId())
                 .categoryId(advert.getCategory().getId())
                 .categoryPropertyKeys(advert.getCategory().getCategoryPropertyKeys())
-                .featuredImage(imageMapper.mapToImageResponse(getFeaturedImage(advert.getImages())))
+                .featuredImage(advertHelper.getFeaturedImage(advert.getImages()))
                 .images(advert.getImages().stream()
                         .map(imageMapper::mapToImageResponse)
                         .collect(Collectors.toList()))
@@ -177,7 +151,30 @@ public class AdvertMapper {
                 .build();
     }
 
+    public AdvertResponse mapAdvertToAdvertResponse(Advert advert) {
+        return AdvertResponse.builder()
+                .id(advert.getId())
+                .title(advert.getTitle())
+                .userId(advert.getUser().getId())
+                .description(advert.getDescription())
+                .price(advert.getPrice())
+                .advertTypeId(advert.getAdvertType().getId())
+                .countryId(advert.getCountry().getId())
+                .cityId(advert.getCity().getId())
+                .districtId(advert.getDistrict().getId())
+                .categoryId(advert.getCategory().getId())
+                .categoryPropertyKeys(advert.getCategory().getCategoryPropertyKeys())
+                .featuredImage(advertHelper.getFeaturedImage(advert.getImages()))
+                .images(advert.getImages().stream()
+                        .map(imageMapper::mapToImageResponse)
+                        .collect(Collectors.toList()))
+                .favoritesCount(advert.getFavoritesList().size())
+                .tourRequestCount(advert.getTourRequestList().size())
+                .isActive(advert.getIsActive())
+                .build();
+    }
 
+    /*
     public AdvertResponse toAdvertResponse(Advert advert) { //A06
         return AdvertResponse.builder()
                 .id(advert.getId())
@@ -192,7 +189,7 @@ public class AdvertMapper {
                 .status(advert.getStatus())
                 .build();
     }
-
+*/
     public AdvertResponseForUser mapAdvertToAdvertResponseForUser(Advert advert){ //A08
 
         // Dinamik özellikleri saklamak için bir harita oluştur
