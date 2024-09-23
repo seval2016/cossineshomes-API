@@ -46,7 +46,7 @@ public class ResetService {
 
         List<Category> allCategory=categoryRepository.findAll();
         for (Category category:allCategory){
-            if (!category.isBuiltIn()){
+            if (!category.getBuiltIn()){
                 categoryRepository.delete(category);
             }
         }
@@ -68,7 +68,7 @@ public class ResetService {
 
         List<User> allUser=userRepository.findAll();
         for (User user:allUser){
-            if (!user.isBuiltIn()){
+            if (!user.getBuiltIn()){
                 userRepository.delete(user);
             }
         }

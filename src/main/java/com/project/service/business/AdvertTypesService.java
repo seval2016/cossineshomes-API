@@ -7,8 +7,8 @@ import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.AdvertTypesMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
-import com.project.payload.request.business.AdvertTypeRequest;
-import com.project.payload.response.business.advert.AdvertTypeResponse;
+import com.project.payload.request.business.AdvertTypesRequest;
+import com.project.payload.response.business.advert.AdvertTypesResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.AdvertTypesRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,14 +27,14 @@ public class AdvertTypesService {
     private final AdvertTypesRepository advertTypesRepository;
     private final AdvertTypesMapper advertTypeMapper;
 
-    public List<AdvertTypeResponse> getAllAdvertTypes() {
+    public List<AdvertTypesResponse> getAllAdvertTypes() {
         return advertTypesRepository.findAll()
                 .stream()
                 .map(advertTypeMapper::mapAdvertTypeToAdvertTypeResponse)
                 .collect(Collectors.toList());
     }
 
-    public AdvertTypeResponse getAdvertTypeById(Long id) {
+    public AdvertTypesResponse getAdvertTypeById(Long id) {
         AdvertType advertType= isAdvertTypeExists(id);
         return advertTypeMapper.mapAdvertTypeToAdvertTypeResponse(advertType);
     }
@@ -45,12 +45,12 @@ public class AdvertTypesService {
                 new ResourceNotFoundException(String.format(ErrorMessages.ADVERT_TYPE_NOT_FOUND_BY_ID , id)));
     }
 
-    public ResponseMessage<AdvertTypeResponse> saveAdvertType(AdvertTypeRequest advertTypeRequest) {
-        isAdvertTypeExistsByTitle(advertTypeRequest.getTitle());
+    public ResponseMessage<AdvertTypesResponse> saveAdvertType(AdvertTypesRequest advertTypesRequest) {
+        isAdvertTypeExistsByTitle(advertTypesRequest.getTitle());
 
-        AdvertType savedAdvertType= advertTypesRepository.save(advertTypeMapper.mapAdvertTypeRequestToAdvertType(advertTypeRequest));
+        AdvertType savedAdvertType= advertTypesRepository.save(advertTypeMapper.mapAdvertTypeRequestToAdvertType(advertTypesRequest));
 
-        return ResponseMessage.<AdvertTypeResponse>builder()
+        return ResponseMessage.<AdvertTypesResponse>builder()
                 .message(SuccessMessages.ADVERT_TYPE_SAVED)
                 .httpStatus(HttpStatus.CREATED)
                 .object(advertTypeMapper.mapAdvertTypeToAdvertTypeResponse(savedAdvertType))
@@ -69,16 +69,16 @@ public class AdvertTypesService {
     }
 
 
-    public AdvertTypeResponse updateAdvertTypeById(Long id, AdvertTypeRequest advertTypeRequest) {
+    public AdvertTypesResponse updateAdvertTypeById(Long id, AdvertTypesRequest advertTypesRequest) {
         AdvertType advertType= isAdvertTypeExists(id);
 
         if(
-                !(advertType.getTitle().equalsIgnoreCase(advertTypeRequest.getTitle())) &&
-                        (advertTypesRepository.existsByTitle(advertTypeRequest.getTitle()))){
+                !(advertType.getTitle().equalsIgnoreCase(advertTypesRequest.getTitle())) &&
+                        (advertTypesRepository.existsByTitle(advertTypesRequest.getTitle()))){
             throw new ConflictException(ErrorMessages.ADVERT_TYPE_ALREADY_EXIST);
         }
 
-        AdvertType updatedAdvertType= advertTypeMapper.mapAdvertRequestToUpdatedAdvertType(id, advertTypeRequest);
+        AdvertType updatedAdvertType= advertTypeMapper.mapAdvertRequestToUpdatedAdvertType(id, advertTypesRequest);
 
         AdvertType savedAdvertType= advertTypesRepository.save(updatedAdvertType);
 

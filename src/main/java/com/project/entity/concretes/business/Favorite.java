@@ -34,13 +34,18 @@ public class Favorite {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
     @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt= LocalDateTime.now();
+    private LocalDateTime createAt;
 
     @PreRemove
     private void preRemove() {
         if (user != null) {
             user.getFavoritesList().remove(this);
         }
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        createAt = LocalDateTime.now();
     }
 
 }

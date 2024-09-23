@@ -14,6 +14,7 @@ import java.util.Set;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthResponse {
+
     private Long id;
 
     private String firstName;
@@ -24,16 +25,9 @@ public class AuthResponse {
 
     private String phone;
 
-    private Boolean builtIn = false;
-
     private Set<String> userRole;
 
     private String token;
 
-
-    private Set<AdvertResponse> advert;
-
-    private Set<TourRequestResponse>tourRequestsResponse;
-
-    private List<Long> favoritesList;
+    private Boolean builtIn = false;
 }

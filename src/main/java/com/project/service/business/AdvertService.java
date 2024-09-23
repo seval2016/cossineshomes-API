@@ -3,7 +3,7 @@ package com.project.service.business;
 import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.business.Image;
 import com.project.entity.concretes.user.User;
-import com.project.entity.enums.LogEnum;
+import com.project.entity.enums.Log;
 import com.project.entity.enums.RoleType;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.AdvertMapper;
@@ -249,7 +249,7 @@ public class AdvertService {
         savedAdvert.setImages(imageList); // Resim listesini ilana ekliyoruz
 
         // Log sistemi ile yeni bir ilan oluşturulduğunu kayıt altına alıyoruz
-        logService.createLogEvent(savedAdvert.getUser(), savedAdvert, LogEnum.CREATED);
+        logService.createLogEvent(savedAdvert.getUser(), savedAdvert, Log.CREATED);
 
         // İlanı ve resimleri tekrar kaydediyoruz
         savedAdvert = advertRepository.save(savedAdvert);
@@ -309,7 +309,7 @@ public class AdvertService {
 
         Advert returnedAdvert = advertRepository.save(updateAdvert);
 
-        logService.createLogEvent(advert.getUser(), advert, LogEnum.UPDATED);
+        logService.createLogEvent(advert.getUser(), advert, Log.UPDATED);
 
         return ResponseMessage.<AdvertResponse>builder()
                 .message(SuccessMessages.ADVERT_UPDATED)
@@ -364,7 +364,7 @@ public class AdvertService {
         Advert savedAdvert = advertRepository.save(updatedAdvert);
 
         // Güncelleme olayı loglanır
-        logService.createLogEvent(user, savedAdvert, LogEnum.UPDATED);
+        logService.createLogEvent(user, savedAdvert, Log.UPDATED);
 
         // Başarı mesajı ve güncellenen ilan dönülür
         return ResponseMessage.<AdvertResponse>builder()

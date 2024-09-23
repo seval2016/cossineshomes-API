@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AdvertTypeResponse {
+public class AdvertTypesResponse {
 
     private Long id;
     private String title;

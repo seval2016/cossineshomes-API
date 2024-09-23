@@ -13,8 +13,19 @@ public class ImageResponse {
     private String type;
     private boolean featured;
     private Long advertId;
-    private String data;
+    private String url;
+    private byte[] data;
 
+    public ImageResponse(Long id,String name,String type,Boolean featured,Long advertId,
+                         byte[] data){
+        this.id=id;
+        this.name=name;
+        this.type=type;
+        this.featured=featured;
+        this.advertId=advertId;
+        this.data=data;
+
+    }
     public ImageResponse(Long id,String name,String type,Boolean featured){
         this.id=id;
         this.name=name;
@@ -22,7 +33,7 @@ public class ImageResponse {
         this.featured=featured;
 
     }
-    public ImageResponse(Long id,String data){
+    public ImageResponse(Long id,byte[] data){
         this.id=id;
         this.data=data;
 

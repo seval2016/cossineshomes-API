@@ -24,117 +24,88 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserMapper {
 
-    private final MethodHelper methodHelper;
-    private final TourRequestMapper tourRequestMapper;
-    private final AdvertMapper advertMapper;
-
-
     public UserResponse mapUserToUserResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .advert(user.getAdvert() != null ? user.getAdvert().stream().map(advertMapper::mapAdvertToAdvertResponse).collect(Collectors.toSet()) : new HashSet<>())
-                .favoritesList(user.getFavoritesList() != null ? user.getFavoritesList().stream().map(Favorite::getId).collect(Collectors.toSet()) : new HashSet<>())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
-                .userRole(user.getUserRole() != null ? user.getUserRole().stream().map(UserRole::getRoleName).collect(Collectors.toSet()) : new HashSet<>())
-                .tourRequestsResponse(user.getTourRequests() != null ? user.getTourRequests().stream().map(tourRequestMapper::mapTourRequestToTourRequestResponse).collect(Collectors.toSet()) : new HashSet<>())
-                .builtIn(user.getBuiltIn())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .createAt(user.getCreateAt())
+                .updateAt(user.getUpdateAt())
                 .build();
     }
-    public User mapUserRequestToUser(BaseUserRequest userRequest) {
 
+    public User mapUserRequestToUser(BaseUserRequest userRequest) {
         return User.builder()
-                .email(userRequest.getEmail())
                 .firstName(userRequest.getFirstName())
                 .lastName(userRequest.getLastName())
+                .email(userRequest.getEmail())
                 .phone(userRequest.getPhone())
-                .builtIn(userRequest.getBuiltIn())
+                .passwordHash(userRequest.getPasswordHash())
                 .build();
     }
-    public CustomerResponse mapUserToCustomerResponse(User customer) {
-        return  CustomerResponse.builder()
-                .userId(customer.getId())
-                .username(customer.getUsername())
-                .firstname(customer.getFirstName())
-                .lastname(customer.getLastName())
-                .email(customer.getEmail())
-                .phone(customer.getPhone())
-                .build();
-    }
-    public User mapUserRequestToUpdatedUser(UserRequest userRequest, Long userId) {
 
+    public CustomerResponse mapUserToCustomerResponse(User customer) {
+        return CustomerResponse.builder()
+                .id(customer.getId())
+                .firstName(customer.getFirstName())
+                .lastName(customer.getLastName())
+                .email(customer.getEmail())
+                .build();
+    }
+
+    public User mapUserRequestToUpdatedUser(UserRequest userRequest, Long userId) {
         return User.builder()
                 .id(userId)
-                .username(userRequest.getUsername())
                 .firstName(userRequest.getFirstName())
                 .lastName(userRequest.getLastName())
-                .passwordHash(userRequest.getPasswordHash())
-                .phone(userRequest.getPhone())
                 .email(userRequest.getEmail())
+                .phone(userRequest.getPhone())
                 .build();
-
     }
+
     public void mapUserRequestWithoutPasswordToUser(UserRequestWithoutPassword userRequestWithoutPassword, User user) {
         user.setFirstName(userRequestWithoutPassword.getFirstName());
         user.setLastName(userRequestWithoutPassword.getLastName());
-        user.setPhone(userRequestWithoutPassword.getPhone());
         user.setEmail(userRequestWithoutPassword.getEmail());
+        user.setPhone(userRequestWithoutPassword.getPhone());
     }
+
     public User mapUserResponseToUser(BaseUserResponse authenticatedUser) {
         return User.builder()
-                .id(authenticatedUser.getUserId())
-                .username(authenticatedUser.getUsername())
-                .firstName(authenticatedUser.getFirstname())
-                .lastName(authenticatedUser.getLastname())
+                .id(authenticatedUser.getId())
+                .firstName(authenticatedUser.getFirstName())
+                .lastName(authenticatedUser.getLastName())
                 .email(authenticatedUser.getEmail())
                 .phone(authenticatedUser.getPhone())
-                .userRole(authenticatedUser.getUserRole()
-                        .stream()
-                        .map(roleName -> {
-                            UserRole userRole = new UserRole();
-                            userRole.setRoleName(roleName);
-                            userRole.setRole(RoleType.valueOf(roleName.toUpperCase()));
-                            return userRole;
-                        })
-                        .collect(Collectors.toList()))
                 .build();
     }
-    public User userRequestToUser(UserSaveRequest request) {
 
+    public User userRequestToUser(UserSaveRequest request) {
         return User.builder()
-                .email(request.getEmail())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
+                .email(request.getEmail())
                 .phone(request.getPhone())
-                .builtIn(request.getBuiltIn())
+                .passwordHash(request.getPasswordHash())
                 .build();
-
     }
-    public RegisterResponse userToRegisterResponse(User newRegisterUser){
+
+    public RegisterResponse userToRegisterResponse(User newRegisterUser) {
         return RegisterResponse.builder()
                 .id(newRegisterUser.getId())
                 .firstName(newRegisterUser.getFirstName())
                 .lastName(newRegisterUser.getLastName())
-                .phone(newRegisterUser.getPhone())
-                .email(newRegisterUser.getEmail())
                 .build();
     }
 
     public CustomerResponse customerToCustomerResponse(User user) {
         return CustomerResponse.builder()
                 .id(user.getId())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .advert(user.getAdvert().stream().map(advertMapper::mapAdvertToAdvertResponse).collect(Collectors.toSet()))
-                .favoritesList(user.getFavoritesList().stream().map(Favorite::getId).collect(Collectors.toSet()))
-                .tourRequestsResponse(user.getTourRequests().stream().map(tourRequestMapper::mapTourRequestToTourRequestResponse).collect(Collectors.toSet()))
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
-                .userRole(user.getUserRole().stream().map(UserRole::getRoleName).collect(Collectors.toSet()))
-                .tourRequestsResponse(user.getTourRequests().stream().map(tourRequestMapper::mapTourRequestToTourRequestResponse).collect(Collectors.toSet()))
+                .email(user.getEmail())
                 .build();
     }
-
 }

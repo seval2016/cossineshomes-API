@@ -3,9 +3,9 @@ package com.project.service.business;
 import com.project.entity.concretes.business.Advert;
 import com.project.entity.concretes.business.TourRequest;
 import com.project.entity.concretes.user.User;
-import com.project.entity.enums.LogEnum;
+import com.project.entity.enums.Log;
 import com.project.entity.enums.RoleType;
-import com.project.entity.enums.StatusType;
+import com.project.entity.enums.TourRequestEnum;
 import com.project.exception.BadRequestException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.TourRequestMapper;
@@ -102,8 +102,8 @@ public class TourRequestService {
     public ResponseMessage<TourRequestResponse> createTourRequest(TourRequestRequest tourRequestRequest, HttpServletRequest request) {
 
         // Advertta Date-time cakismasi var mi?
-        List<TourRequest> tourRequestsFromRepo = tourRequestHelper.getAlTourRequest();
-        dateTimeValidator.checkConflictTourRequestFromRepoByAdvert(tourRequestsFromRepo, tourRequestRequest);
+        List<TourRequest> tourRequestsFromRepoEnum = tourRequestHelper.getAlTourRequest();
+        dateTimeValidator.checkConflictTourRequestFromRepoByAdvert(tourRequestsFromRepoEnum, tourRequestRequest);
 
         //UserGuest için aynı satte requesti var mı?
         String userEmail = (String) request.getAttribute("email");
@@ -120,13 +120,13 @@ public class TourRequestService {
             throw new BadRequestException("Can not book your own advert");
         }
         TourRequest mappedTourRequest = tourRequestMapper.mapTourRequestRequestToTourRequest(tourRequestRequest, advert);
-        mappedTourRequest.setStatus(StatusType.PENDING);
+        mappedTourRequest.setStatus(TourRequestEnum.PENDING.getValue());
         mappedTourRequest.setOwnerUser(ownerUser);
         mappedTourRequest.setGuestUser(userGuest);
 
         TourRequest savedTourRequest = tourRequestRepository.save(mappedTourRequest);
 
-        logService.createLogEvent(userGuest, savedTourRequest.getAdvert(), LogEnum.TOUR_REQUEST_CREATED);
+        logService.createLogEvent(userGuest, savedTourRequest.getAdvert(), Log.TOUR_REQUEST_CREATED);
 
 
         return ResponseMessage.<TourRequestResponse>builder()
@@ -145,7 +145,7 @@ public class TourRequestService {
         //id ile tour request var mi?
         TourRequest tourRequest = tourRequestHelper.findTourRequestById(id);
 
-        if (tourRequest.getStatus().getTourStatusValue() == 1) {
+        if (tourRequest.getStatus() == 1) {
             throw new BadRequestException(ErrorMessages.TOUR_REQUEST_CAN_NOT_BE_CHANGED);
         }
 
@@ -159,13 +159,13 @@ public class TourRequestService {
         Advert advert = advertHelper.getAdvertForFavorites(tourRequestRequest.getAdvertId());
         TourRequest updatedTourRequest = tourRequestMapper.mapTourRequestRequestToTourRequest(tourRequestRequest, advert);
         updatedTourRequest.setId(id);
-        updatedTourRequest.setStatus(StatusType.PENDING);
+        updatedTourRequest.setStatus(TourRequestEnum.PENDING.getValue());
         updatedTourRequest.setGuestUser(guestUser);
         updatedTourRequest.setOwnerUser(advert.getUser());
         updatedTourRequest.setCreateAt(LocalDateTime.now());
 
 
-        logService.createLogEvent(guestUser, advert, LogEnum.TOUR_REQUEST_ACCEPTED);
+        logService.createLogEvent(guestUser, advert, Log.TOUR_REQUEST_ACCEPTED);
 
         return ResponseMessage.<TourRequestResponse>builder()
                 .object(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequestRepository.save(updatedTourRequest)))
@@ -183,9 +183,9 @@ public class TourRequestService {
         //id ile tour request var mi?
         TourRequest tourRequest = tourRequestRepository.findByIdByCustomer(guestUser.getId(), id);
 
-        tourRequest.setStatus(StatusType.CANCELED);
+        tourRequest.setStatus(TourRequestEnum.CANCELED.getValue());
 
-        logService.createLogEvent(guestUser, tourRequest.getAdvert(), LogEnum.TOUR_REQUEST_CANCELED);
+        logService.createLogEvent(guestUser, tourRequest.getAdvert(), Log.TOUR_REQUEST_CANCELED);
         return ResponseMessage.<TourRequestResponse>builder()
                 .object(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequestRepository.save(tourRequest)))
                 .httpStatus(HttpStatus.OK)
@@ -203,9 +203,9 @@ public class TourRequestService {
         //id ile tour request var mi?
         TourRequest tourRequest = tourRequestRepository.findByIdByCustomer(guestUser.getId(), id);
 
-        tourRequest.setStatus(StatusType.CANCELED);
+        tourRequest.setStatus(TourRequestEnum.CANCELED.getValue());
 
-        logService.createLogEvent(guestUser, tourRequest.getAdvert(), LogEnum.TOUR_REQUEST_CANCELED);
+        logService.createLogEvent(guestUser, tourRequest.getAdvert(), Log.TOUR_REQUEST_CANCELED);
         return ResponseMessage.<TourRequestResponse>builder()
                 .object(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequestRepository.save(tourRequest)))
                 .httpStatus(HttpStatus.OK)
@@ -224,9 +224,9 @@ public class TourRequestService {
         //id ile tour request var mi?
         TourRequest tourRequest = tourRequestRepository.findByIdByCustomer(guestUser.getId(), id);
 
-        tourRequest.setStatus(StatusType.DECLINED);
+        tourRequest.setStatus(TourRequestEnum.DECLINED.getValue());
 
-        logService.createLogEvent(guestUser, tourRequest.getAdvert(), LogEnum.TOUR_REQUEST_DECLINED);
+        logService.createLogEvent(guestUser, tourRequest.getAdvert(), Log.TOUR_REQUEST_DECLINED);
 
         return ResponseMessage.<TourRequestResponse>builder()
                 .object(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequestRepository.save(tourRequest)))

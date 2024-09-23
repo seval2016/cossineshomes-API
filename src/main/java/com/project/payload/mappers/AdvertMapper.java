@@ -12,7 +12,7 @@ import com.project.payload.response.business.advert.AdvertListResponse;
 import com.project.payload.response.business.advert.AdvertResponse;
 import com.project.payload.response.business.advert.AdvertResponseForUser;
 import com.project.payload.response.business.category.CategoryAdvertResponse;
-import com.project.payload.response.business.category.PropertyValueResponse;
+import com.project.payload.response.business.category.CategoryPropertyValueResponse;
 import com.project.payload.response.business.image.ImageResponse;
 import com.project.payload.response.business.tourRequest.TourRequestResponseForSlug;
 import com.project.service.helper.AdvertHelper;
@@ -62,7 +62,7 @@ public class AdvertMapper {
                 .id(advert.getId())
                 .title(advert.getTitle())
                 .properties(advert.getCategoryPropertyValuesList().stream()
-                        .map(propertyValue -> new PropertyValueResponse(
+                        .map(propertyValue -> new CategoryPropertyValueResponse(
                                 propertyValue.getCategoryPropertyKey(),
                                 propertyValue.getValue()
                         ))
@@ -95,7 +95,7 @@ public class AdvertMapper {
                 .builtIn(advert.getIsActive())
                 .description(advert.getDescription())
                 .title(advert.getTitle())
-                .status(methodHelper.updateAdvertStatus(advert.getStatus(), advert))
+                .status(advertHelper.updateAdvertStatus(advert.getStatus(), advert))
                 .countryId(advert.getCountry().getId())
                 .cityId(advert.getCity().getId())
                 .districtId(advert.getDistrict().getId())
@@ -173,23 +173,6 @@ public class AdvertMapper {
                 .isActive(advert.getIsActive())
                 .build();
     }
-
-    /*
-    public AdvertResponse toAdvertResponse(Advert advert) { //A06
-        return AdvertResponse.builder()
-                .id(advert.getId())
-                .title(advert.getTitle())
-                .images(advert.getImages().stream()
-                        .map(image -> new ImageResponse(
-                                image.getId(),
-                                image.getUrl()))
-                        .collect(Collectors.toList()))
-                .description(advert.getDescription())
-                .price(advert.getPrice())
-                .status(advert.getStatus())
-                .build();
-    }
-*/
     public AdvertResponseForUser mapAdvertToAdvertResponseForUser(Advert advert){ //A08
 
         // Dinamik özellikleri saklamak için bir harita oluştur

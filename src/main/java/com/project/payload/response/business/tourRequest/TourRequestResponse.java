@@ -2,7 +2,7 @@ package com.project.payload.response.business.tourRequest;
 
 import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.user.User;
-import com.project.entity.enums.StatusType;
+import com.project.entity.enums.TourRequestEnum;
 import com.project.payload.response.business.image.ImageResponse;
 import lombok.*;
 
@@ -19,7 +19,7 @@ public class TourRequestResponse {
     private Long id;
     private LocalDate tourDate;
     private LocalTime tourTime;
-    private StatusType status;
+    private int status;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
     private User ownerUserId;

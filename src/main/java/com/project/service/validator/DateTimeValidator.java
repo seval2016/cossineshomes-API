@@ -17,9 +17,9 @@ import java.util.List;
 public class DateTimeValidator {
 
 
-    public void checkConflictTourRequestFromRepoByAdvert(List<TourRequest> tourRequestsFromRepo, TourRequestRequest tourRequestRequest) {
+    public void checkConflictTourRequestFromRepoByAdvert(List<TourRequest> tourRequestsFromRepoEnum, TourRequestRequest tourRequestRequest) {
 
-        for(TourRequest tourRequest: tourRequestsFromRepo ){
+        for(TourRequest tourRequest : tourRequestsFromRepoEnum){
             if((tourRequest.getAdvert().getId().equals(tourRequestRequest.getAdvertId())) &&
                     (tourRequest.getTourDate().equals(tourRequestRequest.getTourDate()))) {
 
@@ -35,7 +35,7 @@ public class DateTimeValidator {
 
     public void checkConflictTourRequestFromRepoByUserForGuest(User userGuest, TourRequestRequest tourRequestRequest) {
 
-        for(TourRequest tourRequest : userGuest.getGuestTourRequests()){
+        for(TourRequest tourRequest : userGuest.getTourRequests()){
             if(tourRequest.getTourDate().equals(tourRequestRequest.getTourDate())){
 
                 if(Math.abs(calculateMinutesBetweenTime(tourRequest,tourRequestRequest))<30){
@@ -48,7 +48,7 @@ public class DateTimeValidator {
     }
     public void checkConflictTourRequestFromRepoByUserForOwner(User ownerUser, TourRequestRequest tourRequestRequest) {
 
-        for (TourRequest tourRequest : ownerUser.getOwnerTourRequests()){
+        for (TourRequest tourRequest : ownerUser.getTourRequests()){
             if(tourRequest.getTourDate().equals(tourRequestRequest.getTourDate())){
 
                 if(calculateMinutesBetweenTime(tourRequest,tourRequestRequest) <30){
@@ -59,7 +59,7 @@ public class DateTimeValidator {
         }
     }
 
-    private long calculateMinutesBetweenTime(TourRequest tourRequest,TourRequestRequest tourRequestRequest){
+    private long calculateMinutesBetweenTime(TourRequest tourRequest, TourRequestRequest tourRequestRequest){
 
         LocalTime tourTimeFromRepo = tourRequest.getTourTime();
 

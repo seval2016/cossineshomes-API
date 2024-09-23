@@ -4,7 +4,7 @@ import com.project.entity.concretes.business.Advert;
 import com.project.entity.concretes.business.TourRequest;
 import com.project.entity.concretes.user.User;
 import com.project.entity.enums.RoleType;
-import com.project.entity.enums.StatusType;
+import com.project.entity.enums.TourRequestEnum;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.TourRequestMapper;
 import com.project.payload.response.ResponseMessage;
@@ -41,9 +41,9 @@ public class TourRequestHelper {
     }
 
 
-    public List<TourRequest> getTourRequest(LocalDateTime date1, LocalDateTime date2, StatusType statusType) {
+    public List<TourRequest> getTourRequest(LocalDateTime date1, LocalDateTime date2, TourRequestEnum tourRequestEnum) {
 
-        return tourRequestRepository.getTourRequest(date1, date2, statusType);
+        return tourRequestRepository.getTourRequest(date1, date2, tourRequestEnum);
 
     }
 

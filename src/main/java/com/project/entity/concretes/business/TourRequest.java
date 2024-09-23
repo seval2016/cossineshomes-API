@@ -3,7 +3,7 @@ package com.project.entity.concretes.business;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.entity.concretes.user.User;
-import com.project.entity.enums.StatusType;
+import com.project.entity.enums.TourRequestEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,7 +36,8 @@ public class TourRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private StatusType status = StatusType.PENDING;
+    private int status= TourRequestEnum.PENDING.getValue();
+
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(nullable = false)
@@ -47,9 +48,9 @@ public class TourRequest {
     private LocalDateTime updateAt;
 
 
-    //------------İlişkili sütunlar -------------
-
-    //ManyToOne
+    /**
+     * İlişkiler
+     */
 
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)

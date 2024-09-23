@@ -1,22 +1,30 @@
 package com.project.payload.mappers;
 
+import com.project.entity.concretes.business.Advert;
+import com.project.entity.concretes.business.CategoryPropertyKey;
 import com.project.entity.concretes.business.CategoryPropertyValue;
-import com.project.payload.response.business.category.PropertyValueResponse;
+import com.project.payload.request.business.CategoryPropertyValueRequest;
+import com.project.payload.response.business.category.CategoryPropertyValueResponse;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
 @Data
 @Component
 public class CategoryPropertyValueMapper {
-    public PropertyValueResponse mapCategoryPropertyValueToCategoryPropertyValueResponse(CategoryPropertyValue categoryPropertyValue) {
-        if (categoryPropertyValue == null) {
-            return null;
-        }
-
-        return PropertyValueResponse.builder()
-                .id(categoryPropertyValue.getId())  // CategoryPropertyValue entity'sinin ID'sini Response'a ekler
-                .categoryPropertyKey(categoryPropertyValue.getCategoryPropertyKey() != null ? categoryPropertyValue.getCategoryPropertyKey().getId() : null)  // CategoryPropertyKey var mı kontrol eder, varsa ID'sini ekler
+    public CategoryPropertyValueResponse mapEntityToCategoryPropertyValueResponse(CategoryPropertyValue categoryPropertyValue) {
+        return CategoryPropertyValueResponse.builder()
+                .id(categoryPropertyValue.getId())
+                .value(categoryPropertyValue.getValue())
+                .advertId(categoryPropertyValue.getAdvert().getId())
+                .categoryPropertyKeyId(categoryPropertyValue.getCategoryPropertyKey().getId())
                 .build();
+    }
 
+    public CategoryPropertyValue mapCategoryPropertyValueResponseToEntity(CategoryPropertyValueRequest request, Advert advert, CategoryPropertyKey categoryPropertyKey) {
+        return CategoryPropertyValue.builder()
+                .value(request.getValue())
+                .advert(advert)
+                .categoryPropertyKey(categoryPropertyKey)
+                .build();
     }
 }

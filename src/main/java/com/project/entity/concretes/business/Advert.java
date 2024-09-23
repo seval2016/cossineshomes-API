@@ -55,7 +55,7 @@ public class Advert {
     private Integer viewCount = 0;
 
     @Column(nullable = false, length = 255)
-    private String location; // Google embed kodu
+    private String location;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Turkey")
     @Column(nullable = false)
@@ -83,7 +83,9 @@ public class Advert {
         }
     }
 
-    // İlişkiler
+    /**
+     * İlişkiler
+     */
     @ManyToOne
     @JoinColumn(name = "advert_type_id", nullable = false)
     private AdvertType advertType;
@@ -110,7 +112,7 @@ public class Advert {
 
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Image> images; // Image list associated with the advert
+    private List<Image> images;
 
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
     private List<TourRequest> tourRequestList;

@@ -3,12 +3,10 @@ package com.project.entity.concretes.business;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.entity.concretes.user.User;
 
-import com.project.entity.enums.LogEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,7 +24,7 @@ public class Log {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private LogEnum log;
+    private com.project.entity.enums.Log log;
 
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)

@@ -1430,6 +1430,12 @@ It will return the deleted tour request object
 
 ------------------------------------  USERS  ------------------------------------
 
+Verdiğim endpoint ile ilgili aşağıdaki endpoint'leri kontrol eder ve kodların içeriği ile alakalı kodların üstüne
+// ile açıklama yaz. Aşağıdaki gibi yorumlar içerisine açıklama yaz
+/**
+*F01 -> http://localhost:8080/users/login
+**/
+
 /login
 
 F01 -> http://localhost:8080/users/login

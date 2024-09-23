@@ -2,7 +2,7 @@ package com.project.repository.business;
 
 import com.project.entity.concretes.business.Advert;
 import com.project.entity.concretes.business.TourRequest;
-import com.project.entity.enums.StatusType;
+import com.project.entity.enums.TourRequestEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,7 +29,7 @@ public interface TourRequestRepository extends JpaRepository<TourRequest, Long> 
             "t.status = :statusType")
     List<TourRequest> getTourRequest(@Param("date1") LocalDateTime date1,
                                      @Param("date2") LocalDateTime date2,
-                                     @Param("statusType") StatusType statusType);
+                                     @Param("statusType") TourRequestEnum tourRequestEnum);
 
     @Query("SELECT t FROM TourRequest t WHERE t.guestUser.id = :userId AND " +
             "(LOWER(t.advert.title) LIKE LOWER(CONCAT('%', :query, '%')))")

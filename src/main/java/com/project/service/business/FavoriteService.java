@@ -36,7 +36,7 @@ public class FavoriteService {
 
     public List<AdvertResponse> getAuthenticatedUserFavorites(HttpServletRequest request) {
         String username = (String) request.getAttribute("username");
-        BaseUserResponse authenticatedUser = authenticationService.findByUsername(username);
+        BaseUserResponse authenticatedUser = userService.findByUsername(username);
 
         List<Favorite> favorites = favoriteRepository.findByUser(userMapper.mapUserResponseToUser(authenticatedUser));
 

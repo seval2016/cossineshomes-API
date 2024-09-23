@@ -112,7 +112,8 @@ public interface AdvertRepository extends JpaRepository<Advert, Long> {
                                        @Param(value = "category") String category,
                                        @Param(value = "type") String type,
                                        @Param(value = "enumStatus") AdvertStatus enumStatus);
-
-
     Page<Advert> findByUser(User user, Pageable pageable);
+
+    @Query("SELECT a FROM Advert a WHERE SIZE(a.tourRequestList) > :amount ORDER BY SIZE(a.tourRequestList) DESC")
+    Page<Advert> getMostPopularAdverts(@Param("amount") int amount, Pageable pageable);
 }

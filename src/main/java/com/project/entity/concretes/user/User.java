@@ -13,10 +13,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Entity
@@ -78,9 +75,9 @@ public class User {
         updateAt = LocalDateTime.now();
     }
 
-    //------------İlişkili sütunlar -------------
-
-    //ManyToOne
+    /**
+     * İlişkiler
+     */
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -93,8 +90,8 @@ public class User {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Advert> advert;
 
-    @OneToMany(mappedBy = "ownerUser",cascade = CascadeType.ALL,orphanRemoval = true) //iliski ismine bak yaz
-    private List<TourRequest>tourRequests;
+    @OneToMany(mappedBy = "ownerUser",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<TourRequest> tourRequests;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
     private List<Favorite>favoritesList;

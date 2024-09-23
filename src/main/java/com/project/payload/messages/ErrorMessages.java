@@ -11,6 +11,7 @@ public class ErrorMessages {
     public static final String THERE_IS_NO_USER_REGISTERED_WITH_THIS_EMAIL_ADDRESS = "There is no user registered with this email address";
     public static final String TOUR_REQUEST_CAN_NOT_BE_CHANGED = "Tour request cannot be changed after it has been submitted.";
     public static final String THERE_IS_NO_TOUR_REQUEST_OF_ADVERT = "There is no tour request associated with this advert.";
+    public static final String THE_USER_HAS_RELATED_RECORDS_WITH_ADVERTS_OR_TOUR_REQUESTS ="The user has related records with adverts or tour requests." ;
 
 
     private ErrorMessages() {

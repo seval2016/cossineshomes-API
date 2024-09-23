@@ -1,8 +1,8 @@
 package com.project.payload.mappers;
 
 import com.project.entity.concretes.business.AdvertType;
-import com.project.payload.request.business.AdvertTypeRequest;
-import com.project.payload.response.business.advert.AdvertTypeResponse;
+import com.project.payload.request.business.AdvertTypesRequest;
+import com.project.payload.response.business.advert.AdvertTypesResponse;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -11,16 +11,16 @@ import org.springframework.stereotype.Component;
 public class AdvertTypesMapper {
     //DTO-> POJO
 
-    public AdvertType mapAdvertTypeRequestToAdvertType(AdvertTypeRequest advertTypeRequest){
+    public AdvertType mapAdvertTypeRequestToAdvertType(AdvertTypesRequest advertTypesRequest){
         return AdvertType.builder()
-                .title(advertTypeRequest.getTitle().toLowerCase())
+                .title(advertTypesRequest.getTitle().toLowerCase())
                 .build();
     }
 
     //POJO -> DTO
 
-    public AdvertTypeResponse mapAdvertTypeToAdvertTypeResponse(AdvertType advertType){
-        return AdvertTypeResponse.builder()
+    public AdvertTypesResponse mapAdvertTypeToAdvertTypeResponse(AdvertType advertType){
+        return AdvertTypesResponse.builder()
                 .id(advertType.getId())
                 .title(advertType.getTitle())
                 .build();
@@ -28,10 +28,10 @@ public class AdvertTypesMapper {
 
     //request -> updated pojo
 
-    public AdvertType mapAdvertRequestToUpdatedAdvertType(Long id, AdvertTypeRequest advertTypeRequest){
+    public AdvertType mapAdvertRequestToUpdatedAdvertType(Long id, AdvertTypesRequest advertTypesRequest){
         return AdvertType.builder()
                 .id(id)
-                .title(advertTypeRequest.getTitle())
+                .title(advertTypesRequest.getTitle())
                 .build();
     }
 }

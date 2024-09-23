@@ -20,10 +20,6 @@ public class UniquePropertyValidator {
         String updatedEmail="";
         boolean isChanged= false;
 
-        if( ! user.getUsername().equalsIgnoreCase(abstractUserRequest.getUsername())){
-            updatedUsername = abstractUserRequest.getUsername();
-            isChanged = true;
-        }
 
         if( ! user.getPhone().equalsIgnoreCase(abstractUserRequest.getPhone())){
             updatedPhone = abstractUserRequest.getPhone();

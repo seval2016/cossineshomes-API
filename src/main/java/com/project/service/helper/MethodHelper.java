@@ -4,7 +4,6 @@ import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.business.Image;
 import com.project.entity.concretes.user.User;
 import com.project.entity.concretes.user.UserRole;
-import com.project.entity.enums.AdvertStatus;
 import com.project.entity.enums.RoleType;
 import com.project.exception.BadRequestException;
 import com.project.exception.ConflictException;
@@ -236,31 +235,6 @@ public class MethodHelper {
         }
     }
 
-    public int updateAdvertStatus(int caseNumber, Advert advert) {
-        AdvertStatus status;
-        switch (caseNumber) {
-            case 0:
-                status = AdvertStatus.PENDING;
-                advert.setIsActive(false);
-                System.out.println("Advert status set to PENDING. Advert is now inactive.");
-                break;
-            case 1:
-                status = AdvertStatus.PENDING;
-                advert.setIsActive(true);
-                System.out.println("Advert status set to ACTIVATED. Advert is now active.");
-                break;
-            case 2:
-                status = AdvertStatus.REJECTED;
-                advert.setIsActive(false);
-                System.out.println("Advert status set to REJECTED. Advert is inactive.");
-                break;
-            default:
-                System.out.println("Invalid case number.");
-                return AdvertStatus.PENDING.getValue();
-        }
-        return caseNumber;
-    }
-
     public Advert isAdvertExistById(Long id){
         return advertRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_ADVERT_WITH_ID_MESSAGE,id)));
@@ -275,6 +249,14 @@ public class MethodHelper {
             imageList.add(image);
         }
         return imageList;
+    }
+
+    public void isRelatedToAdvertsOrTourRequest(User user) {
+
+        if (user.getTourRequests().size() > 0 || user.getAdvert().size() > 0) {
+            throw new BadRequestException(ErrorMessages.THE_USER_HAS_RELATED_RECORDS_WITH_ADVERTS_OR_TOUR_REQUESTS);
+        }
+
     }
 
     /*--------------------------For Report---------------------------------------*/
@@ -325,7 +307,7 @@ public class MethodHelper {
                 createRow(sheet, rowNum++, headerStyle,"ID", "Name", "Last Name","Title");
 
                 for (TourRequest tourRequest : (List<TourRequest>) list) {
-                    createRow(sheet, rowNum++,null, tourRequest.getId(), tourRequest.getOwnerUser().getFirstName(),tourRequest.getOwnerUser().getLastName(), tourRequest.getAdvert().getTitle());
+                    createRow(sheet, rowNum++,null, tourRequest.getId(), tourRequest.getOwnerUser().getFirstName(), tourRequest.getOwnerUser().getLastName(), tourRequest.getAdvert().getTitle());
                 }
             } else if (!list.isEmpty() && list.get(0) instanceof Advert) {
                 createRow(sheet, rowNum++, headerStyle,"ID", "AdvertTitle", "Status","AdvertTypeTitle","CategoryTitle");

@@ -8,7 +8,7 @@ import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.AdvertMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.request.business.AdvertRequest;
-import com.project.payload.response.business.advert.AdvertResponse;
+
 import com.project.payload.response.business.image.ImageResponse;
 import com.project.repository.business.AdvertRepository;
 import com.project.service.business.*;
@@ -19,12 +19,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 @Component
 @RequiredArgsConstructor
@@ -161,7 +162,6 @@ public class AdvertHelper {
     /**
      * Featured image'ı getirir.
      *
-     * @param advert Advert entity
      * @return ImageResponse veya null
      */
     public ImageResponse getFeaturedImage(List<Image> images) {
@@ -187,5 +187,37 @@ public class AdvertHelper {
                             .featured(firstImage.getFeatured())
                             .build();
                 });
+    }
+
+    public int updateAdvertStatus(int caseNumber, Advert advert) {
+        AdvertStatus status;
+        switch (caseNumber) {
+            case 0:
+                status = AdvertStatus.PENDING;
+                advert.setIsActive(false);
+                System.out.println("Advert status set to PENDING. Advert is now inactive.");
+                break;
+            case 1:
+                status = AdvertStatus.PENDING;
+                advert.setIsActive(true);
+                System.out.println("Advert status set to ACTIVATED. Advert is now active.");
+                break;
+            case 2:
+                status = AdvertStatus.REJECTED;
+                advert.setIsActive(false);
+                System.out.println("Advert status set to REJECTED. Advert is inactive.");
+                break;
+            default:
+                System.out.println("Invalid case number.");
+                return AdvertStatus.PENDING.getValue();
+        }
+        return caseNumber;
+    }
+
+    @Transactional
+    public Page<Advert> getPopularAdverts(int amount, Pageable pageable) {
+
+        return advertRepository.getMostPopularAdverts(amount,pageable);
+
     }
 }

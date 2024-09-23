@@ -2,7 +2,7 @@ package com.project.controller.business;
 
 import com.project.entity.concretes.business.Advert;
 import com.project.payload.response.business.advert.AdvertResponse;
-import com.project.payload.response.business.advert.AdvertTypeResponse;
+import com.project.payload.response.business.advert.AdvertTypesResponse;
 import com.project.service.business.FavoriteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,10 +30,10 @@ public class FavoriteController {
 
     @GetMapping("/admin/{id}") //kullanıcı favorilerini getiren kod
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')") //http://localhost:8080/favorites/admin/3
-    public ResponseEntity<List<AdvertTypeResponse>> getUserFavorites(@PathVariable Long id) {
+    public ResponseEntity<List<AdvertTypesResponse>> getUserFavorites(@PathVariable Long id) {
         List<Advert> favorites = favoriteService.getUserFavorites(id);
-        List<AdvertTypeResponse> response = favorites.stream()
-                .map(advert -> new AdvertTypeResponse(advert.getId(), advert.getTitle())) // Gereken alanları belirleyin
+        List<AdvertTypesResponse> response = favorites.stream()
+                .map(advert -> new AdvertTypesResponse(advert.getId(), advert.getTitle())) // Gereken alanları belirleyin
                 .collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }//K02

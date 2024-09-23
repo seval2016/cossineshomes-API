@@ -5,10 +5,9 @@ import com.project.entity.concretes.business.TourRequest;
 import com.project.entity.concretes.user.User;
 import com.project.entity.enums.AdvertStatus;
 import com.project.entity.enums.RoleType;
-import com.project.entity.enums.StatusType;
+import com.project.entity.enums.TourRequestEnum;
 import com.project.exception.BadRequestException;
 import com.project.payload.messages.ErrorMessages;
-import com.project.payload.response.business.advert.AdvertResponse;
 import com.project.repository.business.*;
 import com.project.repository.user.UserRepository;
 import com.project.service.helper.AdvertHelper;
@@ -17,6 +16,7 @@ import com.project.service.helper.TourRequestHelper;
 import com.project.service.user.UserService;
 import com.project.service.validator.DateTimeValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -66,14 +66,14 @@ public class ReportService {
         return ResponseEntity.ok(logMap);
     }
 
-    public ResponseEntity<byte[]> getPopulerAdvertsReport(int amount, HttpServletRequest request) {
+    public ResponseEntity<byte[]> getPopularAdvertsReport(int amount, HttpServletRequest request) {
         User user = methodHelper.getUserByHttpRequest(request);
         methodHelper.checkRoles(user, RoleType.MANAGER, RoleType.ADMIN);
+        Pageable pageable = PageRequest.of(0,10);
 
-        Pageable pageable = PageRequest.of(0, amount); // Pageable amount parametresini kullanır.
-        List<AdvertResponse> adverts = advertHelper.getMostPopularAdverts(pageable);
-
-        return methodHelper.excelResponse(adverts);
+        Page<Advert> advertsPage = advertHelper.getPopularAdverts(amount,pageable);
+        List<Advert> advertsList = advertsPage.getContent();
+        return methodHelper.excelResponse(advertsList);
     }
 
     public ResponseEntity<byte[]> getUsersWithRol(String rol, HttpServletRequest request) {
@@ -115,14 +115,14 @@ public class ReportService {
         if (begin != null && end != null) {
             dateTimeValidator.checkBeginTimeAndEndTime(begin, end);
         }
-        StatusType statusType;
+        TourRequestEnum tourRequestEnum;
         try {
-            statusType = StatusType.valueOf(status);
+            tourRequestEnum = TourRequestEnum.valueOf(status);
         } catch (BadRequestException e) {
             throw new BadRequestException(ErrorMessages.ADVERT_STATUS_NOT_FOUND);
         }
 
-        List<TourRequest> tourRequests = tourRequestHelper.getTourRequest(begin,end,statusType);
+        List<TourRequest> tourRequests = tourRequestHelper.getTourRequest(begin,end, tourRequestEnum);
         return methodHelper.excelResponse(tourRequests);
     }
 

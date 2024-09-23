@@ -1,6 +1,6 @@
 package com.project.entity.enums;
 
-public enum LogEnum {
+public enum Log {
 
     CREATED("Advert is created and waiting for approval"),
     UPDATED("Advert is updated"),
@@ -13,7 +13,7 @@ public enum LogEnum {
 
     private final String description;
 
-    LogEnum(String description) {
+    Log(String description) {
         this.description = description;
     }
 
@@ -21,8 +21,8 @@ public enum LogEnum {
         return description;
     }
 
-    public static LogEnum fromDescription(String description) {
-        for (LogEnum logDescription : LogEnum.values()) {
+    public static Log fromDescription(String description) {
+        for (Log logDescription : Log.values()) {
             // Büyük/küçük harf duyarlılığını kaldırmak için equalsIgnoreCase kullanılabilir
             if (logDescription.getDescription().equalsIgnoreCase(description)) {
                 return logDescription;
@@ -36,8 +36,8 @@ public enum LogEnum {
     // Tüm açıklamaları string formatında döndüren yardımcı bir metot
     private static String getAvailableDescriptions() {
         StringBuilder descriptions = new StringBuilder();
-        for (LogEnum logEnum : LogEnum.values()) {
-            descriptions.append(logEnum.getDescription()).append(", ");
+        for (Log log : Log.values()) {
+            descriptions.append(log.getDescription()).append(", ");
         }
         // Son virgülü ve boşluğu kaldırma
         if (descriptions.length() > 0) {

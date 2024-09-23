@@ -44,7 +44,7 @@ public class ReportController {
     @PreAuthorize("hasAnyAuthority('MANAGER','ADMIN')")
     public ResponseEntity<byte[]> getReportOfPopulerAdverts(@RequestParam(value = "amount") int amount, HttpServletRequest request) {
 
-        return logService.getPopulerAdvertsReport(amount, request);
+        return logService.getPopularAdvertsReport(amount, request);
 
     }
 
