@@ -4,6 +4,7 @@ import com.project.entity.concretes.business.Category;
 import com.project.entity.concretes.business.CategoryPropertyKey;
 import com.project.entity.enums.CategoryPropertyKeyType;
 import com.project.exception.ConflictException;
+import com.project.payload.mappers.CategoryMapper;
 import com.project.payload.mappers.CategoryPropertyKeyMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
@@ -20,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,19 +33,8 @@ public class CategoryPropertyKeyService {
     private final CategoryPropertyValueRepository categoryPropertyValueRepository;
     private final CategoryPropertyKeyHelper categoryPropertyKeyHelper;
     private final CategoryService categoryService;
+    private final CategoryMapper categoryMapper;
 
-
-    // Kategoriye ait property keys'leri getiren metod
-    /*public Set<CategoryPropertyKeyResponse> getCategoryPropertyKeys(Long categoryId) {
-        // Kategori ID'ye göre Category bul
-        Category category = categoryPropertyKeyHelper.findCategoryById(categoryId);
-
-        // Kategorinin property keys'lerini al
-        Set<CategoryPropertyKey> categoryPropertyKeys = category.getCategoryPropertyKeys();
-
-        // CategoryPropertyKey nesnelerini CategoryPropertyKeyResponse'a map et
-        return categoryPropertyKeyMapper.mapCategoryPropertyKeyToResponse();
-    }*/
 
     // Yeni property key oluşturma metodu
     public ResponseMessage<CategoryPropertyKeyResponse> createCategoryPropertyKeys(Long id, CategoryPropertyKeyRequest propertyKeyRequest) {
@@ -196,5 +187,14 @@ public class CategoryPropertyKeyService {
             }
 
         }
+    }
+
+    public Set<CategoryPropertyKeyResponse> findByCategoryIdEquals(Long id) {
+        Category category = categoryService.findCategoryById(id);
+        Set<CategoryPropertyKey> properKeysOfCategory = categoryPropertyKeyRepository.findByCategory_Id(category.getId());
+
+        return properKeysOfCategory.stream()
+                .map(categoryMapper::mapPropertyKeytoPropertyKeyResponse)
+                .collect(Collectors.toSet());
     }
 }

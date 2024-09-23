@@ -84,7 +84,7 @@ public class CategoryController {
     @GetMapping("/{id}/properties") // http://localhost:8080/categories/3/properties
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
     public Set<CategoryPropertyKeyResponse> getCategoryPropertyKeys(@PathVariable("id") Long id) {
-        return categoryPropertyKeyService.getCategoryPropertyKeys(id);
+        return categoryPropertyKeyService.findByCategoryIdEquals(id);
     }
 
     //--> C08 - Verilen kategori id'ye ait property anahtarını oluşturma

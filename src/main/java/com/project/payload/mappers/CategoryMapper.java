@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Data
 @Component
 public class CategoryMapper {
-    // Category ====> DTO:
 
     public CategoryResponse mapCategoryToCategoryResponse(Category category){
 
