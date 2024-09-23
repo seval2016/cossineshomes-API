@@ -28,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -42,93 +43,124 @@ public class TourRequestService {
     private final TourRequestMapper tourRequestMapper;
     private final DateTimeValidator dateTimeValidator;
     private final MethodHelper methodHelper;
-    private final UserRoleService userRoleService;
     private final PageableHelper pageableHelper;
     private final AdvertHelper advertHelper;
     private final LogService logService;
     private final TourRequestHelper tourRequestHelper;
 
-    // ----> S01
+
+    /**
+     * S01 -> Authenticated (giriş yapmış) kullanıcının tur taleplerini döndürür.
+     */
     public Page<TourRequestResponse> getUsersTourRequestWithPageForCustomer(HttpServletRequest httpServletRequest, String query, int page, int size, String sort, String type) {
+
         String userEmail = (String) httpServletRequest.getAttribute("email");
         User userByEmail = methodHelper.findByUserByEmail(userEmail);
-        methodHelper.checkRoles(userByEmail, RoleType.CUSTOMER, RoleType.ADMIN);
 
+        // Sadece CUSTOMER rolü kontrol edilecek
+        methodHelper.checkRoles(userByEmail, RoleType.CUSTOMER);
+
+        // Pagination için Pageable nesnesi oluşturuluyor
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
+        // Eğer arama sorgusu (query) varsa bu sorguya göre filtrelenmiş sonuçlar döndürülüyor
         if (query != null && !query.isEmpty()) {
-            return tourRequestRepository.findAllByGuestUserId_IdAndQuery(userByEmail.getId(), query, pageable)
+            return tourRequestRepository.findAllByGuestUserIdAndQuery(userByEmail.getId(), query, pageable)
                     .map(tourRequestMapper::mapTourRequestToTourRequestResponse);
-        } else {
-
-            return tourRequestRepository.findAllByGuestUserId_Id(userByEmail.getId(), pageable)
+        }
+        // Arama sorgusu yoksa sadece kullanıcının tur talepleri döndürülüyor
+        else {
+            return tourRequestRepository.findAllByGuestUserId(userByEmail.getId(), pageable)
                     .map(tourRequestMapper::mapTourRequestToTourRequestResponse);
         }
     }
 
-    // ----> S02
+
+    /**
+     * S02 -> Tüm tur taleplerini döndürür, yalnızca yönetici ve yönetici yardımcısı rollerine sahip kullanıcılar erişebilir.
+     */
     public Page<TourRequestResponse> getAllTourRequestWithPageForAdminAndManager(String query, int page, int size, String sort, String type) {
+
+        // Sayfalama ve sıralama ayarlarını oluşturuyoruz
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
 
+        // Eğer arama sorgusu yoksa tüm talepleri döndürüyoruz
         if (query == null || query.isEmpty()) {
-            return tourRequestRepository.findAll(pageable).map(tourRequestMapper::mapTourRequestToTourRequestResponse);
+            return tourRequestRepository.findAll(pageable)
+                    .map(tourRequestMapper::mapTourRequestToTourRequestResponse);
         }
+
+        // Eğer arama sorgusu varsa, arama filtresiyle sorgu çalıştırıyoruz
         return tourRequestRepository.getTourRequestsByPageWithQuery(query, pageable)
                 .map(tourRequestMapper::mapTourRequestToTourRequestResponse);
     }
 
-    // ----> S03
+    /**
+     * S03 -> Authenticated kullanıcının belirli bir tur talebi detayını döndürür.
+     */
     public ResponseEntity<TourRequestResponse> getUsersTourRequestDetails(Long id, HttpServletRequest request) {
-        //Rol kontrolü
+
+        // Giriş yapan kullanıcı bilgisi alınır
         User guestUser = methodHelper.getUserByHttpRequest(request);
+
+        // Kullanıcı rolü kontrolü: Sadece CUSTOMER erişebilir
         methodHelper.controlRoles(guestUser, RoleType.CUSTOMER);
 
+        // Kullanıcının talep ettiği ID'ye ait tur talebi aranır
         TourRequest tourRequest = tourRequestRepository.findByIdAndGuestUserId_Id(id, guestUser.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Tour request is not found for this user"));
+                .orElseThrow(() -> new ResourceNotFoundException("Tur talebi bulunamadı."));
 
+        // Tur talebi detayları response'a dönüştürülür ve döndürülür
         return ResponseEntity.ok(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequest));
+
     }
 
-    // ----> S04
-    public ResponseEntity<TourRequestResponse> getUsersTourRequestDetailsForAdmin(Long id, HttpServletRequest request) {
-        //Rol kontrolü
-        User guestUser = methodHelper.getUserByHttpRequest(request);
-        methodHelper.controlRoles(guestUser, RoleType.ADMIN, RoleType.MANAGER);
+    /**
+     * S04 -> Yönetici veya yönetici yardımcısının bir tur talebinin detaylarını görüntülemesine olanak tanır.
+     */
+    public TourRequestResponse getUsersTourRequestDetailsForAdmin(Long id) {
 
-        return ResponseEntity.ok(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequestHelper.findTourRequestById(id)));
+        // Tur talebi ID'ye göre aranır
+        TourRequest tourRequest = tourRequestHelper.findTourRequestById(id);
+
+        return tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequestHelper.findTourRequestById(id));
     }
 
-    // ----> S05
+    /**
+     * S05 -> http://localhost:8080/tour-requests + POST + JSON
+     */
     public ResponseMessage<TourRequestResponse> createTourRequest(TourRequestRequest tourRequestRequest, HttpServletRequest request) {
 
-        // Advertta Date-time cakismasi var mi?
-        List<TourRequest> tourRequestsFromRepoEnum = tourRequestHelper.getAlTourRequest();
-        dateTimeValidator.checkConflictTourRequestFromRepoByAdvert(tourRequestsFromRepoEnum, tourRequestRequest);
+        // Veritabanındaki mevcut tur taleplerini çek
+        List<TourRequest> existingTourRequests = tourRequestHelper.getAlTourRequest();
 
-        //UserGuest için aynı satte requesti var mı?
+        // Tarih ve saat çakışması var mı kontrol et (İlgili ilanda başka bir tur var mı?)
+        dateTimeValidator.checkConflictTourRequestFromRepoByAdvert(existingTourRequests, tourRequestRequest);
+
+        // Giriş yapan kullanıcıyı (guest) al ve onun için çakışan tur talebi var mı kontrol et
         String userEmail = (String) request.getAttribute("email");
-        User userGuest = methodHelper.findByUserByEmail(userEmail);
-        dateTimeValidator.checkConflictTourRequestFromRepoByUserForGuest(userGuest, tourRequestRequest);
+        User guestUser  = methodHelper.findByUserByEmail(userEmail);
+        dateTimeValidator.checkConflictTourRequestFromRepoByUserForGuest(guestUser, tourRequestRequest);
 
-        //UserOwner için çakışma kontrolü
+        // İlan sahibi (owner) için çakışma kontrolü
         Advert advert = advertHelper.getAdvertForFavorites(tourRequestRequest.getAdvertId());
         User ownerUser = advert.getUser();
-        // User ownerUser = methodHelper.findUserWithId(ownerId);
         dateTimeValidator.checkConflictTourRequestFromRepoByUserForOwner(ownerUser, tourRequestRequest);
 
-        if (userGuest.getId().equals(ownerUser.getId())) {
-            throw new BadRequestException("Can not book your own advert");
-        }
-        TourRequest mappedTourRequest = tourRequestMapper.mapTourRequestRequestToTourRequest(tourRequestRequest, advert);
-        mappedTourRequest.setStatus(TourRequestEnum.PENDING.getValue());
-        mappedTourRequest.setOwnerUser(ownerUser);
-        mappedTourRequest.setGuestUser(userGuest);
 
-        TourRequest savedTourRequest = tourRequestRepository.save(mappedTourRequest);
+        // Tur talebini mapleyerek oluştur ve varsayılan durumunu `PENDING` yap
+        TourRequest newTourRequest = tourRequestMapper.mapTourRequestRequestToTourRequest(tourRequestRequest, advert,ownerUser,guestUser);
+        newTourRequest.setStatus(TourRequestEnum.PENDING);
+        newTourRequest.setOwnerUser(ownerUser);
+        newTourRequest.setGuestUser(guestUser);
 
-        logService.createLogEvent(userGuest, savedTourRequest.getAdvert(), Log.TOUR_REQUEST_CREATED);
+        // Tur talebini kaydet
+        TourRequest savedTourRequest = tourRequestRepository.save(newTourRequest);
 
+        // Log kaydı oluştur
+        logService.createLogEvent(guestUser, savedTourRequest.getAdvert(), Log.TOUR_REQUEST_CREATED);
 
+        // Yanıt oluştur ve döndür
         return ResponseMessage.<TourRequestResponse>builder()
                 .object(tourRequestMapper.mapTourRequestToTourRequestResponse(savedTourRequest))
                 .httpStatus(HttpStatus.CREATED)
@@ -136,76 +168,77 @@ public class TourRequestService {
                 .build();
     }
 
-    // ----> S06
+    /**
+     * S06 -> Authenticated kullanıcının tur talebini günceller.
+     */
     public ResponseMessage<TourRequestResponse> updateTourRequest(TourRequestRequest tourRequestRequest, HttpServletRequest request, Long id) {
-        //Rol kontrolü
+
+            // Kullanıcı rolü kontrolü
+            User guestUser = methodHelper.getUserByHttpRequest(request);
+            methodHelper.controlRoles(guestUser, RoleType.CUSTOMER);
+
+            // Tur talebi var mı kontrol et
+            TourRequest tourRequest = tourRequestHelper.findTourRequestById(id);
+
+            // Sadece beklemede veya reddedilmiş talepler güncellenebilir
+            if (tourRequest.getStatus() != TourRequestEnum.PENDING &&
+                    tourRequest.getStatus() != TourRequestEnum.CANCELED) {
+                throw new BadRequestException(ErrorMessages.TOUR_REQUEST_CAN_NOT_BE_CHANGED);
+            }
+
+            // Tarih ve saat çakışması kontrolü (aynı ilan için başka bir talep var mı?)
+            List<TourRequest> existingTourRequests = tourRequestHelper.getAlTourRequest();
+            dateTimeValidator.checkConflictTourRequestFromRepoByAdvert(existingTourRequests, tourRequestRequest);
+            dateTimeValidator.checkConflictTourRequestFromRepoByUserForOwner(tourRequest.getOwnerUser(), tourRequestRequest);
+            dateTimeValidator.checkConflictTourRequestFromRepoByUserForGuest(guestUser, tourRequestRequest);
+
+            // Güncelleme için yeni ilan bilgilerini al
+            Advert advert = advertHelper.getAdvertForFavorites(tourRequestRequest.getAdvertId());
+
+            // Güncellenmiş tur talebi nesnesini oluştur
+            tourRequest.setTourDate(tourRequestRequest.getTourDate());
+            tourRequest.setTourTime(tourRequestRequest.getTourTime());
+            tourRequest.setAdvert(advert);
+            tourRequest.setStatus(TourRequestEnum.PENDING);  // Durumu tekrar "Pending" olarak ayarla
+            tourRequest.setGuestUser(guestUser);
+            tourRequest.setOwnerUser(advert.getUser());
+            tourRequest.setUpdateAt(LocalDateTime.now()); // Güncelleme zamanını ayarla
+
+            // Log kaydı oluştur
+            logService.createLogEvent(guestUser, advert, Log.UPDATED);
+
+            // Yanıt oluştur ve döndür
+            return ResponseMessage.<TourRequestResponse>builder()
+                    .object(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequestRepository.save(tourRequest)))
+                    .httpStatus(HttpStatus.OK)
+                    .message(String.format(SuccessMessages.TOUR_REQUEST_UPDATED, id))
+                    .build();
+    }
+
+    /**
+     * S07 -> Authenticated kullanıcının tur talebini iptal eder.
+     */
+    public ResponseMessage<TourRequestResponse> cancelTourRequest(Long id, HttpServletRequest request) {
+
+        // Kullanıcı rolü kontrolü
         User guestUser = methodHelper.getUserByHttpRequest(request);
         methodHelper.controlRoles(guestUser, RoleType.CUSTOMER);
 
-        //id ile tour request var mi?
-        TourRequest tourRequest = tourRequestHelper.findTourRequestById(id);
+        // Kullanıcının tur talebi var mı kontrol et
+        TourRequest tourRequest = tourRequestRepository.findByIdByCustomer(guestUser.getId(), id);
 
-        if (tourRequest.getStatus() == 1) {
-            throw new BadRequestException(ErrorMessages.TOUR_REQUEST_CAN_NOT_BE_CHANGED);
+        // Talep bulunamazsa hata fırlat
+        if (tourRequest == null) {
+            throw new NotFoundException(ErrorMessages.TOUR_REQUEST_NOT_FOUND);
         }
 
-        List<TourRequest> tourRequestList = tourRequestHelper.getAlTourRequest();
+        // Tur talebinin durumunu iptal olarak ayarla
+        tourRequest.setStatus(TourRequestEnum.CANCELED);
 
-        dateTimeValidator.checkConflictTourRequestFromRepoByAdvert(tourRequestList, tourRequestRequest);
-        dateTimeValidator.checkConflictTourRequestFromRepoByUserForOwner(tourRequest.getOwnerUser(), tourRequestRequest);
-        dateTimeValidator.checkConflictTourRequestFromRepoByUserForGuest(guestUser, tourRequestRequest);
-
-        //request to entity
-        Advert advert = advertHelper.getAdvertForFavorites(tourRequestRequest.getAdvertId());
-        TourRequest updatedTourRequest = tourRequestMapper.mapTourRequestRequestToTourRequest(tourRequestRequest, advert);
-        updatedTourRequest.setId(id);
-        updatedTourRequest.setStatus(TourRequestEnum.PENDING.getValue());
-        updatedTourRequest.setGuestUser(guestUser);
-        updatedTourRequest.setOwnerUser(advert.getUser());
-        updatedTourRequest.setCreateAt(LocalDateTime.now());
-
-
-        logService.createLogEvent(guestUser, advert, Log.TOUR_REQUEST_ACCEPTED);
-
-        return ResponseMessage.<TourRequestResponse>builder()
-                .object(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequestRepository.save(updatedTourRequest)))
-                .httpStatus(HttpStatus.OK)
-                .message(String.format(SuccessMessages.TOUR_REQUEST_UPDATED, id))
-                .build();
-    }
-
-    // ----> S07
-    public ResponseMessage<TourRequestResponse> updateTourRequestCancel(Long id, HttpServletRequest request) {
-        //Rol kontrolü
-        User guestUser = methodHelper.getUserByHttpRequest(request);
-        methodHelper.controlRoles(guestUser, RoleType.CUSTOMER);
-
-        //id ile tour request var mi?
-        TourRequest tourRequest = tourRequestRepository.findByIdByCustomer(guestUser.getId(), id);
-
-        tourRequest.setStatus(TourRequestEnum.CANCELED.getValue());
-
+        // Log kaydı oluştur
         logService.createLogEvent(guestUser, tourRequest.getAdvert(), Log.TOUR_REQUEST_CANCELED);
-        return ResponseMessage.<TourRequestResponse>builder()
-                .object(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequestRepository.save(tourRequest)))
-                .httpStatus(HttpStatus.OK)
-                .message(SuccessMessages.TOUR_REQUEST_UPDATED)
-                .build();
-    }
 
-    // ----> S08
-    public ResponseMessage<TourRequestResponse> updateTourRequestApprove(Long id, HttpServletRequest
-            httpServletRequest) {
-        //Rol kontrolü
-        User guestUser = methodHelper.getUserByHttpRequest(httpServletRequest);
-        methodHelper.controlRoles(guestUser, RoleType.CUSTOMER);
-
-        //id ile tour request var mi?
-        TourRequest tourRequest = tourRequestRepository.findByIdByCustomer(guestUser.getId(), id);
-
-        tourRequest.setStatus(TourRequestEnum.CANCELED.getValue());
-
-        logService.createLogEvent(guestUser, tourRequest.getAdvert(), Log.TOUR_REQUEST_CANCELED);
+        // İptal edilen tur talebini kaydet ve yanıt oluştur
         return ResponseMessage.<TourRequestResponse>builder()
                 .object(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequestRepository.save(tourRequest)))
                 .httpStatus(HttpStatus.OK)
@@ -213,21 +246,59 @@ public class TourRequestService {
                 .build();
     }
 
-    // ----> S09
-    public ResponseMessage<TourRequestResponse> updateTourRequestDecline(Long id, HttpServletRequest
-            httpServletRequest) {
-
-        //Rol kontrolü
+    /**
+     * S08 -> Authenticated kullanıcının tur talebini onaylar.
+     */
+    public ResponseMessage<TourRequestResponse> updateTourRequestApprove(Long id, HttpServletRequest httpServletRequest) {
+        // Kullanıcı rolü kontrolü
         User guestUser = methodHelper.getUserByHttpRequest(httpServletRequest);
         methodHelper.controlRoles(guestUser, RoleType.CUSTOMER);
 
-        //id ile tour request var mi?
+        // Kullanıcının tur talebi var mı kontrol et
         TourRequest tourRequest = tourRequestRepository.findByIdByCustomer(guestUser.getId(), id);
 
-        tourRequest.setStatus(TourRequestEnum.DECLINED.getValue());
+        // Talep bulunamazsa hata fırlat
+        if (tourRequest == null) {
+            throw new NotFoundException(ErrorMessages.TOUR_REQUEST_NOT_FOUND);
+        }
 
+        // Talep durumunu onayla
+        tourRequest.setStatus(TourRequestEnum.APPROVED);
+
+        // Log kaydı oluştur
+        logService.createLogEvent(guestUser, tourRequest.getAdvert(), Log.CREATED);
+
+        // Onaylanan tur talebini kaydet ve yanıt oluştur
+        return ResponseMessage.<TourRequestResponse>builder()
+                .object(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequestRepository.save(tourRequest)))
+                .httpStatus(HttpStatus.OK)
+                .message(SuccessMessages.TOUR_REQUEST_APPROVED)
+                .build();
+    }
+
+    /**
+     * S09 -> Authenticated kullanıcının tur talebini reddeder.
+     */
+    public ResponseMessage<TourRequestResponse> updateTourRequestDecline(Long id, HttpServletRequest httpServletRequest) {
+        // Kullanıcı rolü kontrolü
+        User guestUser = methodHelper.getUserByHttpRequest(httpServletRequest);
+        methodHelper.controlRoles(guestUser, RoleType.CUSTOMER);
+
+        // Kullanıcının tur talebi var mı kontrol et
+        TourRequest tourRequest = tourRequestRepository.findByIdByCustomer(guestUser.getId(), id);
+
+        // Talep bulunamazsa hata fırlat
+        if (tourRequest == null) {
+            throw new NotFoundException(ErrorMessages.TOUR_REQUEST_NOT_FOUND);
+        }
+
+        // Talep durumunu reddet
+        tourRequest.setStatus(TourRequestEnum.DECLINED);
+
+        // Log kaydı oluştur
         logService.createLogEvent(guestUser, tourRequest.getAdvert(), Log.TOUR_REQUEST_DECLINED);
 
+        // Reddedilen tur talebini kaydet ve yanıt oluştur
         return ResponseMessage.<TourRequestResponse>builder()
                 .object(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequestRepository.save(tourRequest)))
                 .httpStatus(HttpStatus.OK)
@@ -235,21 +306,26 @@ public class TourRequestService {
                 .build();
     }
 
-    // ----> S10
+    /**
+     * S10 -> Authenticated kullanıcının tur talebini siler.
+     */
     public ResponseMessage<TourRequestResponse> deleteTourRequestById(Long id, HttpServletRequest httpServletRequest) {
-        User guestUser = methodHelper.getUserByHttpRequest(httpServletRequest);
-        methodHelper.controlRoles(guestUser, RoleType.ADMIN, RoleType.MANAGER);
+            // Kullanıcı rolü kontrolü
+            User guestUser = methodHelper.getUserByHttpRequest(httpServletRequest);
+            methodHelper.controlRoles(guestUser, RoleType.CUSTOMER);
 
-        //id ile tour request var mi?
-        TourRequest tourRequest = tourRequestHelper.findTourRequestById(id);
+            // Tur talebini id ile bul
+            TourRequest tourRequest = tourRequestHelper.findTourRequestById(id);
 
-        tourRequestRepository.delete(tourRequest);
+            // Tur talebini sil
+            tourRequestRepository.delete(tourRequest);
 
-        return ResponseMessage.<TourRequestResponse>builder()
-                .object(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequest))
-                .httpStatus(HttpStatus.OK)
-                .message(SuccessMessages.TOUR_REQUEST_DELETED)
-                .build();
+            // Silinen talep nesnesini döndür
+            return ResponseMessage.<TourRequestResponse>builder()
+                    .object(tourRequestMapper.mapTourRequestToTourRequestResponse(tourRequest))
+                    .httpStatus(HttpStatus.OK)
+                    .message(SuccessMessages.TOUR_REQUEST_DELETED)
+                    .build();
     }
 
 }

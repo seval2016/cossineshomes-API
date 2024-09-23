@@ -14,44 +14,31 @@ import java.time.LocalDateTime;
 @Component
 public class CategoryMapper {
 
-    public CategoryResponse mapCategoryToCategoryResponse(Category category){
-
+    // Category -> CategoryResponse
+    public CategoryResponse mapCategoryToCategoryResponse(Category category) {
         return CategoryResponse.builder()
                 .id(category.getId())
                 .title(category.getTitle())
                 .icon(category.getIcon())
-                .builtIn(category.getBuiltIn())
-                .seq(category.getSeq())
                 .slug(category.getSlug())
                 .isActive(category.getIsActive())
+                .seq(category.getSeq())
+                .builtIn(category.getBuiltIn())
                 .createAt(category.getCreateAt())
                 .updateAt(category.getUpdateAt())
-                .categoryPropertyKeys(category.getCategoryPropertyKeys())
                 .build();
     }
 
-    // DTO ====> Category(POJO) :
-
-    public Category mapCategoryRequestToCategory(CategoryRequest categoryRequest){
-
+    // CategoryRequest -> Category
+    public Category mapCategoryRequestToCategory(CategoryRequest categoryRequest) {
         return Category.builder()
                 .title(categoryRequest.getTitle())
                 .icon(categoryRequest.getIcon())
-                .seq(categoryRequest.getSeq())
                 .slug(categoryRequest.getSlug())
                 .isActive(categoryRequest.getIsActive())
-                .createAt(LocalDateTime.now())
-                .updateAt(LocalDateTime.now())
-                .builtIn(false)
+                .seq(categoryRequest.getSeq())
+                .builtIn(categoryRequest.getBuiltIn())
                 .build();
     }
 
-    //Property key pojo ---> Property key response
-    public CategoryPropertyKeyResponse mapPropertyKeytoPropertyKeyResponse(CategoryPropertyKey categoryPropertyKey) {
-        return CategoryPropertyKeyResponse.builder()
-                .id(categoryPropertyKey.getId())
-                .name(categoryPropertyKey.getName())
-                .builtIn(false)
-                .build();
-    }
 }

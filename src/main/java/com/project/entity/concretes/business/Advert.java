@@ -83,9 +83,8 @@ public class Advert {
         }
     }
 
-    /**
-     * İlişkiler
-     */
+    /** İlişkiler */
+
     @ManyToOne
     @JoinColumn(name = "advert_type_id", nullable = false)
     private AdvertType advertType;
@@ -123,7 +122,7 @@ public class Advert {
     @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
     private List<Favorite> favoritesList;
 
-    @OneToMany(mappedBy = "advertId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "advert", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Log> logList;
 }

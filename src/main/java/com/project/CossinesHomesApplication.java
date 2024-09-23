@@ -13,6 +13,7 @@ import com.project.repository.business.ImagesRepository;
 import com.project.repository.user.UserRoleRepository;
 import com.project.service.business.*;
 import com.project.service.helper.AdvertHelper;
+import com.project.service.helper.CategoryHelper;
 import com.project.service.helper.CategoryPropertyKeyHelper;
 import com.project.service.helper.MethodHelper;
 import com.project.service.user.UserRoleService;
@@ -23,6 +24,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.*;
 import java.time.LocalDateTime;
@@ -46,6 +48,7 @@ public class CossinesHomesApplication implements CommandLineRunner {
 	private final ImagesRepository imagesRepository;
 	private final MethodHelper methodHelper;
 	private final AdvertHelper advertHelper;
+	private final CategoryHelper categoryHelper;
 	private final CategoryPropertyKeyHelper categoryPropertyKeyHelper;
 
 	@Autowired
@@ -63,6 +66,7 @@ public class CossinesHomesApplication implements CommandLineRunner {
 									ImagesRepository imagesRepository,
 									MethodHelper methodHelper,
 									AdvertHelper advertHelper,
+									CategoryHelper categoryHelper,
 									CategoryPropertyKeyHelper categoryPropertyKeyHelper) {
 		this.passwordEncoder = passwordEncoder;
 		this.userRoleService = userRoleService;
@@ -78,6 +82,7 @@ public class CossinesHomesApplication implements CommandLineRunner {
 		this.imagesRepository = imagesRepository;
 		this.methodHelper = methodHelper;
 		this.advertHelper = advertHelper;
+		this.categoryHelper=categoryHelper;
 		this.categoryPropertyKeyHelper = categoryPropertyKeyHelper;
 	}
 
@@ -119,8 +124,8 @@ public class CossinesHomesApplication implements CommandLineRunner {
 		}
 
 		// Varsayılan kategoriler oluşturuluyor
-		categoryService.generateCategory();
-		categoryPropertyKeyService.generateCategoryPropertyKeys();
+		categoryHelper.generateCategory();
+		categoryHelper.generateCategoryPropertyKeys();
 
 		// Varsayılan ülkeler ekleniyor
 		if (countryService.countAllCountries() == 0) {
@@ -173,13 +178,13 @@ public class CossinesHomesApplication implements CommandLineRunner {
 		DistrictRequest defaultDistrict=new DistrictRequest();
 		defaultDistrict.setName("Üsküdar");
 	}
-	private void addDefaultAdverts(){
-		Object[] arr1 = {"Şehir Merkezinde Modern Daire", "3+1 odalı, geniş balkonlu ve yerden ısıtmalı modern daire. Merkezi konum, kapalı otopark ve güvenlik mevcut", "Ankara", 2500000.00, 1L, 2L};
-		Object[] arr2 = {"Deniz Manzaralı Ev", "Denize sıfır, 4+1 odalı, özel havuzlu villa. Eşsiz manzara, geniş bahçe ve lüks iç mekan.", "İzmir", 10000000.00, 1L, 3L};
-		Object[] arr3 = {"Doğa İçinde Ferah Ev", "2+1 odalı, bahçeli köy evi. Şehrin gürültüsünden uzak, huzurlu yaşam için ideal. Ahşap detaylarla sıcak bir atmosfer.", "Bursa", 12000000.00, 1L, 4L};
-		Object[] arr4 = {"Lüks Şehir Evi", "Antalya'nın prestijli bölgesinde 5+1 odalı lüks şehir evi. Akıllı ev sistemi, geniş bahçe ve muhteşem şehir manzarası.", "Antalya", 45000000.00, 1L, 5L};
-
-		List<Object[]> advertList = Arrays.asList(arr1, arr2, arr3, arr4);
+	private void addDefaultAdverts() throws IOException {
+		List<Object[]> advertList = Arrays.asList(
+				new Object[]{"Şehir Merkezinde Modern Daire", "3+1 odalı, geniş balkonlu ve yerden ısıtmalı modern daire. Merkezi konum, kapalı otopark ve güvenlik mevcut", "Ankara", new BigDecimal("2500000.00"), 1L, 2L},
+				new Object[]{"Deniz Manzaralı Ev", "Denize sıfır, 4+1 odalı, özel havuzlu villa. Eşsiz manzara, geniş bahçe ve lüks iç mekan.", "İzmir", new BigDecimal("10000000.00"), 1L, 3L},
+				new Object[]{"Doğa İçinde Ferah Ev", "2+1 odalı, bahçeli köy evi. Şehrin gürültüsünden uzak, huzurlu yaşam için ideal. Ahşap detaylarla sıcak bir atmosfer.", "Bursa", new BigDecimal("12000000.00"), 1L, 4L},
+				new Object[]{"Lüks Şehir Evi", "Antalya'nın prestijli bölgesinde 5+1 odalı lüks şehir evi. Akıllı ev sistemi, geniş bahçe ve muhteşem şehir manzarası.", "Antalya", new BigDecimal("45000000.00"), 1L, 5L}
+		);
 
 		for (Object[] advertData : advertList) {
 			Advert advert = new Advert();
@@ -198,26 +203,33 @@ public class CossinesHomesApplication implements CommandLineRunner {
 			advert.setIsActive(true);
 			advert.setCreateAt(LocalDateTime.now());
 
-			advertHelper.saveRunner(advert);
+			try {
+				advertHelper.saveRunner(advert);
+			} catch (Exception e) {
+				System.err.println("Advert kaydedilirken hata: " + e.getMessage());
+				continue; // Hata alındıysa bir sonraki ilana geç
+			}
 
 			// Define and save images for each advert
 			String[] imageNames = {"mustakil.jpg", "yali.jpg", "villa.jpg"};
 
 			for (String imageName : imageNames) {
-				Path path = Paths.get("src/main/resources/static/images/" + imageName);
-				byte[] imageData = Files.readAllBytes(path);
+				try {
+					Path path = Paths.get("src/main/resources/static/images/" + imageName);
+					byte[] imageData = Files.readAllBytes(path);
 
-				Image image = new Image();
-				image.setName(imageName);
-				image.setData(imageData);
-				image.setAdvert(advert);
+					Image image = new Image();
+					image.setName(imageName);
+					image.setData(imageData);
+					image.setAdvert(advert);
 
-				imagesRepository.save(image);
+					imagesRepository.save(image);
+				} catch (IOException e) {
+					System.err.println("Resim yüklenirken hata: " + e.getMessage());
+				}
 			}
 		}
+
 	}
-
-
-	// Varsayılan ilanları ekleyen metot
 
 }

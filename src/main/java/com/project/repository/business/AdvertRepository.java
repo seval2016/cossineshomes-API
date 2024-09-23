@@ -53,7 +53,7 @@ public interface AdvertRepository extends JpaRepository<Advert, Long> {
      *
      * @return List of CategoryAdvertResponse
      */
-    @Query("SELECT c.name AS categoryName, COUNT(a) AS amount" +
+    @Query("SELECT c.name AS categoryName, COUNT(a) AS amount " +
             "FROM Category c " +
             "LEFT JOIN Advert a ON a.category.id = c.id " +
             "GROUP BY c.id, c.name")

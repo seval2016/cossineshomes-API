@@ -16,5 +16,9 @@ public class CategoryPropertyValueResponse {
     private Long advertId;
     private Long categoryPropertyKeyId;
 
+    public CategoryPropertyValueResponse(Long id,String value){
+        this.id=id;
+        this.value=value;
+    }
 
 }

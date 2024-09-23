@@ -40,6 +40,7 @@ public class AdvertHelper {
     private final AdvertTypesService advertTypesService;
     private final DateTimeValidator dateTimeValidator;
     private final DistrictService districtService;
+    private final CategoryHelper categoryHelper;
 
 
     /**
@@ -112,7 +113,7 @@ public class AdvertHelper {
         LocalDateTime end = LocalDateTime.parse(date2, formatter);
         dateTimeValidator.checkBeginTimeAndEndTime(begin, end);
 
-        categoryService.getCategoryByTitle(category);
+        categoryHelper.getCategoryByTitle(category);
         AdvertStatus statusEnum = AdvertStatus.fromValue(status.getValue());
         advertTypesService.findByTitle(type);
 

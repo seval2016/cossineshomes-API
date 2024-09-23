@@ -56,6 +56,8 @@ public class ErrorMessages {
     public static final String NOT_FOUND_USER_USER_ROLE_MESSAGE = "Error: User not found with user-role %s";
     public static final String NOT_FOUND_USER_MESSAGE = "Error: User not found with id %s";
     public static final String NOT_FOUND_USER_EMAIL = "There is no email that matches %s";
+
+    public static final String EMAIL_CANNOT_BE_NULL_OR_EMPTY = "Email cannot be null or empty";
     public static final String USER_IS_NOT_FOUND = "The user with %s id is not found";
     public static final String USER_IS_NOT_FOUND_BY_EMAIL = "The user with %s email is not found";
     public static final String NOT_FOUND_USER_WITH_ROLE_MESSAGE = "Error: The role information of the user with id %s is not role: %s";

@@ -63,7 +63,7 @@ public class AdvertMapper {
                 .title(advert.getTitle())
                 .properties(advert.getCategoryPropertyValuesList().stream()
                         .map(propertyValue -> new CategoryPropertyValueResponse(
-                                propertyValue.getCategoryPropertyKey(),
+                                propertyValue.getCategoryPropertyKey().getId(),
                                 propertyValue.getValue()
                         ))
                         .collect(Collectors.toList()))

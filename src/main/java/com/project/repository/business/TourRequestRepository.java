@@ -18,6 +18,21 @@ import java.util.Set;
 @Repository
 public interface TourRequestRepository extends JpaRepository<TourRequest, Long> {
 
+    /**
+     * S01 - Kullanıcıya ait tur taleplerini arama sorgusuna göre döndüren sorgu
+     */
+    @Query("SELECT t FROM TourRequest t WHERE t.guestUser.id = :userId AND " +
+            "(t.advert.title LIKE %:query% OR t.tourDate LIKE %:query%)")
+    Page<TourRequest> findAllByGuestUserIdAndQuery(@Param("userId") Long userId,
+                                                   @Param("query") String query,
+                                                   Pageable pageable);
+
+    /**
+     * S01 - Kullanıcının tüm tur taleplerini döndüren sorgu
+     */
+    Page<TourRequest> findAllByGuestUserId(Long userId, Pageable pageable);
+
+
     @Query("SELECT tr FROM TourRequest tr WHERE tr.guestUser.id = ?1")
     Page<TourRequest> findAllByUserId(Long id, Pageable pageable);
 

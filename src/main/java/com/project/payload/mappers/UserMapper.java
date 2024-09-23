@@ -1,9 +1,6 @@
 package com.project.payload.mappers;
 
-import com.project.entity.concretes.business.Favorite;
 import com.project.entity.concretes.user.User;
-import com.project.entity.concretes.user.UserRole;
-import com.project.entity.enums.RoleType;
 import com.project.payload.request.abstracts.BaseUserRequest;
 import com.project.payload.request.user.UserRequest;
 import com.project.payload.request.user.UserRequestWithoutPassword;
@@ -13,12 +10,9 @@ import com.project.payload.response.user.CustomerResponse;
 import com.project.payload.response.UserResponse;
 
 import com.project.payload.response.user.RegisterResponse;
-import com.project.service.helper.MethodHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor

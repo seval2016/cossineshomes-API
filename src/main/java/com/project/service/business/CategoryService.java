@@ -10,11 +10,13 @@ import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.CategoryPropertyKeyRequest;
 import com.project.payload.request.business.CategoryRequest;
+import com.project.payload.response.business.category.CategoryPropertyKeyResponse;
 import com.project.payload.response.business.category.CategoryResponse;
 import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.AdvertRepository;
 import com.project.repository.business.CategoryPropertyKeyRepository;
 import com.project.repository.business.CategoryRepository;
+import com.project.service.helper.CategoryHelper;
 import com.project.service.helper.PageableHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,28 +38,25 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
-    private final CategoryPropertyKeyRepository categoryPropertyKeyRepository;
-    private final AdvertRepository advertRepository;
-    private final PageableHelper pageableHelper;
+    private final CategoryHelper categoryHelper;
 
-
-    //--------------------yardımcı metodlar-------------------------
-
-
-    public Category findCategoryById(Long id) {
-        return categoryRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(ErrorMessages.CATEGORY_NOT_FOUND + id));
-    }
-    //---------------------------------------------
-
-
+    /**
+     * C01
+     * Tüm aktif kategorileri listeleme
+     */
     public Page<CategoryResponse> getAllActiveCategories(String query, int page, int size, String sort, String type) {
+        // Create a Pageable object with the given parameters
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(type), sort));
 
-        Page<Category> categoryPage = categoryRepository.findByTitleContainingAndIsActiveTrue(query, pageable);
-        return  categoryPage.map(categoryMapper::mapCategoryToCategoryResponse);
+        // Perform the search based on the query and return the results
+        return categoryRepository.findByTitleContainingAndIsActiveTrue( query, pageable)
+                .map(categoryMapper::mapCategoryToCategoryResponse);
     }
 
+    /**
+     * C02
+     * Tüm kategorileri çağırma
+     */
     public Page<CategoryResponse> getAllCategoriesWithPageable(String query, int page, int size, String sort, String type) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(type), sort));
         Page<Category> categoryPage;
@@ -66,14 +66,22 @@ public class CategoryService {
         } else {
             categoryPage = categoryRepository.findAll(pageable);
         }
+
         return categoryPage.map(categoryMapper::mapCategoryToCategoryResponse);
     }
 
+    /**
+     * C03
+     * id'ye göre kategori çağırma
+     */
     public Category getCategoryById(Long id) {
         return categoryRepository.findById(id).orElseThrow(() -> new RuntimeException(ErrorMessages.CATEGORY_NOT_FOUND));
-
     }
 
+    /**
+     * C04
+     * Create a new category
+     */
     public ResponseMessage<CategoryResponse> createCategory(CategoryRequest categoryRequest) {
         if (categoryRepository.existsByTitle(categoryRequest.getTitle())) {
             throw new ConflictException("Category " + categoryRequest.getTitle() + " is already exist ");
@@ -102,9 +110,13 @@ public class CategoryService {
                         .build();
             }
 
+    /**
+     * C05
+     * Update a category by its ID
+     */
     public ResponseMessage<CategoryResponse> updateCategoryById(Long id, CategoryRequest categoryRequest) {
         // Kategori'yi id ile bul
-        Category category = findCategoryById(id);
+        Category category = categoryHelper.findCategoryById(id);
 
         // Eğer builtIn true ise hata fırlat
         if (category.getBuiltIn()) {
@@ -128,10 +140,14 @@ public class CategoryService {
                 .build();
     }
 
+    /**
+     * C06
+     * Id'ye göre kategori silme
+     */
     public ResponseMessage<CategoryResponse> deleteCategory(Long id) {
 
         // Kategori'yi id ile bul
-        Category category = findCategoryById(id);
+        Category category = categoryHelper.findCategoryById(id);
 
         // builtIn özelliği true ise silmeye izin verilmez
         if (category.getBuiltIn()) {
@@ -153,6 +169,10 @@ public class CategoryService {
                 .build();
     }
 
+    /**
+     * C11
+     * Verilen kategori id'ye ait propertyleri döndüren endpoint
+     */
     public ResponseMessage<CategoryResponse> findCategoryBySlug(String slug) {
 
         Category category = categoryRepository.findBySlug(slug)
@@ -165,74 +185,5 @@ public class CategoryService {
                 .message(SuccessMessages.CATEGORY_FOUNDED)
                 .httpStatus(HttpStatus.OK)
                 .build();
-    }
-
-
-    //-------------------------------
-
-    public List<Category> getCategoryByTitle(String category) {
-
-        return categoryRepository.findByTitle(category).orElseThrow(
-                () -> new BadRequestException(ErrorMessages.CATEGORY_NOT_FOUND)
-        );
-    }
-
-    public void generateCategory() {
-        if (categoryRepository.findAll().isEmpty()) {
-            List<Category> categories = List.of(
-                    Category.builder()
-                            .id(1L)
-                            .title("Müstakil Ev")
-                            .icon("ev_icon")
-                            .builtIn(true)
-                            .seq(0)
-                            .slug("mustakil-ev")
-                            .isActive(true)
-                            .build(),
-                    Category.builder()
-                            .id(2L)
-                            .title("Apartman Dairesi")
-                            .icon("dairesi_icon")
-                            .builtIn(true)
-                            .seq(0)
-                            .slug("apartman-dairesi")
-                            .isActive(true)
-                            .build(),
-                    Category.builder()
-                            .id(3L)
-                            .title("Ofis")
-                            .icon("ofis_icon")
-                            .builtIn(true)
-                            .seq(0)
-                            .slug("kelepir-ofis")
-                            .isActive(true)
-                            .build(),
-                    Category.builder()
-                            .id(4L)
-                            .title("Villa")
-                            .icon("villa_icon")
-                            .builtIn(true)
-                            .seq(0)
-                            .slug("kelepir-villa")
-                            .isActive(true)
-                            .build(),
-                    Category.builder()
-                            .id(5L)
-                            .title("Arsa")
-                            .icon("arsa_icon")
-                            .builtIn(true)
-                            .seq(0)
-                            .slug("kelepir-arsa")
-                            .isActive(true)
-                            .build()
-            );
-
-            // Kategorileri kaydet
-            categoryRepository.saveAll(categories);
-        }
-    }
-
-    public List<Category> getAllCategory() {
-        return categoryRepository.findAll();
     }
 }

@@ -48,71 +48,116 @@ public class MethodHelper {
     private final UserRoleService userRoleService;
     private final AdvertRepository advertRepository;
 
-    //!!! isUserExist
+
+    /**
+     * Kullanıcının var olup olmadığını kontrol eder. Bulunmazsa bir istisna fırlatır.
+     */
     public User isUserExist(Long userId){
         return userRepository.findById(userId).orElseThrow(()->
                 new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_USER_MESSAGE, userId)));
     }
 
-    //!!! builtIn kontrolu
+    /**
+     * Kullanıcının builtIn alanını kontrol eder. Eğer true ise işlem yapmayı engeller.
+     */
     public void checkBuiltIn(User user){
         if(Boolean.TRUE.equals(user.getBuiltIn())) {
             throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
         }
     }
 
-    //!!! Rol kontrolu yapan metod
-    public void checkRole(User user, RoleType role){
-       if(!user.getUserRole()
-               .stream()
-               .anyMatch(userRole -> userRole.getRole().equals(role))){
+    /**
+     * Kullanıcının belirtilen rollerden birine sahip olup olmadığını kontrol eder.
+     */
+    public void controlRoles(User user, RoleType... roleTypes) {
 
-            throw new ResourceNotFoundException(
-                    String.format(ErrorMessages.NOT_FOUND_USER_WITH_ROLE_MESSAGE, user.getId(), role));
+        Set<RoleType> roles = new HashSet<>();
+        Collections.addAll(roles, roleTypes);
+        Set<UserRole> rolesUserRole = roles.stream().map(userRoleService::getUserRole).collect(Collectors.toSet());
+
+        for (UserRole role : user.getUserRole()) {
+            if (!(rolesUserRole.contains(role))) {
+                throw new BadRequestException(ErrorMessages.NOT_HAVE_AUTHORITY);
+            }
         }
     }
 
-    //!!! username ile kontrol
+    /**
+     * Kullanıcının kullanıcı adının var olup olmadığını kontrol eder.
+     */
     public User isUserExistByUsername(String username){
         User user = userRepository.findByUsernameEquals(username);
 
-        if(user.getId() == null){
+        if(user == null){
             throw new ResourceNotFoundException(ErrorMessages.NOT_FOUND_USER_MESSAGE);
         }
-
         return user;
     }
+
+    /**
+     * Verilen ID'ye sahip bir kullanıcının veritabanında olup olmadığını kontrol eder.
+     *
+     * @param id Kontrol edilecek kullanıcı ID'si.
+     * @return Kullanıcı var ise true, yok ise false döner.
+     */
+    public boolean isUserExistById(Long id) {
+        return userRepository.existsById(id);
+    }
+
+    /**
+     * Verilen ID'ye sahip kullanıcıyı bulur.
+     * Bulunmazsa ResourceNotFoundException fırlatır.
+     *
+     * @param id Bulunacak kullanıcı ID'si.
+     * @return Bulunan kullanıcı nesnesi.
+     * @throws ResourceNotFoundException Eğer kullanıcı bulunamazsa.
+     */
+    public User findUserWithId(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(ErrorMessages.USER_IS_NOT_FOUND, id)));
+    }
+
+    /**
+     * E-mail ile kullanıcıyı bulur. E-mail null veya boş olamaz.
+     */
     public User findByUserByEmail(String email) {
         if (email == null || email.isEmpty()) {
-            throw new ResourceNotFoundException("Email can not be null or empty");
+            throw new IllegalArgumentException("Email can not be null or empty");
         }
 
         return userRepository.findByEmail(email).orElseThrow(() ->
-                new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_USER_EMAIL, email)));
+                new ResourceNotFoundException(String.format(ErrorMessages.EMAIL_CANNOT_BE_NULL_OR_EMPTY, email)));
     }
-        public User getUserByHttpRequest(HttpServletRequest request) {
+
+    /**
+     * HttpServletRequest ile e-mail alıp kullanıcıyı döner.
+     */
+    public User getUserByHttpRequest(HttpServletRequest request) {
         return findByUserByEmail(getEmailByRequest(request));
-
     }
 
+    /**
+     * HttpServletRequest'ten e-mail alır.
+     */
     public String getEmailByRequest(HttpServletRequest request) {
 
         return (String) request.getAttribute("email");
     }
 
+    /**
+     * E-posta veya telefon numarasının başka bir kullanıcı tarafından kullanılıp kullanılmadığını kontrol eder.
+     */
     public void checkDuplicate(String email, String phone) {
-
         if (userRepository.existsByEmail(email)) {
             throw new ConflictException(String.format(ErrorMessages.THIS_EMAIL_IS_ALREADY_TAKEN, email));
         }
         if (userRepository.existsByPhone(phone)) {
             throw new ConflictException(String.format(ErrorMessages.THIS_PHONE_NUMBER_IS_ALREADY_TAKEN, phone));
-
         }
-
     }
 
-
+    /**
+     * Kullanıcının e-posta ve telefon bilgilerini değiştirmeden önce çakışmalar olup olmadığını kontrol eder.
+     */
     public void checkUniqueProperties(User user, AuthenticatedUsersRequest request) {
 
         boolean changed = false;
@@ -136,6 +181,9 @@ public class MethodHelper {
 
     }
 
+    /**
+     * Kullanıcının e-posta ve şifresini kontrol eder.
+     */
     public void checkEmailAndPassword(User user, CustomerRequest request) {
 
         if (!user.getEmail().equals(request.getEmail())){
@@ -147,9 +195,9 @@ public class MethodHelper {
         }
     }
 
-    public User findUserWithId(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(ErrorMessages.USER_IS_NOT_FOUND, id)));
-    }
+    /**
+     * Kullanıcının belirtilen rollerden birine sahip olup olmadığını kontrol eder.
+     */
     public void checkRoles(User user, RoleType... roleTypes) {
 
         Set<RoleType> roles = new HashSet<>();
@@ -161,40 +209,42 @@ public class MethodHelper {
         throw new ResourceNotFoundException(ErrorMessages.ROLE_NOT_FOUND);
     }
 
+    /**
+     * Rol tipini string olarak alıp UserRole tipine çevirir.
+     */
     public Set<UserRole> roleStringToUserRole(Set<String> request) {
 
         return request.stream().map(item -> userRoleService.getUserRole(RoleType.valueOf(item))).collect(Collectors.toSet());
     }
 
-    public void controlRoles(User user, RoleType... roleTypes) {
-
-        Set<RoleType> roles = new HashSet<>();
-        Collections.addAll(roles, roleTypes);
-        Set<UserRole> rolesUserRole = roles.stream().map(userRoleService::getUserRole).collect(Collectors.toSet());
-
-        for (UserRole role : user.getUserRole()) {
-            if (!(rolesUserRole.contains(role))) {
-                throw new BadRequestException(ErrorMessages.NOT_HAVE_AUTHORITY);
-            }
-        }
-    }
-
+    /**
+     * Şifrelerin eşleşip eşleşmediğini kontrol eder.
+     */
     public void UpdatePasswordControl(String password, String reWritePassword) {
         if (!Objects.equals(password, reWritePassword)) {
             throw new BadRequestException(ErrorMessages.PASSWORDS_DID_NOT_MATCH);
         }
     }
 
+    /**
+     *Popülerlik puanı hesaplar. (3 * ilan tur talebi sayısı + ilan görüntülenme sayısı)
+     */
     public int calculatePopularityPoint(int advertTourRequestListSize, int advertViewCount) {
         return (3 * advertTourRequestListSize) + advertViewCount;
     }
 
+    /**
+     * Fiyat kontrolü yapar. Geçersizse true döner.
+     */
     public boolean priceControl(Double startPrice, Double endPrice) {
         if (startPrice < 0 || endPrice < startPrice || endPrice < 0) {
             return true;
         } else return false;
     }
 
+    /**
+     * İki listeyi tek bir haritaya dönüştürür.
+     */
     public Map<Object, Object> mapTwoListToOneMap(List<Object> list1, List<Object> list2) {
         Map<Object, Object> resultMap = new LinkedHashMap<>();
 
@@ -205,12 +255,18 @@ public class MethodHelper {
         return resultMap;
     }
 
+    /**
+     * Kullanıcıyı alıp rollerini kontrol eder ve döner.
+     */
     public User getUserAndCheckRoles(HttpServletRequest request, String name) {
         User user = getUserByHttpRequest(request);
         checkRoles(user, RoleType.valueOf(name));
         return user;
     }
 
+    /**
+     * HttpServletRequest'ten kullanıcının ID'sini alır.
+     */
     public static Long getUserIdFromRequest(HttpServletRequest httpServletRequest, UserRepository userRepository) {
 
         String email = (String) httpServletRequest.getAttribute("email");
@@ -222,6 +278,9 @@ public class MethodHelper {
         return userOptional.map(User::getId).orElse(null);
     }
 
+    /**
+     * Kullanıcının favori ilanını ekler.
+     */
     public static void addFavorite(User user, Advert advert, FavoriteRepository favoritesRepository) {
         // Favori ilanın var olup olmadığını kontrol et
         boolean isFavorite = favoritesRepository.existsByUserIdAndAdvertId(user.getId(), advert.getId());
@@ -235,11 +294,17 @@ public class MethodHelper {
         }
     }
 
+    /**
+     * ID ile ilan var mı diye kontrol eder.
+     */
     public Advert isAdvertExistById(Long id){
         return advertRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_ADVERT_WITH_ID_MESSAGE,id)));
     }
 
+    /**
+     *  İlan için dosyalardan image listesi oluşturur.
+     */
     public List<Image> getImagesForAdvert(MultipartFile[] files, List<Image> currentImages) {
         // images işlem lojiklerini buraya yazın
         List<Image> imageList = new ArrayList<>();
@@ -251,6 +316,9 @@ public class MethodHelper {
         return imageList;
     }
 
+    /**
+     * Excel dosyası için bir satır oluşturur.
+     */
     public void isRelatedToAdvertsOrTourRequest(User user) {
 
         if (user.getTourRequests().size() > 0 || user.getAdvert().size() > 0) {
@@ -261,6 +329,14 @@ public class MethodHelper {
 
     /*--------------------------For Report---------------------------------------*/
 
+    /**
+     * Excel dosyası için bir satır oluşturur.
+     *
+     * @param sheet  Excel sayfası.
+     * @param rowNum Oluşturulacak satır numarası.
+     * @param style  Hücre stili (opsiyonel).
+     * @param values Satırda yer alacak değerler.
+     */
     private void createRow(Sheet sheet, int rowNum, CellStyle style, Object... values) {
         Row row = sheet.createRow(rowNum);
         for (int i = 0; i < values.length; i++) {
@@ -274,6 +350,12 @@ public class MethodHelper {
         }
     }
 
+    /**
+     * Excel başlık stili oluşturur.
+     *
+     * @param workbook Excel çalışma kitabı.
+     * @return Başlık stili.
+     */
     private CellStyle createHeaderStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
@@ -287,6 +369,15 @@ public class MethodHelper {
         return style;
     }
 
+
+    /**
+     * Verilen listeye göre Excel dosyası oluşturur ve HTTP yanıtı olarak döner.
+     *
+     * @param list Excel dosyasına dönüştürülecek nesne listesi.
+     * @param <T>  Liste içindeki nesne tipi.
+     * @return Excel dosyasını içeren HTTP yanıtı.
+     * @throws BadRequestException Eğer Excel dosyası oluşturulamazsa.
+     */
     public <T> ResponseEntity<byte[]> excelResponse(List<T> list) {
 
         try {
@@ -332,6 +423,14 @@ public class MethodHelper {
         }
     }
 
+    /**
+     * Verilen sayfaya göre Excel dosyası oluşturur ve HTTP yanıtı olarak döner.
+     *
+     * @param list Excel dosyasına dönüştürülecek sayfalı nesne listesi.
+     * @param <T>  Liste içindeki nesne tipi.
+     * @return Excel dosyasını içeren HTTP yanıtı.
+     * @throws BadRequestException Eğer Excel dosyası oluşturulamazsa veya tip Advert değilse.
+     */
     public <T> ResponseEntity<byte[]> excelResponse(Page<T> list) {
 
         try {
@@ -365,6 +464,11 @@ public class MethodHelper {
 
     }
 
+    /**
+     * Excel dosyası indirilirken gerekli HTTP başlıklarını oluşturur.
+     *
+     * @return Excel dosyası indirme için gerekli HTTP başlıkları.
+     */
     private HttpHeaders returnHeader(){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));

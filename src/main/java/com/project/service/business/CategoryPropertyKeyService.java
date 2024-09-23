@@ -15,6 +15,7 @@ import com.project.payload.response.business.ResponseMessage;
 import com.project.repository.business.CategoryPropertyKeyRepository;
 import com.project.repository.business.CategoryPropertyValueRepository;
 import com.project.repository.business.CategoryRepository;
+import com.project.service.helper.CategoryHelper;
 import com.project.service.helper.CategoryPropertyKeyHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,16 +28,31 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CategoryPropertyKeyService {
 
-    private final CategoryRepository categoryRepository;
     private final CategoryPropertyKeyMapper categoryPropertyKeyMapper;
     private final CategoryPropertyKeyRepository categoryPropertyKeyRepository;
     private final CategoryPropertyValueRepository categoryPropertyValueRepository;
     private final CategoryPropertyKeyHelper categoryPropertyKeyHelper;
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
+    private final CategoryHelper categoryHelper;
 
+    /**
+     * C07
+     * Verilen kategori id'ye ait propertyleri döndüren endpoint
+     */
+    public Set<CategoryPropertyKeyResponse> getPropertyKeysByCategory(Long id) {
+        Category category = categoryHelper.findCategoryById(id);
+        Set<CategoryPropertyKey> categoryPropertyKeys = categoryPropertyKeyRepository.findByCategory_Id(category.getId());
 
-    // Yeni property key oluşturma metodu
+        return categoryPropertyKeys.stream()
+                .map(categoryPropertyKeyMapper::mapCategoryPropertyKeyToResponse)
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * C08
+     * Verilen kategori id'ye göre category'nin property key'ini olusturma (Path Variable ile)
+     */
     public ResponseMessage<CategoryPropertyKeyResponse> createCategoryPropertyKeys(Long id, CategoryPropertyKeyRequest propertyKeyRequest) {
         // Kategori ID'sine göre Category'yi bul
         Category category = categoryPropertyKeyHelper.findCategoryById(id);
@@ -54,8 +70,8 @@ public class CategoryPropertyKeyService {
         // Yeni CategoryPropertyKey oluştur
         CategoryPropertyKey propertyKey = CategoryPropertyKey.builder()
                 .name(propertyKeyRequest.getName())
-                .category(propertyKeyRequest.getCategory())
-                .categoryPropertyValues(propertyKeyRequest.getCategoryPropertyValues())
+                .type(CategoryPropertyKeyType.valueOf(propertyKeyRequest.getType().toUpperCase()))
+                .category(category)
                 .builtIn(propertyKeyRequest.getBuiltIn())
                 .build();
 
@@ -75,7 +91,10 @@ public class CategoryPropertyKeyService {
                 .build();
     }
 
-    // Property key güncelleme metodu
+    /**
+     * C09
+     * Verilen id'ye göre kategori özelliğini güncelleme
+     */
     public ResponseMessage<CategoryPropertyKeyResponse> updateCategoryPropertyKey(Long id, CategoryPropertyKeyRequest propertyKeyRequest) {
         // Property key ID'sine göre CategoryPropertyKey bul
         CategoryPropertyKey propertyKey = categoryPropertyKeyHelper.findPropertyKeyById(id);
@@ -97,6 +116,10 @@ public class CategoryPropertyKeyService {
                 .build();
     }
 
+    /**
+     * C10
+     * Verilen id'ye göre property key silme
+     */
     public ResponseMessage<CategoryPropertyKeyResponse> deleteCategoryPropertyKey(Long id) {
         // Property key ID'sine göre CategoryPropertyKey bul
         CategoryPropertyKey propertyKey =categoryPropertyKeyHelper.findPropertyKeyById(id);
@@ -120,81 +143,4 @@ public class CategoryPropertyKeyService {
                 .build();
     }
 
-    public void generateCategoryPropertyKeys() {
-        if (categoryPropertyKeyRepository.findAll().isEmpty()) {
-
-            String[] housePropertyName = {"Number of Rooms and Living Rooms", "Number of Bathrooms", "Building Age", "Gross Square Meters", "Garden", "Garage", "Min. Price", "Max. Price"};
-            String[] apartmentPropertyName = {"Number of Rooms and Living Rooms", "Number of Bathrooms", "Building Age", "Gross Square Meters", "Balcony", "Garage", "Min. Price", "Max. Price"};
-            String[] officePropertyName = {"Number of Rooms and Living Rooms", "Number of Bathrooms", "Building Age", "Gross Square Meters", "Storage", "Garage", "Min. Price", "Max. Price"};
-            String[] villaPropertyName = {"Number of Rooms and Living Rooms", "Number of Bathrooms", "Building Age", "Gross Square Meters", "Storage", "Garage", "Min. Price", "Max. Price"};
-            String[] landPropertyName = {"Square Meters", "Min. Price", "Max. Price"};
-
-            CategoryPropertyKeyType[] propertyTypes1 = {CategoryPropertyKeyType.NUMBER, CategoryPropertyKeyType.NUMBER, CategoryPropertyKeyType.NUMBER, CategoryPropertyKeyType.NUMBER, CategoryPropertyKeyType.BOOLEAN, CategoryPropertyKeyType.BOOLEAN, CategoryPropertyKeyType.DOUBLE, CategoryPropertyKeyType.DOUBLE};
-            CategoryPropertyKeyType[] propertyTypes2 = {CategoryPropertyKeyType.NUMBER, CategoryPropertyKeyType.DOUBLE, CategoryPropertyKeyType.DOUBLE};
-
-            JsonCategoryPropertyKeyRequest[] arr = new JsonCategoryPropertyKeyRequest[5];
-            arr[0] = new JsonCategoryPropertyKeyRequest(1L, housePropertyName, true);
-            arr[1] = new JsonCategoryPropertyKeyRequest(2L, apartmentPropertyName, true);
-            arr[2] = new JsonCategoryPropertyKeyRequest(3L, officePropertyName, true);
-            arr[3] = new JsonCategoryPropertyKeyRequest(4L, villaPropertyName, true);
-            arr[4] = new JsonCategoryPropertyKeyRequest(5L, landPropertyName, true);
-
-            for (JsonCategoryPropertyKeyRequest request : arr) {
-
-                String[] propertyName = {};
-                CategoryPropertyKeyType[] propertyTypes = {};
-
-
-                switch (request.getId().intValue()) {
-                    case 1:
-                        propertyName = housePropertyName;
-                        propertyTypes = propertyTypes1;
-                        break;
-                    case 2:
-                        propertyName = apartmentPropertyName;
-                        propertyTypes = propertyTypes1;
-                        break;
-                    case 3:
-                        propertyName = officePropertyName;
-                        propertyTypes = propertyTypes1;
-                        break;
-                    case 4:
-                        propertyName = villaPropertyName;
-                        propertyTypes = propertyTypes1;
-                        break;
-                    case 5:
-                        propertyName = landPropertyName;
-                        propertyTypes = propertyTypes2;
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Invalid category ID");
-                }
-
-
-                Category category = categoryService.getCategoryById(request.getId());
-
-                for (int i = 0; i < propertyName.length; i++) {
-                    CategoryPropertyKey props = CategoryPropertyKey.builder()
-                            .name(propertyName[i])
-                            .builtIn(request.getBuiltIn())
-                            .type(propertyTypes[i])
-                            .category(category)
-                            .build();
-                    categoryPropertyKeyRepository.save(props);
-
-                }
-
-            }
-
-        }
-    }
-
-    public Set<CategoryPropertyKeyResponse> findByCategoryIdEquals(Long id) {
-        Category category = categoryService.findCategoryById(id);
-        Set<CategoryPropertyKey> properKeysOfCategory = categoryPropertyKeyRepository.findByCategory_Id(category.getId());
-
-        return properKeysOfCategory.stream()
-                .map(categoryMapper::mapPropertyKeytoPropertyKeyResponse)
-                .collect(Collectors.toSet());
-    }
 }

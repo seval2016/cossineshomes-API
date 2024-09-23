@@ -36,7 +36,7 @@ public class TourRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private int status= TourRequestEnum.PENDING.getValue();
+    private TourRequestEnum status= TourRequestEnum.PENDING;
 
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
