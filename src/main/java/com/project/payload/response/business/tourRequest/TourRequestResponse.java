@@ -1,15 +1,10 @@
 package com.project.payload.response.business.tourRequest;
 
-import com.project.entity.concretes.business.*;
-import com.project.entity.concretes.user.User;
-import com.project.entity.enums.TourRequestEnum;
 import com.project.payload.response.UserResponse;
 import com.project.payload.response.business.advert.AdvertResponse;
-import com.project.payload.response.business.image.ImageResponse;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter

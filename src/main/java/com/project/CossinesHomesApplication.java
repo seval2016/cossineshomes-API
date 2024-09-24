@@ -1,14 +1,13 @@
 package com.project;
 
-import com.project.entity.concretes.business.Advert;
-import com.project.entity.concretes.business.AdvertType;
-import com.project.entity.concretes.business.Image;
+import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.user.UserRole;
 import com.project.entity.enums.RoleType;
 import com.project.payload.request.business.CityRequest;
 import com.project.payload.request.business.CountryRequest;
 import com.project.payload.request.business.DistrictRequest;
 import com.project.payload.request.user.UserSaveRequest;
+import com.project.repository.business.DistrictRepository;
 import com.project.repository.business.ImagesRepository;
 import com.project.repository.user.UserRoleRepository;
 import com.project.service.business.*;
@@ -50,6 +49,7 @@ public class CossinesHomesApplication implements CommandLineRunner {
 	private final AdvertHelper advertHelper;
 	private final CategoryHelper categoryHelper;
 	private final CategoryPropertyKeyHelper categoryPropertyKeyHelper;
+	private final DistrictRepository districtRepository;
 
 	@Autowired
 	public CossinesHomesApplication(PasswordEncoder passwordEncoder,
@@ -64,6 +64,7 @@ public class CossinesHomesApplication implements CommandLineRunner {
 									DistrictService districtService,
 									AdvertService advertService,
 									ImagesRepository imagesRepository,
+									DistrictRepository districtRepository,
 									MethodHelper methodHelper,
 									AdvertHelper advertHelper,
 									CategoryHelper categoryHelper,
@@ -80,9 +81,10 @@ public class CossinesHomesApplication implements CommandLineRunner {
 		this.districtService = districtService;
 		this.advertService = advertService;
 		this.imagesRepository = imagesRepository;
+		this.districtRepository = districtRepository;
 		this.methodHelper = methodHelper;
 		this.advertHelper = advertHelper;
-		this.categoryHelper=categoryHelper;
+		this.categoryHelper = categoryHelper;
 		this.categoryPropertyKeyHelper = categoryPropertyKeyHelper;
 	}
 
@@ -166,18 +168,40 @@ public class CossinesHomesApplication implements CommandLineRunner {
 
 	// Varsayılan ülkeleri ekleyen metot
 	private void addDefaultCountries() {
-		CountryRequest defaultCountry = new CountryRequest();
-		defaultCountry.setName("Türkiye");
+		Country turkey = new Country();
+		turkey.setName("Türkiye");
+		turkey.setBuiltIn(true);
+		countryService.saveCountry(turkey);
+
+		Country germany = new Country();
+		germany.setName("Almanya");
+		germany.setBuiltIn(false);
+		countryService.saveCountry(germany);
 	}
-	private void addDefaultCity(){
-		CityRequest defaultCity=new CityRequest();
+
+	private void addDefaultCity() {
+		CityRequest defaultCity = new CityRequest();
 		defaultCity.setName("İstanbul");
-		defaultCity.setCountry_id(1L);
+		defaultCity.setCountry_id(1L); // Mevcut bir ülkenin id'sini kullanın
+		cityService.saveCity(defaultCity);
 	}
-	private void addDefaultDistricts(){
-		DistrictRequest defaultDistrict=new DistrictRequest();
-		defaultDistrict.setName("Üsküdar");
+
+	private void addDefaultDistricts() {
+		if (districtRepository.findAll().isEmpty()) {
+			City city = cityService.getCityByName("İstanbul");
+			if (city != null) {
+				District district = District.builder()
+						.name("Kadıköy")
+						.city(city)
+						.builtIn(false)
+						.build();
+				districtRepository.save(district);
+			} else {
+				System.err.println("İstanbul şehri bulunamadı!");
+			}
+		}
 	}
+
 	private void addDefaultAdverts() throws IOException {
 		List<Object[]> advertList = Arrays.asList(
 				new Object[]{"Şehir Merkezinde Modern Daire", "3+1 odalı, geniş balkonlu ve yerden ısıtmalı modern daire. Merkezi konum, kapalı otopark ve güvenlik mevcut", "Ankara", new BigDecimal("2500000.00"), 1L, 2L},
@@ -193,8 +217,14 @@ public class CossinesHomesApplication implements CommandLineRunner {
 			advert.setLocation((String) advertData[2]);
 			advert.setPrice((BigDecimal) advertData[3]);
 			advert.setCountry(countryService.getCountryById(1L));
-			advert.setDistrict(districtService.getDistrictByIdForAdvert((Long) advertData[5]));
-			advert.setCity(cityService.getCityById((Long) advertData[5]));
+
+			// District ve City için doğru ID'leri kullanın
+			Long districtId = (Long) advertData[1];
+			Long cityId = (Long) advertData[1];
+
+			advert.setDistrict(districtService.getDistrictByIdForAdvert(districtId));
+			advert.setCity(cityService.getCityById(cityId));
+
 			advert.setCategory(categoryService.getCategoryById(1L));
 			advert.setAdvertType(advertTypesService.findByIdAdvertType((Long) advertData[4]));
 			advert.setBuiltIn(true);
@@ -203,6 +233,9 @@ public class CossinesHomesApplication implements CommandLineRunner {
 			advert.setIsActive(true);
 			advert.setCreateAt(LocalDateTime.now());
 
+			// Slug oluşturma
+			advert.generateSlug();
+
 			try {
 				advertHelper.saveRunner(advert);
 			} catch (Exception e) {
@@ -210,26 +243,28 @@ public class CossinesHomesApplication implements CommandLineRunner {
 				continue; // Hata alındıysa bir sonraki ilana geç
 			}
 
-			// Define and save images for each advert
-			String[] imageNames = {"mustakil.jpg", "yali.jpg", "villa.jpg"};
-
-			for (String imageName : imageNames) {
-				try {
-					Path path = Paths.get("src/main/resources/static/images/" + imageName);
-					byte[] imageData = Files.readAllBytes(path);
-
-					Image image = new Image();
-					image.setName(imageName);
-					image.setData(imageData);
-					image.setAdvert(advert);
-
-					imagesRepository.save(image);
-				} catch (IOException e) {
-					System.err.println("Resim yüklenirken hata: " + e.getMessage());
-				}
-			}
+			// Resim ekleme
+			addImagesToAdvert(advert);
 		}
-
 	}
 
+	// Resimleri ekleyen ayrı bir metot
+	private void addImagesToAdvert(Advert advert) {
+		String[] imageNames = {"mustakil.jpg", "yali.jpg", "villa.jpg"};
+		for (String imageName : imageNames) {
+			try {
+				Path path = Paths.get("src/main/resources/static/images/" + imageName);
+				byte[] imageData = Files.readAllBytes(path);
+
+				Image image = new Image();
+				image.setName(imageName);
+				image.setData(imageData);
+				image.setAdvert(advert);
+
+				imagesRepository.save(image);
+			} catch (IOException e) {
+				System.err.println("Resim yüklenirken hata: " + e.getMessage());
+			}
+		}
+	}
 }

@@ -45,9 +45,6 @@ public class AdvertHelper {
 
     /**
      * İlanın popülarite puanını hesaplar.
-     *
-     * @param advert İlgili advert entity
-     * @return Popülarite puanı (int)
      */
     private int calculatePopularityPoint(Advert advert) {
         int totalTourRequests = advert.getTourRequestList().size();
@@ -55,14 +52,8 @@ public class AdvertHelper {
         return (3 * totalTourRequests) + totalViews;
     }
 
-
     /**
      * İlan detaylarını alır ve gerekli bilgileri harita olarak döner.
-     *
-     * @param advertRequest      İlan istek nesnesi
-     * @param httpServletRequest HTTP isteği
-     * @param detailsMap         Detaylar için harita
-     * @return Detaylar haritası
      */
     public Map<String, Object> getAdvertDetails(AdvertRequest advertRequest, HttpServletRequest httpServletRequest, Map<String, Object> detailsMap) {
         if (detailsMap == null) {
@@ -87,9 +78,6 @@ public class AdvertHelper {
 
     /**
      * Belirtilen ID'ye sahip ilanı kontrol eder ve var ise döner, yoksa hata fırlatır.
-     *
-     * @param id İlanın ID'si
-     * @return Advert entity
      */
     public Advert isAdvertExistById(Long id) {
         return advertRepository.findById(id).orElseThrow(
@@ -99,13 +87,6 @@ public class AdvertHelper {
 
     /**
      * Belirtilen tarih aralığı, kategori, tür ve durum bilgileri ile ilan raporu döner.
-     *
-     * @param date1    Başlangıç tarihi
-     * @param date2    Bitiş tarihi
-     * @param category Kategori adı
-     * @param type     İlan türü
-     * @param status   İlan durumu
-     * @return İlan listesi
      */
     public List<Advert> getAdvertsReport(String date1, String date2, String category, String type, AdvertStatus status) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -124,8 +105,6 @@ public class AdvertHelper {
 
     /**
      * Tüm ilanları döner.
-     *
-     * @return İlan listesi
      */
     public List<Advert> getAllAdverts() {
         return advertRepository.findAll();
@@ -133,8 +112,6 @@ public class AdvertHelper {
 
     /**
      * Verilen ilanı veritabanına kaydeder.
-     *
-     * @param advert Kaydedilecek ilan
      */
     public void saveRunner(Advert advert) {
         advertRepository.save(advert);
@@ -142,9 +119,6 @@ public class AdvertHelper {
 
     /**
      * Favoriler için belirtilen ID'ye sahip ilanı döner.
-     *
-     * @param id İlan ID'si
-     * @return Advert entity
      */
     public Advert getAdvertForFavorites(Long id) {
         return advertRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.ADVERT_NOT_FOUND));
@@ -152,9 +126,6 @@ public class AdvertHelper {
 
     /**
      * Advert entity'sini ID ile getirir.
-     *
-     * @param id Advert ID
-     * @return Advert entity veya null
      */
     public Advert getAdvertById(Long id) {
         return advertRepository.findById(id).orElse(null);
@@ -162,58 +133,7 @@ public class AdvertHelper {
 
     /**
      * Featured image'ı getirir.
-     *
-     * @return ImageResponse veya null
      */
-    public ImageResponse getFeaturedImage(List<Image> images) {
-        if (images == null || images.isEmpty()) {
-            return null;
-        }
-        // Featured image seçme mantığı: 'featured' flag'ine göre veya ilk resmi seç
-        return images.stream()
-                .filter(Image::getFeatured)
-                .findFirst()
-                .map(img -> ImageResponse.builder()
-                        .id(img.getId())
-                        .name(img.getName())
-                        .type(img.getType())
-                        .featured(img.getFeatured())
-                        .build())
-                .orElseGet(() -> {
-                    Image firstImage = images.get(0);
-                    return ImageResponse.builder()
-                            .id(firstImage.getId())
-                            .name(firstImage.getName())
-                            .type(firstImage.getType())
-                            .featured(firstImage.getFeatured())
-                            .build();
-                });
-    }
-
-    public int updateAdvertStatus(int caseNumber, Advert advert) {
-        AdvertStatus status;
-        switch (caseNumber) {
-            case 0:
-                status = AdvertStatus.PENDING;
-                advert.setIsActive(false);
-                System.out.println("Advert status set to PENDING. Advert is now inactive.");
-                break;
-            case 1:
-                status = AdvertStatus.PENDING;
-                advert.setIsActive(true);
-                System.out.println("Advert status set to ACTIVATED. Advert is now active.");
-                break;
-            case 2:
-                status = AdvertStatus.REJECTED;
-                advert.setIsActive(false);
-                System.out.println("Advert status set to REJECTED. Advert is inactive.");
-                break;
-            default:
-                System.out.println("Invalid case number.");
-                return AdvertStatus.PENDING.getValue();
-        }
-        return caseNumber;
-    }
 
     @Transactional
     public Page<Advert> getPopularAdverts(int amount, Pageable pageable) {

@@ -13,8 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CategoryAdvertResponse { //A03 - /adverts/categories
-    private String category;
+    private String title;
 
     @JsonProperty("amount")
-    private Long advertCount; //advertCount alanını JSON yanıtında "amount" olarak serileştirir.
+    private Long amount;
+
 }

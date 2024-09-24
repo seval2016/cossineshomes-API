@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,11 +48,10 @@ public class CityService {
     }
 
     public void setBuiltInForCity() {
-
-        Long cityId = 1L;
-
-        City city = cityRepository.findById(cityId).orElseThrow(() -> new RuntimeException(ErrorMessages.CITY_NOT_FOUND));
-        cityRepository.save(city);
+        CityRequest defaultCity = new CityRequest();
+        defaultCity.setName("İstanbul");
+        defaultCity.setCountry_id(1L);
+        saveCity(defaultCity);
     }
 
     public City saveCity(CityRequest cityRequest) {
@@ -67,5 +67,14 @@ public class CityService {
 
         // Save the city entity to the database
         return cityRepository.save(city);
+    }
+
+    public City getCityByName(String cityName) {
+       List<City> cities  = cityRepository.findByName(cityName);
+
+        if (cities .isEmpty()) {
+            throw new RuntimeException("City not found: " + cityName);
+        }
+        return cities.get(0);
     }
 }

@@ -2,7 +2,7 @@ package com.project.payload.mappers;
 
 
 import com.project.entity.concretes.business.*;
-import com.project.entity.concretes.business.Image;
+
 import com.project.entity.concretes.user.User;
 import com.project.entity.enums.AdvertStatus;
 import com.project.payload.request.business.AdvertRequest;
@@ -20,20 +20,16 @@ import com.project.service.helper.MethodHelper;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
 @Component
 public class AdvertMapper {
 
-    private final TourRequestMapper tourRequestMapper;
     private final MethodHelper methodHelper;
     private final ImageMapper imageMapper;
     private final CategoryPropertyValueMapper categoryPropertyValueMapper;
-    private final AdvertHelper advertHelper;
 
     public Advert mapAdvertRequestToAdvert(AdvertRequest advertRequest, Category category, City city, User user, Country country, AdvertType advertType, District district) {
         return Advert.builder()
@@ -95,7 +91,7 @@ public class AdvertMapper {
                 .builtIn(advert.getIsActive())
                 .description(advert.getDescription())
                 .title(advert.getTitle())
-                .status(advertHelper.updateAdvertStatus(advert.getStatus(), advert))
+                .status(methodHelper.updateAdvertStatus(advert.getStatus(), advert))
                 .countryId(advert.getCountry().getId())
                 .cityId(advert.getCity().getId())
                 .districtId(advert.getDistrict().getId())
@@ -103,7 +99,7 @@ public class AdvertMapper {
                 .advertTypeId(advert.getAdvertType().getId())
                 .categoryId(advert.getCategory().getId())
                 .categoryPropertyKeys(advert.getCategory().getCategoryPropertyKeys())
-                .featuredImage(advertHelper.getFeaturedImage(advert.getImages()))
+                .featuredImage(methodHelper.getFeaturedImage(advert.getImages()))
                 .images(advert.getImages().stream()
                         .map(imageMapper::mapToImageResponse)
                         .collect(Collectors.toList()))
@@ -164,7 +160,7 @@ public class AdvertMapper {
                 .districtId(advert.getDistrict().getId())
                 .categoryId(advert.getCategory().getId())
                 .categoryPropertyKeys(advert.getCategory().getCategoryPropertyKeys())
-                .featuredImage(advertHelper.getFeaturedImage(advert.getImages()))
+                .featuredImage(methodHelper.getFeaturedImage(advert.getImages()))
                 .images(advert.getImages().stream()
                         .map(imageMapper::mapToImageResponse)
                         .collect(Collectors.toList()))

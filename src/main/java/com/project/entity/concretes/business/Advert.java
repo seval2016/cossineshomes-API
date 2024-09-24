@@ -79,7 +79,11 @@ public class Advert {
     @PostUpdate
     public void generateSlug() {
         if (this.slug == null || this.slug.isEmpty()) {
-            this.slug = SlugUtils.toSlug(this.title) + "-" + this.id;
+            if (this.title != null && !this.title.isEmpty()) {
+                this.slug = SlugUtils.toSlug(this.title) + "-" + this.id;
+            } else {
+                throw new IllegalStateException("Title cannot be null or empty when generating slug.");
+            }
         }
     }
 

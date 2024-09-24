@@ -7,6 +7,7 @@ import com.project.payload.request.business.TourRequestRequest;
 import com.project.payload.response.business.tourRequest.TourRequestResponse;
 import com.project.service.helper.ImageHelper;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,10 +30,10 @@ public class TourRequestMapper {
                 .id(tourRequest.getId())
                 .tourDate(tourRequest.getTourDate())
                 .tourTime(tourRequest.getTourTime())
-                .status(tourRequest.getStatus().name()) // Enum değerini string olarak döndür
-                .advert(advertMapper.mapAdvertToAdvertResponse(tourRequest.getAdvert())) // Advert için bir mapper kullanılıyor
-                .ownerUser(userMapper.mapUserToUserResponse(tourRequest.getOwnerUser())) // Owner kullanıcı bilgileri
-                .guestUser(userMapper.mapUserToUserResponse(tourRequest.getGuestUser())) // Misafir kullanıcı bilgileri
+                .status(tourRequest.getStatus().name())
+                .advert(advertMapper.mapAdvertToAdvertResponse(tourRequest.getAdvert()))
+                .ownerUser(userMapper.mapUserToUserResponse(tourRequest.getOwnerUser()))
+                .guestUser(userMapper.mapUserToUserResponse(tourRequest.getGuestUser()))
                 .build();
     }
 

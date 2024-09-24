@@ -1,14 +1,8 @@
 package com.project.payload.request.business;
 
-import com.project.entity.concretes.business.Category;
-import com.project.entity.concretes.business.CategoryPropertyValue;
-import com.project.entity.enums.CategoryPropertyKeyType;
 import lombok.Data;
 import lombok.*;
 import javax.validation.constraints.*;
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

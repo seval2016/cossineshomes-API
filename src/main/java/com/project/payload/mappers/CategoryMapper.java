@@ -1,14 +1,11 @@
 package com.project.payload.mappers;
 
 import com.project.entity.concretes.business.Category;
-import com.project.entity.concretes.business.CategoryPropertyKey;
 import com.project.payload.request.business.CategoryRequest;
-import com.project.payload.response.business.category.CategoryPropertyKeyResponse;
 import com.project.payload.response.business.category.CategoryResponse;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 
 @Data
 @Component

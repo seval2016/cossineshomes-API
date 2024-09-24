@@ -7,6 +7,7 @@ import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.DistrictMapper;
 
 import com.project.payload.messages.ErrorMessages;
+import com.project.payload.request.business.CityRequest;
 import com.project.payload.request.business.DistrictRequest;
 import com.project.payload.response.business.DistrictResponse;
 import com.project.payload.response.business.ResponseMessage;
@@ -47,7 +48,8 @@ public class DistrictService {
     }
 
     public District getDistrictByIdForAdvert(Long districtId) {
-        return districtRepository.findById(districtId).orElseThrow(()->new ResourceNotFoundException(ErrorMessages.DISTRICT_NOT_FOUND));
+        return districtRepository.findById(districtId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.DISTRICT_NOT_FOUND + ": " + districtId));
     }
 
     public void resetDistrictTables() {
@@ -59,12 +61,10 @@ public class DistrictService {
     }
 
     public void setBuiltInForDistrict() {
-        // Türkiye'nin ID'si 1 olduğundan emin olun
-        Long districtId = 1L;
-
-        District district = districtRepository.findById(districtId).orElseThrow(() -> new RuntimeException(ErrorMessages.DISTRICT_NOT_FOUND));
-        district.setBuiltIn(Boolean.TRUE);
-        districtRepository.save(district);
+        DistrictRequest defaultDistrict = new DistrictRequest();
+        defaultDistrict.setName("Üsküdar");
+        defaultDistrict.setCityId(1L);
+        saveDistrict(defaultDistrict);
     }
 
     public District saveDistrict(DistrictRequest districtRequest) {

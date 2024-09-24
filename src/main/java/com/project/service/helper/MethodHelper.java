@@ -4,6 +4,7 @@ import com.project.entity.concretes.business.*;
 import com.project.entity.concretes.business.Image;
 import com.project.entity.concretes.user.User;
 import com.project.entity.concretes.user.UserRole;
+import com.project.entity.enums.AdvertStatus;
 import com.project.entity.enums.RoleType;
 import com.project.exception.BadRequestException;
 import com.project.exception.ConflictException;
@@ -12,6 +13,7 @@ import com.project.exception.ResourceNotFoundException;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.request.user.AuthenticatedUsersRequest;
 import com.project.payload.request.user.CustomerRequest;
+import com.project.payload.response.business.image.ImageResponse;
 import com.project.repository.business.AdvertRepository;
 import com.project.repository.business.FavoriteRepository;
 import com.project.repository.user.UserRepository;
@@ -479,5 +481,55 @@ public class MethodHelper {
         return headers;
     }
 
-    /*-----------------------------------------------------------*/
+    /*-------------------------Advert----------------------------------*/
+
+    public int updateAdvertStatus(int caseNumber, Advert advert) {
+        AdvertStatus status;
+        switch (caseNumber) {
+            case 0:
+                status = AdvertStatus.PENDING;
+                advert.setIsActive(false);
+                System.out.println("Advert status set to PENDING. Advert is now inactive.");
+                break;
+            case 1:
+                status = AdvertStatus.PENDING;
+                advert.setIsActive(true);
+                System.out.println("Advert status set to ACTIVATED. Advert is now active.");
+                break;
+            case 2:
+                status = AdvertStatus.REJECTED;
+                advert.setIsActive(false);
+                System.out.println("Advert status set to REJECTED. Advert is inactive.");
+                break;
+            default:
+                System.out.println("Invalid case number.");
+                return AdvertStatus.PENDING.getValue();
+        }
+        return caseNumber;
+    }
+
+    public ImageResponse getFeaturedImage(List<Image> images) {
+        if (images == null || images.isEmpty()) {
+            return null;
+        }
+        // Featured image seçme mantığı: 'featured' flag'ine göre veya ilk resmi seç
+        return images.stream()
+                .filter(Image::getFeatured)
+                .findFirst()
+                .map(img -> ImageResponse.builder()
+                        .id(img.getId())
+                        .name(img.getName())
+                        .type(img.getType())
+                        .featured(img.getFeatured())
+                        .build())
+                .orElseGet(() -> {
+                    Image firstImage = images.get(0);
+                    return ImageResponse.builder()
+                            .id(firstImage.getId())
+                            .name(firstImage.getName())
+                            .type(firstImage.getType())
+                            .featured(firstImage.getFeatured())
+                            .build();
+                });
+    }
 }

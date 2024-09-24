@@ -37,7 +37,8 @@ public class CountryService {
     }
     public void setBuiltInForCountry() {
         Long countryId = 1L;
-        Country country = countryRepository.findById(countryId).orElseThrow(() -> new RuntimeException(ErrorMessages.COUNTRY_NOT_FOUND));
+        Country country = countryRepository.findById(countryId)
+                .orElseThrow(() -> new RuntimeException("Country with ID " + countryId + " not found"));
         country.setBuiltIn(Boolean.TRUE);
         countryRepository.save(country);
     }

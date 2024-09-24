@@ -2,15 +2,12 @@ package com.project.payload.response.business.advert;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-
 import com.project.entity.concretes.business.CategoryPropertyKey;
 import com.project.entity.concretes.business.Favorite;
 import com.project.entity.concretes.business.TourRequest;
+import com.project.payload.response.business.category.CategoryPropertyValueResponse;
 import com.project.payload.response.business.image.ImageResponse;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,13 +28,13 @@ public class AdvertResponse {
 
     private String title;
 
+    private String description;
+
     private String slug;
 
     private BigDecimal price;
 
     private int status;
-
-    private String description;
 
     private Boolean builtIn;
 
@@ -63,7 +60,7 @@ public class AdvertResponse {
 
     private LocalDateTime updateAt;
 
-    private Map<String, String> properties;
+    private Map<String,String > properties;
 
     private List<ImageResponse> images;
 
@@ -78,12 +75,13 @@ public class AdvertResponse {
     private int tourRequestCount;
     private int favoritesCount;
 
-    public AdvertResponse(Long id, String title, String description, String image, BigDecimal price, int status) {
+
+    public AdvertResponse(Long id, String title, String description, String image, BigDecimal price,int status) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.price = price;
-        this.status = status;
+        this.status=status;
     }
 
 }

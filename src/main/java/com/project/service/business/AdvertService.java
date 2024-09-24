@@ -83,7 +83,7 @@ public class AdvertService {
         return popularAdverts.stream()
                 .map(response -> {
                     Advert advert = advertHelper.getAdvertById(response.getId());
-                    ImageResponse imageResponse = advertHelper.getFeaturedImage(advert.getImages());
+                    ImageResponse imageResponse = methodHelper.getFeaturedImage(advert.getImages());
                     return response.toBuilder()
                             .featuredImage(imageResponse)
                             .build();

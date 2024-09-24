@@ -25,9 +25,6 @@ public class City {
     @Column(nullable = false, length = 30)
     private String name;
 
-    @Column(nullable = false)
-    private Boolean builtIn=false;
-
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "country_id", nullable = false)
