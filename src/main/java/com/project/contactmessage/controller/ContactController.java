@@ -4,6 +4,7 @@ import com.project.contactmessage.dto.ContactRequest;
 import com.project.contactmessage.dto.ContactResponse;
 import com.project.contactmessage.entity.ContactMessage;
 import com.project.contactmessage.service.ContactService;
+import com.project.payload.response.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 

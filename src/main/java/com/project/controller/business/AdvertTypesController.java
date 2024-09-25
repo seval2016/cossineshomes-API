@@ -1,6 +1,7 @@
 package com.project.controller.business;
 
 import com.project.payload.request.business.AdvertTypesRequest;
+import com.project.payload.response.ResponseMessage;
 import com.project.payload.response.business.advert.AdvertTypesResponse;
 import com.project.service.business.AdvertTypesService;
 import lombok.RequiredArgsConstructor;
