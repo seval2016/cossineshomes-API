@@ -1,15 +1,10 @@
 package com.project.controller;
 
-import com.project.payload.mappers.UserMapper;
-import com.project.payload.messages.SuccessMessages;
-
 import com.project.payload.request.authentication.LoginRequest;
 import com.project.payload.request.business.ForgotPasswordRequest;
-import com.project.payload.request.business.UpdatePasswordRequest;
 import com.project.payload.request.user.RegisterRequest;
 import com.project.payload.request.user.ResetCodeRequest;
-import com.project.payload.response.business.ResponseMessage;
-import com.project.payload.response.UserResponse;
+import com.project.payload.response.ResponseMessage;
 import com.project.payload.response.authentication.AuthResponse;
 
 
@@ -18,10 +13,8 @@ import com.project.service.AuthenticationService;
 import com.project.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController

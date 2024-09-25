@@ -1,7 +1,6 @@
 package com.project.controller.business;
 
 import com.project.payload.request.business.TourRequestRequest;
-import com.project.payload.response.business.ResponseMessage;
 import com.project.payload.response.business.tourRequest.TourRequestResponse;
 import com.project.service.business.TourRequestService;
 import lombok.RequiredArgsConstructor;

@@ -1,12 +1,12 @@
 package com.project.controller.business;
-import com.project.entity.concretes.business.City;
-import com.project.payload.response.business.ResponseMessage;
+import com.project.payload.response.business.CityResponse;
 import com.project.service.business.CityService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/cities")
@@ -16,13 +16,16 @@ public class CityController {
 
     private final CityService cityService;
 
-    @GetMapping("/cities") //http://localhost:8080/cities
-    public ResponseMessage<List<City>> getAllCity(){
-        return cityService.getAllCity();
-    }
-
-    @GetMapping("/getCityById/{id}") //http://localhost:8080/city/getByCity/1
-    public City getCityById(@PathVariable Long countryId){
-        return cityService.getCityById(countryId);
+    @GetMapping
+    @PreAuthorize("permitAll") // ANONYMOUS
+    public List<CityResponse> getCities() {
+        return cityService.getAllCities().stream()
+                .map(city -> {
+                    CityResponse response = new CityResponse();
+                    response.setId(city.getId());
+                    response.setName(city.getName());
+                    return response;
+                })
+                .collect(Collectors.toList());
     }
 }

@@ -2,14 +2,15 @@ package com.project.service.business;
 
 import com.project.entity.concretes.business.Country;
 import com.project.exception.ResourceNotFoundException;
-import com.project.payload.messages.ErrorMessages;
-import com.project.payload.response.business.ResponseMessage;
+import com.project.payload.response.business.CountryResponse;
 
 import com.project.repository.business.CountryRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -19,42 +20,31 @@ import java.util.List;
 public class CountryService {
 
     private final CountryRepository countryRepository;
+    private final RestTemplate restTemplate; // API çağrıları için Spring RestTemplate kullanıyoruz
 
-    // Ülkeleri sıfırlamak için (deleteAll)
-    public void resetCountryTables() {
-        countryRepository.deleteAll();
+    private static final String COUNTRY_API_URL = "https://restcountries.com/v3.1/all";
+
+    public List<Country> getAllCountries() {
+        return countryRepository.findAll();
     }
 
-    // ID'ye göre ülke getirme
     public Country getCountryById(Long id) {
         return countryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.COUNTRY_NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException("Country not found with id: " + id));
     }
 
-    // Toplam ülke sayısını döndürme
-    public int countAllCountries() {
-        return countryRepository.countAllCountries();  // Repository'de `countAllCountries` metodu olduğundan emin olun
-    }
-    public void setBuiltInForCountry() {
-        Long countryId = 1L;
-        Country country = countryRepository.findById(countryId)
-                .orElseThrow(() -> new RuntimeException("Country with ID " + countryId + " not found"));
-        country.setBuiltIn(Boolean.TRUE);
-        countryRepository.save(country);
-    }
-
-    // Tüm ülkeleri getirme
-    public ResponseMessage<List<Country>> getAllCountries() {
-        List<Country> countryList = countryRepository.findAll();
-        return ResponseMessage.<List<Country>>builder()
-                .httpStatus(HttpStatus.OK)
-                .object(countryList)
-                .message("Countries were brought successfully.")
-                .build();
-    }
-
-    // Yeni ülke kaydetme
-    public void saveCountry(Country country) {
-        countryRepository.save(country);
+    // API ile tüm ülkeleri otomatik yükleyen metod
+    public void loadCountriesFromApi() {
+        ResponseEntity<CountryResponse[]> response = restTemplate.getForEntity(COUNTRY_API_URL, CountryResponse[].class);
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            for (CountryResponse countryResponse : response.getBody()) {
+                Country country = Country.builder()
+                        .name(countryResponse.getName()) // Ülkenin ismi
+                        .build();
+                countryRepository.save(country); // Ülkeyi veritabanına kaydet
+            }
+        } else {
+            throw new RuntimeException("Failed to fetch countries from API");
+        }
     }
 }

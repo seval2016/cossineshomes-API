@@ -13,7 +13,6 @@ public class DistrictMapper {
         return DistrictResponse.builder()
                 .id(district.getId())
                 .name(district.getName())
-                .city(district.getCity())
                 .build();
     }
 }

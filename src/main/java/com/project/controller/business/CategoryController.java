@@ -1,12 +1,11 @@
 package com.project.controller.business;
 
 import com.project.entity.concretes.business.Category;
-import com.project.entity.concretes.business.CategoryPropertyKey;
 import com.project.payload.request.business.CategoryPropertyKeyRequest;
 import com.project.payload.request.business.CategoryRequest;
+import com.project.payload.response.ResponseMessage;
 import com.project.payload.response.business.category.CategoryPropertyKeyResponse;
 import com.project.payload.response.business.category.CategoryResponse;
-import com.project.payload.response.business.ResponseMessage;
 import com.project.service.business.CategoryPropertyKeyService;
 import com.project.service.business.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Set;
 
 @RestController

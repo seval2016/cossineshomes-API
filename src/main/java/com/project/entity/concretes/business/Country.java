@@ -27,7 +27,8 @@ public class Country {
     @Column(nullable = false, length =30)
     private String name;
 
-    private Boolean builtIn = false;
+    @Column(nullable = false, length = 3) // Add this for ISO code
+    private String isoCode;
 
     @OneToMany (mappedBy = "country",cascade = CascadeType.ALL)
     @JsonIgnore

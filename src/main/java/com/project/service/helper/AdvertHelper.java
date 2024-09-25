@@ -32,7 +32,6 @@ import java.util.Map;
 public class AdvertHelper {
 
     private final AdvertRepository advertRepository;
-    private final AdvertMapper advertMapper;
     private final CategoryService categoryService;
     private final MethodHelper methodHelper;
     private final CityService cityService;
@@ -64,7 +63,7 @@ public class AdvertHelper {
         User user = methodHelper.getUserByHttpRequest(httpServletRequest);
         Country country = countryService.getCountryById(advertRequest.getCountryId());
         AdvertType advertType = advertTypesService.getAdvertTypeByIdForAdvert(advertRequest.getAdvertTypeId());
-        District district = districtService.getDistrictByIdForAdvert(advertRequest.getDistrictId());
+        District district = districtService.getDistrictById(advertRequest.getDistrictId());
 
         detailsMap.put("category", category);
         detailsMap.put("city", city);

@@ -11,8 +11,9 @@ import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.AdvertRequest;
 import com.project.payload.request.business.CreateAdvertPropertyRequest;
-import com.project.payload.response.business.*;
 
+
+import com.project.payload.response.ResponseMessage;
 import com.project.payload.response.business.advert.*;
 import com.project.payload.response.business.category.CategoryAdvertResponse;
 import com.project.payload.response.business.image.ImageResponse;
@@ -23,7 +24,6 @@ import com.project.service.helper.MethodHelper;
 import com.project.service.helper.PageableHelper;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +41,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Lazy
 @RequiredArgsConstructor
 public class AdvertService {
 

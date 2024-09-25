@@ -1,17 +1,16 @@
 package com.project.controller.business;
 
 
-import com.project.entity.concretes.business.Country;
-import com.project.payload.response.business.ResponseMessage;
+import com.project.payload.response.business.CountryResponse;
 
 import com.project.service.business.CountryService;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/countries")
@@ -20,31 +19,16 @@ public class CountryController {
 
     private final CountryService countryService;
 
-    @GetMapping("/countries") // Tüm ülkeleri getirme
-    @PreAuthorize("permitAll()")//http://localhost:8080/countries
-    public ResponseMessage<List<Country>> getAllCountries() {
-        return countryService.getAllCountries();
-    }
-
-
-    // Toplam ülke sayısını döndürme
-    @GetMapping("/count")
-    public ResponseEntity<Integer> countAllCountries() {
-        int count = countryService.countAllCountries();
-        return ResponseEntity.ok(count);
-
-    }
-    // Ülkeleri sıfırlamak için (deleteAll)
-    @DeleteMapping("/reset")
-    public ResponseEntity<Void> resetCountryTables() {
-        countryService.resetCountryTables();
-        return ResponseEntity.ok().build();
-    }
-
-    // ID'ye göre ülke getirme
-    @GetMapping("/{id}")
-    public ResponseEntity<Country> getCountryById(@PathVariable Long id) {
-        Country country = countryService.getCountryById(id);
-        return ResponseEntity.ok(country);
+    @GetMapping
+    @PreAuthorize("permitAll") // ANONYMOUS
+    public List<CountryResponse> getCountries() {
+        return countryService.getAllCountries().stream()
+                .map(country -> {
+                    CountryResponse response = new CountryResponse();
+                    response.setId(country.getId());
+                    response.setName(country.getName());
+                    return response;
+                })
+                .collect(Collectors.toList());
     }
 }

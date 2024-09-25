@@ -2,7 +2,6 @@ package com.project.controller.business;
 
 import com.project.payload.request.business.AdvertTypesRequest;
 import com.project.payload.response.business.advert.AdvertTypesResponse;
-import com.project.payload.response.business.ResponseMessage;
 import com.project.service.business.AdvertTypesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

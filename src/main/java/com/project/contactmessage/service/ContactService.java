@@ -8,7 +8,6 @@ import com.project.contactmessage.mapper.ContactMapper;
 import com.project.contactmessage.messages.Messages;
 import com.project.contactmessage.repository.ContactRepository;
 import com.project.exception.ResourceNotFoundException;
-import com.project.payload.response.business.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

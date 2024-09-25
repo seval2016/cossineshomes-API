@@ -2090,20 +2090,212 @@ It should delete all records in all tables except those whose built-in fields ar
 -------------------------------
 com.example.adverts
 ├── config
-│   └── SecurityConfig.java
+│   └── AppConfig.java
+├── contactMessage
+│   ├── controller
+│   │     └── ContactController
+│   ├── dto
+│   │     ├── ContactRequest
+│   │     └── ContactResponse
+│   ├── entity
+│   │     ├── ContactMessage
+│   │     └── ContactStatus
+│   ├── mapper
+│   │     └── ContactMapper
+│   ├── messages
+│   │      └── Messages
+│   ├── repository
+│   │      └── ContactRepository
+│   └── service
+│          └── ContactService
 ├── controller
-│   └── AdvertController.java
-├── dto
-│   └── CityAdvertResponse.java
+│    ├── business
+│    │      ├── AdvertController
+│    │      ├──  AdvertTypesController
+│    │      ├──  CategoryController
+│    │      ├──  CityController
+│    │      ├──  CountryController
+│    │      ├──  DistrictController
+│    │      ├──  FavoriteController
+│    │      ├──  ImageController
+│    │      ├──  ReportController
+│    │      ├──  ResetController
+│    │      └── TourRequestController
+│    └── user
+│           └── UserController
+├───────── AuthenticationController
 ├── entity
-│   ├── Advert.java
-│   ├── City.java
-│   └── ... (diğer entity sınıfları)
+│     ├── concretes
+│     │      ├── business
+│     │      │     ├── Advert
+│     │      │     ├── AdvertType
+│     │      │     ├── Category
+│     │      │     ├── CategoryPropertyKey
+│     │      │     ├── CategoryPropertyValue
+│     │      │     ├── City
+│     │      │     ├── Country
+│     │      │     ├── District
+│     │      │     ├── Favorite
+│     │      │     ├── Image
+│     │      │     ├── Log
+│     │      │     └── TourRequest
+│     │      └── user
+│     │            ├── User
+│     │            └── UserRole
+│     │
+│     └── enums
+│             ├── AdvertStatus
+│             ├── CategoryPropertyKeyType
+│             ├── Log
+│             ├── RoleType
+│             └── TourRequestEnum
+├── exception
+│      ├── BadRequestException
+│      ├── ConflictException
+│      ├── MailServiceException
+│      ├── NotLoadingCompleted
+│      └── ResourceNotFoundException
+├── payload
+│      ├── mappers
+│      │       ├── AdvertMapper.java
+│      │       ├── AdvertTypesMapper.java
+│      │       ├── CategoryMapper.java
+│      │       ├── CategoryPropertyKeyMapper.java
+│      │       ├── CategoryPropertyValueMapper.java
+│      │       ├── DistrictMapper.java
+│      │       ├── ImageMapper.java
+│      │       ├── TourRequestMapper.java
+│      │       └── UserMapper.java
+│      ├── messages
+│      │       ├── ErrorMessages.java
+│      │       └── SuccessMessages.java
+│      ├── request
+│      │       ├── abstracts
+│      │       │      ├── AbstractUserRequest.java
+│      │       │      └── BaseUserRequest.java
+│      │       ├── authentication
+│      │       │      └── LoginRequest.java
+│      │       ├── business
+│      │       │      ├── AdvertMapper.java
+│      │       │      ├── AdvertTypesMapper.java
+│      │       │      ├── CategoryMapper.java
+│      │       │      ├── CategoryPropertyKeyMapper.java
+│      │       │      ├── CategoryPropertyValueMapper.java
+│      │       │      ├── DistrictMapper.java
+│      │       │      ├── ImageMapper.java
+│      │       │      ├── TourRequestMapper.java
+│      │       │      └── UserMapper.java
+│      │       └── user
+│      │              ├── AuthenticatedUsersRequest.java
+│      │              ├── CustomerRequest.java
+│      │              ├── RegisterRequest.java
+│      │              ├── ResetCodeRequest.java
+│      │              ├── UserRequest.java
+│      │              ├── UserRequestWithoutPassword.java
+│      │              └── UserSaveRequest.java
+│      ├── response
+│      │      ├── abstracts
+│      │      │       └── BaseUserResponse.java
+│      │      ├── authentication
+│      │      │       └── AuthResponse.java
+│      │      ├── business
+│      │      │       ├── advert
+│      │      │       │      ├── AdvertDetailsForSlugResponse.java
+│      │      │       │      ├── AdvertListResponse.java
+│      │      │       │      ├── AdvertResponse.java
+│      │      │       │      ├── AdvertResponseForCustomer.java
+│      │      │       │      ├── AdvertResponseForUser.java
+│      │      │       │      ├── AdvertTypesResponse.java
+│      │      │       │      ├── AuthAdvertResponse.java
+│      │      │       │      ├── AuthAdvertUpdateResponse.java
+│      │      │       │      ├── CategoryAdvertResponse.java
+│      │      │       │      ├── CityAdvertResponse.java
+│      │      │       │      └── PopularAdvertResponse.java
+│      │      │       ├── category
+│      │      │       │      ├── CategoryAdvertResponse.java
+│      │      │       │      ├── CategoryPropertyKeyResponse.java
+│      │      │       │      ├── CategoryPropertyValueResponse.java
+│      │      │       │      └── CategoryResponse.java
+│      │      │       ├── image
+│      │      │       │      ├── FeaturedImageResponse.java
+│      │      │       │      ├── ImageResponse.java
+│      │      │       │      └── UploadImageResponse.java
+│      │      │       ├── tourRequest
+│      │      │       │      ├── TourRequestResponse.java
+│      │      │       │      └── TourRequestResponseForSlug.java
+│      │      │       ├── CityResponse.java
+│      │      │       ├── CountryResponse.java
+│      │      │       ├── DistrictResponse.java
+│      │      │       └── PropertyResponse.java
+│      │      └── user
+│      │      │       ├── CustomerResponse.java
+│      │      │       └── RegisterResponse.java
+│      │      ├── ResponseMessage.java
+│      │      └── UserResponse.java
 ├── repository
-│   └── AdvertRepository.java
+│      ├── business
+│      │      ├── AdvertRepository.java
+│      │      ├── AdvertTypesRepository.java
+│      │      ├── CategoryPropertyKeyRepository.java
+│      │      ├── CategoryPropertyValueRepository.java
+│      │      ├── CategoryRepository.java
+│      │      ├── CityRepository.java
+│      │      ├── CountryRepository.java
+│      │      ├── DistrictRepository.java
+│      │      ├── FavoriteRepository.java
+│      │      ├── ImagesRepository.java
+│      │      ├── LogRepository.java
+│      │      └── TourRequestRepository.java
+│      └── user
+│             ├── UserRepository.java
+│             └── UserRoleRepository.java
+├── security
+│      ├── config
+│      │      └── WebSecurityConfig.java
+│      ├── jwt
+│      │      ├── AuthEntryPointJwt.java
+│      │      ├── AuthTokenFilter.java
+│      │      └── JwtUtils.java
+│      └── service
+│             ├── UserDetailsImpl.java
+│             └── UserDetailsServiceImpl.java
 ├── service
-│   └── AdvertService.java
-└── ... (diğer paketler ve sınıflar)
+│      ├── business
+│      │      ├── AdvertService.java
+│      │      ├── AdvertTypesService.java
+│      │      ├── CategoryPropertyKeyService.java
+│      │      ├── CategoryPropertyValueService.java
+│      │      ├── CategoryService.java
+│      │      ├── CityService.java
+│      │      ├── CountryService.java
+│      │      ├── DistrictService.java
+│      │      ├── FavoriteService.java
+│      │      ├── ImageService.java
+│      │      ├── LogService.java
+│      │      ├── ReportService.java
+│      │      ├── ResetService.java
+│      │      └── TourRequestService.java
+│      ├── email
+│      │      ├── EmailService.java
+│      │      └── EmailServiceInterface.java
+│      ├── helper
+│      │      ├── AdvertHelper.java
+│      │      ├── CategoryHelper.java
+│      │      ├── CategoryPropertyKeyHelper.java
+│      │      ├── ImageHelper.java
+│      │      ├── MethodHelper.java
+│      │      ├── PageableHelper.java
+│      │      └── TourRequestHelper.java
+│      ├── user
+│      │      ├── UserRoleService.java
+│      │      └── UserService.java
+│      ├── validator
+│      │      ├── DateTimeValidator.java
+│      │      └── UniquePropertyValidator.java
+│      └───── AuthenticationService.java
+├── utils
+│      ├── MailUtil.java
+│      └── SlugUtils.java
+├── resources
+       └── application.properties
 
-yukarıdaki entity ve endpoint'e göre repository,controller,
-service ve endpoint response classını yaz. Yorum satırlarını türkçe yaz lombok kullan

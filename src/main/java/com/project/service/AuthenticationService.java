@@ -7,20 +7,17 @@ import com.project.exception.BadRequestException;
 import com.project.exception.MailServiceException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.UserMapper;
-import com.project.payload.messages.ErrorMessages;
 
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.authentication.LoginRequest;
 import com.project.payload.request.business.ForgotPasswordRequest;
-import com.project.payload.request.business.UpdatePasswordRequest;
 
 import com.project.payload.request.user.RegisterRequest;
 import com.project.payload.request.user.ResetCodeRequest;
-import com.project.payload.response.UserResponse;
 
+import com.project.payload.response.ResponseMessage;
 import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.payload.response.authentication.AuthResponse;
-import com.project.payload.response.business.ResponseMessage;
 import com.project.payload.response.user.RegisterResponse;
 import com.project.repository.user.UserRepository;
 import com.project.security.jwt.JwtUtils;
@@ -28,12 +25,9 @@ import com.project.security.service.UserDetailsImpl;
 import com.project.service.email.EmailService;
 import com.project.service.email.EmailServiceInterface;
 import com.project.service.helper.MethodHelper;
-import com.project.service.helper.PageableHelper;
 import com.project.service.user.UserRoleService;
 import com.project.utils.MailUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.MimeMessagePreparator;

@@ -12,14 +12,13 @@ import com.project.payload.mappers.TourRequestMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.TourRequestRequest;
-import com.project.payload.response.business.ResponseMessage;
+import com.project.payload.response.ResponseMessage;
 import com.project.payload.response.business.tourRequest.TourRequestResponse;
 import com.project.repository.business.TourRequestRepository;
 import com.project.service.helper.AdvertHelper;
 import com.project.service.helper.MethodHelper;
 import com.project.service.helper.PageableHelper;
 import com.project.service.helper.TourRequestHelper;
-import com.project.service.user.UserRoleService;
 import com.project.service.validator.DateTimeValidator;
 import lombok.RequiredArgsConstructor;
 

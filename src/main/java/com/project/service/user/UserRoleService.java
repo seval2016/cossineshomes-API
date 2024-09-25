@@ -24,4 +24,13 @@ public class UserRoleService {
     public List<UserRole> getAllUserRole(){
         return userRoleRepository.findAll();
     }
+
+    public UserRole createRole(String roleName, RoleType roleType) {
+        UserRole newUserRole = UserRole.builder()
+                .roleName(roleName)
+                .role(roleType)
+                .build();
+
+        return userRoleRepository.save(newUserRole);
+    }
 }

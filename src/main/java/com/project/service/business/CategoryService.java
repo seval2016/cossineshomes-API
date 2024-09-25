@@ -2,7 +2,6 @@ package com.project.service.business;
 
 import com.project.entity.concretes.business.Category;
 import com.project.entity.concretes.business.CategoryPropertyKey;
-import com.project.exception.BadRequestException;
 import com.project.exception.ConflictException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.CategoryMapper;
@@ -10,14 +9,10 @@ import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.business.CategoryPropertyKeyRequest;
 import com.project.payload.request.business.CategoryRequest;
-import com.project.payload.response.business.category.CategoryPropertyKeyResponse;
+import com.project.payload.response.ResponseMessage;
 import com.project.payload.response.business.category.CategoryResponse;
-import com.project.payload.response.business.ResponseMessage;
-import com.project.repository.business.AdvertRepository;
-import com.project.repository.business.CategoryPropertyKeyRepository;
 import com.project.repository.business.CategoryRepository;
 import com.project.service.helper.CategoryHelper;
-import com.project.service.helper.PageableHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,9 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

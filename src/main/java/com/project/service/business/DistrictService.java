@@ -4,82 +4,67 @@ package com.project.service.business;
 import com.project.entity.concretes.business.City;
 import com.project.entity.concretes.business.District;
 import com.project.exception.ResourceNotFoundException;
-import com.project.payload.mappers.DistrictMapper;
 
-import com.project.payload.messages.ErrorMessages;
-import com.project.payload.request.business.CityRequest;
-import com.project.payload.request.business.DistrictRequest;
 import com.project.payload.response.business.DistrictResponse;
-import com.project.payload.response.business.ResponseMessage;
+
 import com.project.repository.business.CityRepository;
 import com.project.repository.business.DistrictRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
 public class DistrictService {
 
     private final DistrictRepository districtRepository;
-    private final DistrictMapper districtMapper;
-    private final CityService cityService;
     private final CityRepository cityRepository;
+    private final RestTemplate restTemplate;
+    private static final String DISTRICT_API_URL = "https://wft-geo-db.p.rapidapi.com/v1/geo/cities/{cityId}/districts";
 
-    public List<DistrictResponse> getAllDistrict() {
-        return districtRepository.findAll()
-                .stream()
-                .map(districtMapper::mapDistrictToDistrictResponse)
-                .collect(Collectors.toList());
+    public List<District> getAllDistricts() {
+        return districtRepository.findAll();
     }
 
-    public ResponseMessage<List<District>> getByDistrict(Long cityId) {
-        // Belirtilen cityId'ye ait ilçeleri getir
-        List<District> districtList = districtRepository.getByDistrict(cityId);
-
-        return ResponseMessage.<List<District>>builder()
-                .httpStatus(HttpStatus.OK)
-                .object(districtList)
-                .message("Districts were brought successfully.")
-                .build();
+    // Yeni metod
+    public District getDistrictById(Long id) {
+        return districtRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("District not found with id: " + id));
     }
 
-    public District getDistrictByIdForAdvert(Long districtId) {
-        return districtRepository.findById(districtId)
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.DISTRICT_NOT_FOUND + ": " + districtId));
-    }
+    // Bir şehre ait ilçeleri API'den yükleyen metod
+    public void loadDistrictsFromApi(Long cityId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-RapidAPI-Key", "YOUR_API_KEY");
+        headers.set("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
 
-    public void resetDistrictTables() {
-        districtRepository.deleteAll();
-    }
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        String url = DISTRICT_API_URL.replace("{cityId}", String.valueOf(cityId));
 
-    public int countAllDistricts() {
-        return districtRepository.countAllDistricts();
-    }
+        ResponseEntity<DistrictResponse[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, DistrictResponse[].class);
 
-    public void setBuiltInForDistrict() {
-        DistrictRequest defaultDistrict = new DistrictRequest();
-        defaultDistrict.setName("Üsküdar");
-        defaultDistrict.setCityId(1L);
-        saveDistrict(defaultDistrict);
-    }
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            City city = cityRepository.findById(cityId)
+                    .orElseThrow(() -> new ResourceNotFoundException("City not found with id: " + cityId));
 
-    public District saveDistrict(DistrictRequest districtRequest) {
-        // City exists check
-        City city = cityRepository.findById((long) districtRequest.getCityId())
-                .orElseThrow(() -> new RuntimeException("City with ID " + districtRequest.getCityId() + " does not exist."));
-
-        // Build the District entity from the request
-        District district = District.builder()
-                .name(districtRequest.getName())
-                .city(city)
-                .builtIn(false)  // Default value, adjust as necessary
-                .build();
-
-        // Save the district entity to the database
-        return districtRepository.save(district);
+            for (DistrictResponse districtResponse : response.getBody()) {
+                District district = District.builder()
+                        .name(districtResponse.getName()) // İlçe ismi
+                        .city(city) // İlgili şehri set et
+                        .build();
+                districtRepository.save(district); // İlçeyi veritabanına kaydet
+            }
+        } else {
+            throw new RuntimeException("Failed to fetch districts from API");
+        }
     }
 }

@@ -14,5 +14,4 @@ public class DistrictResponse {
 
     private Long id;
     private String name;
-    private City city;
 }
